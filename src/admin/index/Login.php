@@ -4,6 +4,7 @@ namespace app\admin\index;
 
 use app\common\controllers\BaseAdmin;
 use app\model\user\UserInfo;
+use mowzs\lib\helper\AuthHelper;
 
 /**
  * 登录入口
@@ -16,6 +17,9 @@ class Login extends BaseAdmin
      */
     public function index(): string
     {
+        if (AuthHelper::instance()->isLogin()) {
+            $this->redirect(urls('index/index/index'));
+        }
         if (request()->isPost()) {
             $data = $this->request->post();
             try {
