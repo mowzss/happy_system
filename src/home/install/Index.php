@@ -167,7 +167,7 @@ class Index extends BaseHome
     {
         // 假设有一个admin表用于存储管理员信息
         // 注意：这里应该使用安全的方式处理密码，比如哈希
-        $hashedPassword = password_hash($data['admin_password'], PASSWORD_BCRYPT);
+        $hashedPassword = password_hash(md5($data['admin_password']), PASSWORD_BCRYPT);
         return Db::name('UserInfo')->insert([
             'username' => $data['admin_username'],
             'password' => $hashedPassword,
