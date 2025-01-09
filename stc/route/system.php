@@ -1,6 +1,4 @@
 <?php
 
 
-use think\facade\Route;
-
-Route::auto();
+app()->route->auto();
