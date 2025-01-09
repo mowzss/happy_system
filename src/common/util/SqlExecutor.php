@@ -28,7 +28,7 @@ class SqlExecutor extends UtilBase
      */
     public function execute(string $filePath, string $prefix = ''): void
     {
-        $this->filePath = $this->app->getBasePath() . $filePath;
+        $this->filePath = $this->app->getBasePath() . '/common/install/' . $filePath;
         // 如果传入的前缀为空，则尝试从配置中获取
         $this->setPrefix($prefix);
         if (!file_exists($this->filePath)) {

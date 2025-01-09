@@ -56,7 +56,7 @@ class Index extends BaseHome
         // 执行SQL文件
         $sqlExecutor = new SqlExecutor();
         try {
-            $sqlExecutor->execute('./install.sql');
+            $sqlExecutor->execute('install.sql');
         } catch (\Exception $e) {
             return json(['status' => 'error', 'msg' => '执行SQL文件失败: ' . $e->getMessage()]);
         }
@@ -103,7 +103,7 @@ class Index extends BaseHome
     {
         // 获取并验证表单数据
         $data = Request::post();
-        if (!$this->vali($data, ['db_host', 'db_name', 'db_user', 'db_pass'])) {
+        if (!$this->vali($data)) {
             return json(['status' => 'error', 'msg' => '表单验证失败']);
         }
 

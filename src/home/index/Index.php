@@ -12,7 +12,7 @@ class Index extends BaseHome
     /**
      * @return string
      */
-    public function index(): string
+    public function index()
     {
         EventHelper::instance()->listen('HomeIndex');
         return $this->fetch();

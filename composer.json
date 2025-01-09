@@ -22,6 +22,7 @@
         "app/service": "src/service",
         "app/home/index": "src/home/index",
         "app/home/user": "src/home/user",
+        "app/home/install": "src/home/install",
         "app/model/system": "src/model/system",
         "app/model/user": "src/model/user",
         "route/system.php": "stc/route/system.php"

@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace app\common\traits\system;
 
+use think\db\exception\DataNotFoundException;
+use think\db\exception\DbException;
+use think\db\exception\ModelNotFoundException;
 use think\facade\Env;
 use think\facade\Request;
 
@@ -33,6 +36,9 @@ trait ViewTheme
     /**
      * 获取模板风格目录
      * @return string
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
      */
     protected function getTheme(): string
     {
