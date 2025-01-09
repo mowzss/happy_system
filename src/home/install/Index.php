@@ -5,6 +5,7 @@ namespace app\home\install;
 use app\common\controllers\BaseHome;
 use app\common\util\SqlExecutor;
 use PDO;
+use think\Exception;
 use think\facade\Config;
 use think\facade\Db;
 use think\facade\Request;
@@ -12,15 +13,21 @@ use think\facade\Request;
 class Index extends BaseHome
 {
     /**
+     * @return void
+     */
+    protected function initialize(): void
+    {
+        // 检查是否已经安装
+        if ($this->isInstalled()) {
+            new Exception('页面不存在!');
+        }
+    }
+
+    /**
      * @return string
      */
     public function index(): string
     {
-        // 检查是否已经安装
-        if ($this->isInstalled()) {
-            return '系统已安装，请勿重复安装！';
-        }
-
         // 显示安装表单
         return $this->fetch();
     }
