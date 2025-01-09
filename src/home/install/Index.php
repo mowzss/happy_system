@@ -25,7 +25,7 @@ class Index extends BaseHome
         return $this->fetch();
     }
 
-    public function install()
+    public function install(): \think\response\Json
     {
         // 检查是否已经安装
         if ($this->isInstalled()) {
