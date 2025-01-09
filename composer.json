@@ -27,10 +27,10 @@
       },
       "copy": {
         "app/common.php": "src/common.php",
-        "app/public/admin.php": "stc/public/admin.php",
-        "app/public/index.php": "stc/public/index.php",
-        "app/public/robots.txt": "stc/public/robots.txt",
-        "app/public/router.php": "stc/public/router.php"
+        "public/admin.php": "stc/public/admin.php",
+        "public/index.php": "stc/public/index.php",
+        "public/robots.txt": "stc/public/robots.txt",
+        "public/router.php": "stc/public/router.php"
       },
       "del": true
     }
