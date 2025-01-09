@@ -28,6 +28,7 @@
       },
       "copy": {
         "app/common.php": "src/common.php",
+        "app/provider.php": "src/provider.php",
         "public/admin.php": "stc/public/admin.php",
         "public/index.php": "stc/public/index.php",
         "public/robots.txt": "stc/public/robots.txt",
