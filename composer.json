@@ -23,7 +23,8 @@
         "app/home/index": "src/home/index",
         "app/home/user": "src/home/user",
         "app/model/system": "src/model/system",
-        "app/model/user": "src/model/user"
+        "app/model/user": "src/model/user",
+        "route/system.php": "stc/route/system.php"
       },
       "copy": {
         "app/common.php": "src/common.php",
