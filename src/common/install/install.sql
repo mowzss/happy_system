@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主机： localhost
--- 生成日期： 2025-01-10 00:04:07
+-- 生成日期： 2025-01-10 00:26:47
 -- 服务器版本： 5.7.44-log
 -- PHP 版本： 8.1.13
 
@@ -81,8 +81,8 @@ CREATE TABLE `ha_system_config`
 INSERT INTO `ha_system_config` (`id`, `name`, `type`, `title`, `group_id`, `options`, `help`, `value`, `extend`, `list`,
                                 `module`, `status`, `create_time`, `update_time`)
 VALUES (1, 'storage_driver', 'radio', '存储引擎', 4,
-        'local|本地\noss|阿里云oss|oss_accesskeyid,oss_accesskeysecret,oss_bucket,oss_domain,oss_endpoint\nqiniu|七牛云|qiniu_domain,qiniu_secret,qiniu_access,qiniu_bucket\ncos|腾讯云cos',
-        '', 'local', NULL, 0, 'system', 1, 1733713725, 1735744596),
+        'local|本地\noss|阿里云oss|oss_accesskeyid,oss_accesskeysecret,oss_bucket,oss_domain,oss_endpoint\nqiniu|七牛云|qiniu_domain,qiniu_secret,qiniu_access,qiniu_bucket',
+        '', 'local', NULL, 0, 'system', 1, 1733713725, 1736439933),
        (2, 'site_name', 'text', '网站名称', 1, '', '', '星座之家', NULL, 0, 'system', 1, 1733733724, 1733800178),
        (3, 'seo_title', 'text', '网站标题', 1, '', '', '网站标题', NULL, 0, 'system', 1, 1733733742, 1733733752),
        (4, 'seo_keywords', 'text', '网站关键词', 1, '', '', '网站关键词', NULL, 0, 'system', 1, 1733733850, 1733733901),
@@ -94,7 +94,7 @@ VALUES (1, 'storage_driver', 'radio', '存储引擎', 4,
        (8, 'oss_domain', 'text', '域名', 4, '', '', '', NULL, 0, 'system', 1, 1733750422, 1734448128),
        (9, 'oss_bucket', 'text', 'bucket', 4, '', '', '', NULL, 0, 'system', 1, 1733750444, 1734448128),
        (10, 'oss_accesskeysecret', 'text', 'keysecret', 4, '', '', '', NULL, 0, 'system', 1, 1733750477, 1734448128),
-       (11, 'oss_accesskeyid', 'text', 'keyid', 4, '', '', NULL, NULL, 0, 'system', 1, 1733750500, 1734448128),
+       (11, 'oss_accesskeyid', 'text', 'keyid', 4, '', '', '', NULL, 0, 'system', 1, 1733750500, 1736439944),
        (12, 'file_size', 'text', '文件大小限制', 4, '',
         '最大上传大小，单位b，默认102400， 10Mb按需设置 一般最大不建议超过50Mb', '50', NULL, 0, 'system', 1, 1733801716,
         1733991578),
@@ -134,7 +134,8 @@ VALUES (1, 'storage_driver', 'radio', '存储引擎', 4,
         NULL, 0, 'system', 1, 1736217669, 1736217951),
        (36, 'forbid_username', 'textarea', '禁止注册账号', 2, '', '每行一个', 'admin', NULL, 0, 'system', 1, 1736217885,
         1736217966),
-       (37, 'qr_code_logo', 'image', '二维码LOGO', 1, '', '', '', NULL, 0, 'system', 1, 1736227701, 1736227701),
+       (37, 'square_logo', 'image', '方形LOGO', 1, '', '后台，二维码等场景使用', '', NULL, 0, 'system', 1, 1736227701,
+        1736439835),
        (38, 'home_pc_style', 'select', '网站PC风格', 1, '\\mowzs\\lib\\helper\\TemplateHelper@getTemplateData@home', '',
         'default', NULL, 0, 'system', 1, 1736259709, 1736262456),
        (39, 'home_wap_style', 'select', '网站wap风格', 1, '\\mowzs\\lib\\helper\\TemplateHelper@getTemplateData@home',
@@ -571,6 +572,16 @@ CREATE TABLE `ha_user_info`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='用户表';
 
+--
+-- 转存表中的数据 `ha_user_info`
+--
+
+INSERT INTO `ha_user_info` (`id`, `username`, `password`, `mobile`, `nickname`, `group_id`, `auth_id`, `login_num`,
+                            `last_time`, `last_ip`, `status`, `points`, `avatar`, `describe`, `sex`, `create_time`,
+                            `update_time`, `birthday`)
+VALUES (10000, 'admin', '$2y$10$8yB0meTRNSOrzfuczRz/iejjCteuGjB6HPsnQpXZ/njpcutWDqHCC', '', '', 1, 0, 1, 1736439093,
+        '192.168.31.109', 1, 0, NULL, NULL, 0, 0, 1736439093, NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -873,7 +884,7 @@ ALTER TABLE `ha_user_group_upgrade_log`
 --
 ALTER TABLE `ha_user_info`
     MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
-    AUTO_INCREMENT = 10000;
+    AUTO_INCREMENT = 10001;
 
 --
 -- 使用表AUTO_INCREMENT `ha_user_login_log`
