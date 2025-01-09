@@ -20,10 +20,10 @@
         "app/admin/user": "src/admin/user",
         "app/common": "src/common",
         "app/service": "src/service",
-        "app/home/index": "src/home/article",
+        "app/home/index": "src/home/index",
         "app/home/user": "src/home/user",
-        "app/model/system": "src/model/article",
-        "app/model/user": "src/model/article"
+        "app/model/system": "src/model/system",
+        "app/model/user": "src/model/user"
       },
       "copy": {
         "app/common.php": "src/common.php",
