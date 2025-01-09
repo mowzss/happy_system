@@ -2,14 +2,14 @@
 
 namespace app\home\install;
 
+use app\common\controllers\BaseHome;
 use app\common\util\SqlExecutor;
-use mowzs\lib\Controller;
 use PDO;
 use think\facade\Config;
 use think\facade\Db;
 use think\facade\Request;
 
-class Index extends Controller
+class Index extends BaseHome
 {
     /**
      * @return string
