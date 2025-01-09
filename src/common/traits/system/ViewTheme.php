@@ -27,7 +27,7 @@ trait ViewTheme
         $theme = $this->getTheme();
 
         // 构建完整的模板路径
-        return $this->app->getRootPath() . 'view' . DIRECTORY_SEPARATOR . $this->getStylePath() . DIRECTORY_SEPARATOR . $theme . DIRECTORY_SEPARATOR;
+        return $this->app->getRootPath() . 'view' . DIRECTORY_SEPARATOR . $this->getStylePath() . DIRECTORY_SEPARATOR . $theme . DIRECTORY_SEPARATOR . $this->request->layer(true) . DIRECTORY_SEPARATOR;
     }
 
     /**
