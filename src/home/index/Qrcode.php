@@ -28,7 +28,7 @@ class Qrcode extends BaseHome
         }
         try {
             // 获取系统配置中的二维码 Logo
-            $logoPath = (string)sys_config('qr_code_logo');
+            $logoPath = (string)sys_config('square_logo');
         } catch (DataNotFoundException|DbException $e) {
             $logoPath = '';
         }
