@@ -1,0 +1,38 @@
+{
+  "name": "mowzs/system",
+  "description": "system",
+  "type": "happy-module",
+  "authors": [
+    {
+      "name": "sunboy",
+      "email": "qysk@vip.qq.com"
+    }
+  ],
+  "require": {
+    "php": ">=8.0.0",
+    "mowzs/lib": "dev-master"
+  },
+  "extra": {
+    "module": {
+      "make": {
+        "app/admin/index": "src/admin/index",
+        "app/admin/system": "src/admin/system",
+        "app/admin/user": "src/admin/user",
+        "app/common": "src/common",
+        "app/service": "src/service",
+        "app/home/index": "src/home/article",
+        "app/home/user": "src/home/user",
+        "app/model/system": "src/model/article",
+        "app/model/user": "src/model/article"
+      },
+      "copy": {
+        "app/common.php": "src/common.php",
+        "app/public/admin.php": "stc/public/admin.php",
+        "app/public/index.php": "stc/public/index.php",
+        "app/public/robots.txt": "stc/public/robots.txt",
+        "app/public/router.php": "stc/public/router.php"
+      },
+      "del": true
+    }
+  }
+}
