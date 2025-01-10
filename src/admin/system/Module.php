@@ -16,6 +16,8 @@ class Module extends BaseAdmin
 {
     use CrudTrait;
 
+    protected array $modules;
+
     public function __construct(App $app, SystemModule $module)
     {
         parent::__construct($app);
@@ -87,9 +89,19 @@ class Module extends BaseAdmin
         $this->search = ['id#=#id', 'title#=#title', 'dir#=#module', 'status#=#status', 'create_time#between#create_time', 'update_time#between#update_time'];
     }
 
-    public function add()
+    public function add(): string
     {
-        $modules = ModuleService::instance()->notInstalledModules();
-        dump($modules);
+        $this->modules = ModuleService::instance()->notInstalledModules();
+        if ($this->request->isPost()) {
+            $module = $this->request->post('module');
+            try {
+                ModuleService::instance()->install($module);
+                $this->success('安装成功!');
+            } catch (\Exception $e) {
+                $this->error($e->getMessage());
+            }
+        }
+
+        return $this->fetch();
     }
 }
