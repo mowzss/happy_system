@@ -22,13 +22,19 @@ class SqlExecutor extends UtilBase
     /**
      * 执行SQL文件
      * @param string $filePath
+     * @param string $type 支持安装和升级
      * @param string $prefix
      * @return void
      * @throws \Exception
      */
-    public function execute(string $filePath, string $prefix = ''): void
+    public function execute(string $filePath, string $type = 'install', string $prefix = ''): void
     {
-        $this->filePath = $this->app->getBasePath() . '/common/install/' . $filePath;
+        if ($type == 'install') {//安装
+            $path = '/common/install/';
+        } else if ($type == 'update') {//升级
+            $path = '/common/upgrade/';
+        }
+        $this->filePath = $this->app->getBasePath() . $path . $filePath;
         // 如果传入的前缀为空，则尝试从配置中获取
         $this->setPrefix($prefix);
         if (!file_exists($this->filePath)) {

@@ -65,7 +65,12 @@ class Index extends BaseHome
         if (!$this->createAdmin($data)) {
             return json(['status' => 'error', 'msg' => '创建管理员账户失败']);
         }
-
+        if (!$this->writeAuthConfigFile($data)) {
+            return json(['status' => 'error', 'msg' => '权限分配失败！']);
+        }
+        if (!$this->writeInstallFileLock()) {
+            return json(['status' => 'error', 'msg' => '创建安装锁失败']);
+        }
         return json(['status' => 'success', 'msg' => '安装成功']);
     }
 
@@ -163,7 +168,7 @@ class Index extends BaseHome
         return file_put_contents($configPath, $configContent) !== false;
     }
 
-    protected function writeInstallFileLock($data): bool
+    protected function writeInstallFileLock(): bool
     {
         // 定义默认配置模板路径
         $templatePath = app()->getBasePath() . 'common/install/install.tpl';
@@ -179,11 +184,35 @@ class Index extends BaseHome
         return file_put_contents($configPath, $configContent) !== false;
     }
 
+    protected function writeAuthConfigFile($data): bool
+    {
+        // 定义默认配置模板路径
+        $templatePath = app()->getBasePath() . 'common/install/auth.tpl';
+        $configPath = app()->getConfigPath() . 'auth.php';
+
+        // 检查模板文件是否存在
+        if (!file_exists($templatePath)) {
+            return false;
+        }
+        // 读取模板内容
+        $configContent = file_get_contents($templatePath);
+        // 替换配置项
+        $replacements = [
+            '{USERNAME}' => $data['admin_username'],
+        ];
+
+        foreach ($replacements as $placeholder => $value) {
+            $configContent = str_replace($placeholder, $value, $configContent);
+        }
+        // 写入配置文件
+        return file_put_contents($configPath, $configContent) !== false;
+    }
+
     protected function createAdmin($data)
     {
-        // 假设有一个admin表用于存储管理员信息
-        // 注意：这里应该使用安全的方式处理密码，比如哈希
+
         $hashedPassword = password_hash(md5($data['admin_password']), PASSWORD_BCRYPT);
+
         return Db::name('UserInfo')->insert([
             'username' => $data['admin_username'],
             'password' => $hashedPassword,
