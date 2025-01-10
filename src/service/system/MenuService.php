@@ -29,7 +29,7 @@ class MenuService
      * 插入菜单数据。
      *
      * @param array $menus 菜单数据数组。
-     * @param string|null $parentSlot 父级 slot 标记。
+     * @param string|null $pid
      * @return void
      * @throws Exception
      */
