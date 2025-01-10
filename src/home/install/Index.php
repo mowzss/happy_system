@@ -12,22 +12,15 @@ use think\facade\Request;
 
 class Index extends BaseHome
 {
-    /**
-     * @return void
-     */
-    protected function initialize(): void
-    {
-        // 检查是否已经安装
-        if ($this->isInstalled()) {
-            new Exception('您已安装过系统!');
-        }
-    }
 
     /**
      * @return string
      */
     public function index(): string
     {
+        if ($this->isInstalled()) {
+            new Exception('您已安装过系统!');
+        }
         // 显示安装表单
         return $this->fetch();
     }
