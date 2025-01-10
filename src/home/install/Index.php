@@ -55,7 +55,7 @@ class Index extends BaseHome
         // 执行SQL文件
         $sqlExecutor = new SqlExecutor();
         try {
-            $sqlExecutor->execute('install.sql');
+            $sqlExecutor->execute('system/install.sql');
         } catch (\Exception $e) {
             return json(['status' => 'error', 'msg' => '执行SQL文件失败: ' . $e->getMessage()]);
         }
@@ -142,7 +142,7 @@ class Index extends BaseHome
     protected function writeConfigFile($data): bool
     {
         // 定义默认配置模板路径
-        $templatePath = app()->getBasePath() . 'common/install/database.tpl';
+        $templatePath = app()->getBasePath() . 'common/install/system/database.tpl';
         $configPath = app()->getConfigPath() . 'database.php';
 
         // 检查模板文件是否存在
@@ -173,7 +173,7 @@ class Index extends BaseHome
     protected function writeInstallFileLock(): bool
     {
         // 定义默认配置模板路径
-        $templatePath = app()->getBasePath() . 'common/install/install.tpl';
+        $templatePath = app()->getBasePath() . 'common/install/system/install.tpl';
         $configPath = app()->getConfigPath() . 'install.php';
 
         // 检查模板文件是否存在
@@ -189,7 +189,7 @@ class Index extends BaseHome
     protected function writeAuthConfigFile($data): bool
     {
         // 定义默认配置模板路径
-        $templatePath = app()->getBasePath() . 'common/install/auth.tpl';
+        $templatePath = app()->getBasePath() . 'common/install/system/auth.tpl';
         $configPath = app()->getConfigPath() . 'auth.php';
 
         // 检查模板文件是否存在
