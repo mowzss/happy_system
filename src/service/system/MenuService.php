@@ -18,11 +18,11 @@ class MenuService
     public function insertMenusBySlot(array $menus, string $parentSlot = ''): void
     {
         if (!empty($parentSlot)) {
-            $parentid = SystemMenu::where('slot', $parentSlot)->value('id');
+            $parent = SystemMenu::where('slot', $parentSlot)->value('id');
         } else {
-            $parentid = 0;
+            $parent = 0;
         }
-        $this->insertMenus($menus, $parentid);
+        $this->insertMenus($menus, $parent);
     }
 
     /**
