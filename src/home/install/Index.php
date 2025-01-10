@@ -19,7 +19,7 @@ class Index extends BaseHome
     {
         // 检查是否已经安装
         if ($this->isInstalled()) {
-            new Exception('页面不存在!');
+            new Exception('您已安装过系统!');
         }
     }
 
