@@ -2,6 +2,7 @@
 
 namespace app\service\system;
 
+use app\model\system\SystemMenu;
 use think\Exception;
 
 class MenuService
@@ -16,9 +17,15 @@ class MenuService
      */
     public function insertMenus(array $menus, ?string $parentSlot = null): void
     {
+        if (!empty($parentSlot)) {
+            $parentSlotid = SystemMenu::where('slot', $parentSlot)->value('id');
+        } else {
+            $parentSlotid = 0;
+        }
+
         foreach ($menus as $menu) {
             // 处理顶级菜单
-            $parentId = $this->insertMenu($menu, null);
+            $parentId = $this->insertMenu($menu, $parentSlotid);
             if (!empty($menu['sub'])) {
                 // 如果有子菜单，则递归插入子菜单，并设置父级ID
                 $this->insertMenus($menu['sub'], $parentId);
