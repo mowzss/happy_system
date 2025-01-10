@@ -11,18 +11,18 @@ class MenuService
      * 插入菜单数据。
      *
      * @param array $menus 菜单数据数组。
-     * @param string|null $parentSlot 父级 slot 标记。
+     * @param string $parentSlot 父级 slot 标记。
      * @return void
      * @throws Exception
      */
-    public function insertMenusBySlot(array $menus, ?string $parentSlot = null): void
+    public function insertMenusBySlot(array $menus, string $parentSlot = ''): void
     {
         if (!empty($parentSlot)) {
-            $parentSlotid = SystemMenu::where('slot', $parentSlot)->value('id');
+            $parentid = SystemMenu::where('slot', $parentSlot)->value('id');
         } else {
-            $parentSlotid = 0;
+            $parentid = 0;
         }
-        $this->insertMenus($menus, $parentSlotid);
+        $this->insertMenus($menus, $parentid);
     }
 
     /**
@@ -33,7 +33,7 @@ class MenuService
      * @return void
      * @throws Exception
      */
-    public function insertMenus(array $menus, ?string $pid = null): void
+    public function insertMenus(array $menus, string|int $pid = 0): void
     {
 
         foreach ($menus as $menu) {
@@ -50,11 +50,11 @@ class MenuService
      * 插入单个菜单项。
      *
      * @param array $menu 单个菜单项的数据。
-     * @param int|null $parentId 父级菜单ID。
+     * @param string|int $parentId 父级菜单ID。
      * @return int|string
      * @throws Exception
      */
-    private function insertMenu(array $menu, ?int $parentId): int|string
+    private function insertMenu(array $menu, string|int $parentId = 0): int|string
     {
         $data = [
             'pid' => $parentId ?? 0,
