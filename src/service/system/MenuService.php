@@ -2,7 +2,6 @@
 
 namespace app\service\system;
 
-use app\model\system\SystemMenu;
 use think\Exception;
 
 class MenuService
@@ -20,7 +19,6 @@ class MenuService
         foreach ($menus as $menu) {
             // 处理顶级菜单
             $parentId = $this->insertMenu($menu, null);
-
             if (!empty($menu['sub'])) {
                 // 如果有子菜单，则递归插入子菜单，并设置父级ID
                 $this->insertMenus($menu['sub'], $parentId);
@@ -33,10 +31,10 @@ class MenuService
      *
      * @param array $menu 单个菜单项的数据。
      * @param int|null $parentId 父级菜单ID。
-     * @return int 返回插入菜单的ID。
+     * @return int|string
      * @throws Exception
      */
-    private function insertMenu(array $menu, ?int $parentId): int
+    private function insertMenu(array $menu, ?int $parentId): int|string
     {
         $data = [
             'pid' => $parentId ?? 0,
@@ -51,8 +49,7 @@ class MenuService
         ];
 
         try {
-            $model = SystemMenu::create($data);
-            return $model->id;
+            return (new \app\model\system\SystemMenu)->Insert($data, true);
         } catch (\Exception $e) {
             throw new Exception("Failed to insert menu: " . $e->getMessage());
         }

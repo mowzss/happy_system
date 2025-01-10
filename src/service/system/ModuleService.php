@@ -42,7 +42,6 @@ class ModuleService extends BaseService
     public function install($module): bool
     {
         $info = $this->getModuleInfo($module);
-
         // 执行install_files中的SQL文件及类的run方法
         foreach ($info['install_files'] as $fileOrClass) {
             if (is_string($fileOrClass) && !class_exists($fileOrClass)) {

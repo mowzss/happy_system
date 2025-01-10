@@ -94,12 +94,15 @@ class Module extends BaseAdmin
         $this->modules = ModuleService::instance()->notInstalledModules();
         if ($this->request->isPost()) {
             $module = $this->request->post('module');
+            if (empty($module)) {
+                $this->error("提交信息有误请检查！");
+            }
             try {
                 ModuleService::instance()->install($module);
-                $this->success('安装成功!');
             } catch (\Exception $e) {
                 $this->error($e->getMessage());
             }
+            $this->success('安装成功!');
         }
 
         return $this->fetch();
