@@ -135,7 +135,7 @@ class RemoteFileUtil
      * @param string $filePath 文件路径
      * @param string $mimeType MIME类型
      * @param int $fileSize 文件大小
-     * @throws ValidateException
+     * @throws ValidateException|\Exception
      */
     protected function validateFile(string $filePath, string $mimeType, int $fileSize): void
     {

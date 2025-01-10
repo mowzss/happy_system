@@ -23,6 +23,7 @@ class Index extends BaseAdmin
      */
     public function index(): string
     {
+
         return $this->fetch();
     }
 

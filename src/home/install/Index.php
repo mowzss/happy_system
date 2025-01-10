@@ -5,7 +5,6 @@ namespace app\home\install;
 use app\common\controllers\BaseHome;
 use app\common\util\SqlExecutor;
 use PDO;
-use think\Exception;
 use think\facade\Config;
 use think\facade\Db;
 use think\facade\Request;
@@ -19,7 +18,7 @@ class Index extends BaseHome
     public function index(): string
     {
         if ($this->isInstalled()) {
-            new Exception('您已安装过系统!');
+            $this->error('您已安装过系统!');
         }
         // 显示安装表单
         return $this->fetch();
@@ -74,9 +73,12 @@ class Index extends BaseHome
         return json(['status' => 'success', 'msg' => '安装成功']);
     }
 
-    protected function isInstalled()
+    /**
+     * @return bool
+     */
+    protected function isInstalled(): bool
     {
-        return Config::get('install.installed') === true;
+        return Config::get('install.installed', false) === true;
     }
 
     protected function vali($data)
