@@ -1,227 +1,352 @@
-create table ha_article_column
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- 主机： localhost
+-- 生成日期： 2025-01-10 11:39:58
+-- 服务器版本： 5.7.44-log
+-- PHP 版本： 8.1.13
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT = @@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS = @@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION = @@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- 数据库： `tp55_com`
+--
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `ha_article_column`
+--
+
+CREATE TABLE `ha_article_column`
 (
-    id              int auto_increment
-        primary key,
-    pid             int           default 0  null comment '父栏目',
-    mid             int           default 0  null comment '所属模型',
-    title           varchar(128)  default '' null comment '名称',
-    image           text                     null comment '栏目图片',
-    icon            varchar(255)  default '' null,
-    seo_title       varchar(2000) default '' null comment 'SEO标题',
-    seo_keywords    varchar(200)  default '' null comment '关键词',
-    seo_description text                     null comment '描述',
-    list            int           default 0  null comment '排序',
-    view_file       varchar(128)  default '' null comment '模板路径',
-    status          int           default 1  null comment '状态',
-    create_time     int           default 0  null comment '创建时间',
-    update_time     int           default 0  null comment '更新时间'
-)
-    comment '分类表';
+    `id`              int(11) NOT NULL,
+    `pid`             int(11)       DEFAULT '0' COMMENT '父栏目',
+    `mid`             int(11)       DEFAULT '0' COMMENT '所属模型',
+    `title`           varchar(128)  DEFAULT '' COMMENT '名称',
+    `image`           text COMMENT '栏目图片',
+    `icon`            varchar(255)  DEFAULT '',
+    `seo_title`       varchar(2000) DEFAULT '' COMMENT 'SEO标题',
+    `seo_keywords`    varchar(200)  DEFAULT '' COMMENT '关键词',
+    `seo_description` text COMMENT '描述',
+    `list`            int(11)       DEFAULT '0' COMMENT '排序',
+    `view_file`       varchar(128)  DEFAULT '' COMMENT '模板路径',
+    `status`          int(11)       DEFAULT '1' COMMENT '状态',
+    `create_time`     int(11)       DEFAULT '0' COMMENT '创建时间',
+    `update_time`     int(11)       DEFAULT '0' COMMENT '更新时间'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='分类表';
 
-create index article_column_pid_index
-    on ha_article_column (pid);
+-- --------------------------------------------------------
 
-create index article_column_title_index
-    on ha_article_column (title);
+--
+-- 表的结构 `ha_article_content`
+--
 
-create table ha_article_content
+CREATE TABLE `ha_article_content`
 (
-    id          bigint unsigned auto_increment comment '主键ID'
-        primary key,
-    mid         smallint unsigned  default 0  not null comment '模型ID',
-    cid         mediumint unsigned default 0  not null comment '栏目ID',
-    title       varchar(256)       default '' not null comment '标题',
-    uid         int unsigned       default 0  not null comment '用户ID',
-    view        int unsigned       default 0  not null comment '浏览量',
-    status      tinyint            default 1  not null comment '状态：0未审 1已审 2推荐',
-    list        int unsigned       default 0  not null comment '排序值',
-    create_time int unsigned       default 0  not null comment '创建时间',
-    update_time int unsigned       default 0  not null comment '修改时间',
-    delete_time int                           null
-)
-    comment '测试';
+    `id`          bigint(20) UNSIGNED   NOT NULL COMMENT '主键ID',
+    `mid`         smallint(5) UNSIGNED  NOT NULL DEFAULT '0' COMMENT '模型ID',
+    `cid`         mediumint(8) UNSIGNED NOT NULL DEFAULT '0' COMMENT '栏目ID',
+    `title`       varchar(256)          NOT NULL DEFAULT '' COMMENT '标题',
+    `uid`         int(10) UNSIGNED      NOT NULL DEFAULT '0' COMMENT '用户ID',
+    `view`        int(10) UNSIGNED      NOT NULL DEFAULT '0' COMMENT '浏览量',
+    `status`      tinyint(4)            NOT NULL DEFAULT '1' COMMENT '状态：0未审 1已审 2推荐',
+    `list`        int(10) UNSIGNED      NOT NULL DEFAULT '0' COMMENT '排序值',
+    `create_time` int(10) UNSIGNED      NOT NULL DEFAULT '0' COMMENT '创建时间',
+    `update_time` int(10) UNSIGNED      NOT NULL DEFAULT '0' COMMENT '修改时间',
+    `delete_time` int(11)                        DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='测试';
 
-create table ha_article_content_1
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `ha_article_content_1`
+--
+
+CREATE TABLE `ha_article_content_1`
 (
-    id          bigint unsigned auto_increment comment '主键ID'
-        primary key,
-    mid         smallint unsigned  default 0  not null comment '模型ID',
-    cid         mediumint unsigned default 0  not null comment '栏目ID',
-    title       varchar(256)       default '' not null comment '标题',
-    is_pic      tinyint            default 0  not null comment '是否带组图',
-    uid         int unsigned       default 0  not null comment '用户ID',
-    view        int unsigned       default 0  not null comment '浏览量',
-    status      tinyint            default 1  not null comment '状态：0未审 1已审 2推荐',
-    replynum    int unsigned       default 0  not null comment '评论数',
-    description text                          null comment '简介',
-    list        int unsigned       default 0  not null comment '排序值',
-    images      text                          not null comment '组图',
-    keywords    varchar(500)       default '' not null comment '关键词',
-    extend      text                          null comment '扩展字段',
-    create_time int unsigned       default 0  not null comment '创建时间',
-    update_time int unsigned       default 0  not null comment '修改时间',
-    delete_time int unsigned       default 0  not null comment '软删除'
-)
-    comment '测试';
+    `id`          bigint(20) UNSIGNED   NOT NULL COMMENT '主键ID',
+    `mid`         smallint(5) UNSIGNED  NOT NULL DEFAULT '0' COMMENT '模型ID',
+    `cid`         mediumint(8) UNSIGNED NOT NULL DEFAULT '0' COMMENT '栏目ID',
+    `title`       varchar(256)          NOT NULL DEFAULT '' COMMENT '标题',
+    `is_pic`      tinyint(4)            NOT NULL DEFAULT '0' COMMENT '是否带组图',
+    `uid`         int(10) UNSIGNED      NOT NULL DEFAULT '0' COMMENT '用户ID',
+    `view`        int(10) UNSIGNED      NOT NULL DEFAULT '0' COMMENT '浏览量',
+    `status`      tinyint(4)            NOT NULL DEFAULT '1' COMMENT '状态：0未审 1已审 2推荐',
+    `replynum`    int(10) UNSIGNED      NOT NULL DEFAULT '0' COMMENT '评论数',
+    `description` text COMMENT '简介',
+    `list`        int(10) UNSIGNED      NOT NULL DEFAULT '0' COMMENT '排序值',
+    `images`      text                  NOT NULL COMMENT '组图',
+    `keywords`    varchar(500)          NOT NULL DEFAULT '' COMMENT '关键词',
+    `extend`      text COMMENT '扩展字段',
+    `create_time` int(10) UNSIGNED      NOT NULL DEFAULT '0' COMMENT '创建时间',
+    `update_time` int(10) UNSIGNED      NOT NULL DEFAULT '0' COMMENT '修改时间',
+    `delete_time` int(10) UNSIGNED      NOT NULL DEFAULT '0' COMMENT '软删除'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='测试';
 
-create table ha_article_content_1s
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `ha_article_content_1s`
+--
+
+CREATE TABLE `ha_article_content_1s`
 (
-    id      bigint unsigned auto_increment comment '主键ID'
-        primary key,
-    content longtext null comment '内容'
-)
-    comment '测试';
+    `id`      bigint(20) UNSIGNED NOT NULL COMMENT '主键ID',
+    `content` longtext COMMENT '内容'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='测试';
 
-create table ha_article_field
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `ha_article_field`
+--
+
+CREATE TABLE `ha_article_field`
 (
-    id          int(11) unsigned auto_increment
-        primary key,
-    mid         int          default 0   null comment '所属模型',
-    name        varchar(64)  default ''  null comment '字段名称',
-    type        varchar(64)  default ''  null comment '字段类型',
-    title       varchar(256) default ''  null comment '标签名称',
-    options     text                     null,
-    help        text                     null comment '表单说明',
-    required    int          default 0   null comment '是否必填',
-    list        int          default 100 null comment '排序',
-    edit        int          default 1   null comment '是否能修改 1可以修改 0不能修改',
-    extend      longtext                 null comment '扩展参数',
-    status      int          default 1   null comment '状态',
-    create_time int          default 0   null comment '创建时间',
-    update_time int          default 0   null comment '更新时间',
-    is_search   int                      null comment '是否搜索 1搜索 0不启动'
-)
-    comment '字段设计';
+    `id`          int(11) UNSIGNED NOT NULL,
+    `mid`         int(11)      DEFAULT '0' COMMENT '所属模型',
+    `name`        varchar(64)  DEFAULT '' COMMENT '字段名称',
+    `type`        varchar(64)  DEFAULT '' COMMENT '字段类型',
+    `title`       varchar(256) DEFAULT '' COMMENT '标签名称',
+    `options`     text,
+    `help`        text COMMENT '表单说明',
+    `required`    int(11)      DEFAULT '0' COMMENT '是否必填',
+    `list`        int(11)      DEFAULT '100' COMMENT '排序',
+    `edit`        int(11)      DEFAULT '1' COMMENT '是否能修改 1可以修改 0不能修改',
+    `extend`      longtext COMMENT '扩展参数',
+    `status`      int(11)      DEFAULT '1' COMMENT '状态',
+    `create_time` int(11)      DEFAULT '0' COMMENT '创建时间',
+    `update_time` int(11)      DEFAULT '0' COMMENT '更新时间',
+    `is_search`   int(11)      DEFAULT NULL COMMENT '是否搜索 1搜索 0不启动'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='字段设计';
 
-create table ha_article_model
+--
+-- 转存表中的数据 `ha_article_field`
+--
+
+INSERT INTO `ha_article_field` (`id`, `mid`, `name`, `type`, `title`, `options`, `help`, `required`, `list`, `edit`,
+                                `extend`, `status`, `create_time`, `update_time`, `is_search`)
+VALUES (1, 1, 'title', 'text', '标题', '', NULL, 1, 1000, 1,
+        '{\"field\":{\"type\":\"VARCHAR\",\"length\":\"256\",\"unsigned\":\"0\",\"null\":\"0\",\"default\":\"\'\'\"},\"search\":{\"is_open\":\"1\",\"linq\":\"like\"},\"tables\":{\"is_show\":\"1\",\"templet\":\"\",\"switch\":{\"name\":\"\"},\"edit\":\"0\"},\"add\":{\"is_show\":\"1\"}}',
+        1, 1735613014, 1735613014, NULL),
+       (2, 1, 'keywords', 'text', '关键词', '', NULL, 0, 100, 1,
+        '{\"field\":{\"type\":\"VARCHAR\",\"length\":\"2000\",\"unsigned\":\"0\",\"null\":\"0\",\"default\":\"\'\'\"},\"search\":{\"is_open\":\"0\",\"linq\":\"\"},\"tables\":{\"is_show\":\"0\",\"templet\":\"\",\"switch\":{\"name\":\"\"},\"edit\":\"0\"},\"add\":{\"is_show\":\"0\"}}',
+        1, 1735613014, 1735613014, NULL),
+       (3, 1, 'description', 'textarea', '简介', '', NULL, 0, 100, 1,
+        '{\"field\":{\"type\":\"TEXT\",\"length\":\"\",\"unsigned\":\"0\",\"null\":\"0\",\"default\":\"\"},\"search\":{\"is_open\":\"0\",\"linq\":\"\"},\"tables\":{\"is_show\":\"0\",\"templet\":\"\",\"switch\":{\"name\":\"\"},\"edit\":\"0\"},\"add\":{\"is_show\":\"1\"}}',
+        1, 1735613014, 1735613014, NULL),
+       (4, 1, 'content', 'editor', '内容', '', NULL, 1, 1, 1,
+        '{\"field\":{\"type\":\"LONGTEXT\",\"length\":\"\",\"unsigned\":\"0\",\"null\":\"0\",\"default\":\"\"},\"search\":{\"is_open\":\"0\",\"linq\":\"\"},\"tables\":{\"is_show\":\"0\",\"templet\":\"\",\"switch\":{\"name\":\"\"},\"edit\":\"0\"},\"add\":{\"is_show\":\"1\"}}',
+        1, 1735613014, 1735613014, NULL),
+       (5, 1, 'images', 'images', '组图', '', NULL, 0, 80, 1,
+        '{\"field\":{\"type\":\"TEXT\",\"length\":\"\",\"unsigned\":\"0\",\"null\":\"0\",\"default\":\"\"},\"search\":{\"is_open\":\"0\",\"linq\":\"\"},\"tables\":{\"is_show\":\"1\",\"templet\":\"image\",\"switch\":{\"name\":\"\"},\"edit\":\"0\"},\"add\":{\"is_show\":\"1\"}}',
+        1, 1735613014, 1735662989, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `ha_article_model`
+--
+
+CREATE TABLE `ha_article_model`
 (
-    id     int auto_increment
-        primary key,
-    title  varchar(64)  default ''  null comment '名称',
-    info   varchar(512) default ''  null comment '描述',
-    list   int          default 100 null comment '排序',
-    is_del int          default 1   null comment '可否删除'
-);
+    `id`     int(11) NOT NULL,
+    `title`  varchar(64)  DEFAULT '' COMMENT '名称',
+    `info`   varchar(512) DEFAULT '' COMMENT '描述',
+    `list`   int(11)      DEFAULT '100' COMMENT '排序',
+    `is_del` int(11)      DEFAULT '1' COMMENT '可否删除'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
 
-create index article_model_title_index
-    on ha_article_model (title);
+--
+-- 转存表中的数据 `ha_article_model`
+--
 
-create table ha_article_reply
+INSERT INTO `ha_article_model` (`id`, `title`, `info`, `list`, `is_del`)
+VALUES (-1, '栏目', '栏目模型，内置字段不可修改，仅支持扩展字段', -100, 0),
+       (1, '文章模型', '', 100, 1);
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `ha_article_tag`
+--
+
+CREATE TABLE `ha_article_tag`
 (
-    id          bigint unsigned auto_increment comment '主键ID'
-        primary key,
-    pid         int unsigned        default 0  not null comment '引用回复上级ID',
-    aid         bigint unsigned     default 0  not null comment '内容页ID',
-    ispic       tinyint(1) unsigned default 0  not null comment '是否带组图 (0:否, 1:是)',
-    uid         int unsigned        default 0  not null comment '用户ID',
-    agree       int unsigned        default 0  not null comment '支持数',
-    disagree    int unsigned        default 0  not null comment '反对数',
-    list        int unsigned        default 0  not null comment '排序值',
-    picurl      varchar(255)        default '' not null comment '封面图URL',
-    content     text                           not null comment '评论内容',
-    reply_count mediumint unsigned  default 0  not null comment '回复数',
-    phone_type  varchar(30)         default '' not null comment '发表来自什么手机',
-    status      tinyint(1) unsigned default 1  not null comment '状态：1审核通过，0未审核',
-    create_time int unsigned        default 0  not null comment '创建时间戳'
-)
-    comment '回复内容表';
+    `id`              int(10) UNSIGNED      NOT NULL,
+    `title`           varchar(256)          NOT NULL DEFAULT '' COMMENT '标题',
+    `view`            mediumint(8) UNSIGNED NOT NULL DEFAULT '0' COMMENT '浏览量',
+    `count`           int(11)               NOT NULL DEFAULT '0' COMMENT '内容总数',
+    `status`          tinyint(4)            NOT NULL DEFAULT '1' COMMENT '状态：0未审 1已审 2推荐',
+    `list`            int(10) UNSIGNED      NOT NULL DEFAULT '0' COMMENT '排序值',
+    `uid`             int(11)               NOT NULL DEFAULT '1',
+    `image`           text COMMENT '封面图',
+    `seo_description` mediumtext COMMENT '文章内容',
+    `seo_title`       varchar(128)                   DEFAULT NULL COMMENT 'SEO标题',
+    `seo_keyword`     varchar(128)                   DEFAULT NULL COMMENT '关键词',
+    `create_time`     int(10) UNSIGNED               DEFAULT NULL,
+    `update_time`     int(10) UNSIGNED               DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='tag';
 
-create index idx_aid
-    on ha_article_reply (aid);
 
-create index idx_pid
-    on ha_article_reply (pid);
+-- --------------------------------------------------------
 
-create index idx_sort_order
-    on ha_article_reply (list);
+--
+-- 表的结构 `ha_article_tag_info`
+--
 
-create index idx_status_create_time
-    on ha_article_reply (status, create_time);
-
-create index idx_uid
-    on ha_article_reply (uid);
-
-create table ha_article_tag
+CREATE TABLE `ha_article_tag_info`
 (
-    id              int unsigned auto_increment
-        primary key,
-    title           varchar(256)       default '' not null comment '标题',
-    view            mediumint unsigned default 0  not null comment '浏览量',
-    count           int                default 0  not null comment '内容总数',
-    status          tinyint            default 1  not null comment '状态：0未审 1已审 2推荐',
-    list            int unsigned       default 0  not null comment '排序值',
-    uid             int                default 1  not null,
-    image           text                          null comment '封面图',
-    seo_description mediumtext                    null comment '文章内容',
-    seo_title       varchar(128)                  null comment 'SEO标题',
-    seo_keyword     varchar(128)                  null comment '关键词',
-    create_time     int unsigned                  null,
-    update_time     int unsigned                  null
-)
-    comment 'tag';
+    `id`  int(11) NOT NULL,
+    `aid` bigint(22)       DEFAULT NULL COMMENT '内容id',
+    `tid` int(11)          DEFAULT NULL COMMENT 'tag id',
+    `mid` int(11) NOT NULL DEFAULT '0' COMMENT '模型id'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='tag关联信息';
 
-create index count
-    on ha_article_tag (count);
+--
+-- 转储表的索引
+--
 
-create index create_time
-    on ha_article_tag (create_time);
+--
+-- 表的索引 `ha_article_column`
+--
+ALTER TABLE `ha_article_column`
+    ADD PRIMARY KEY (`id`),
+    ADD KEY `article_column_pid_index` (`pid`),
+    ADD KEY `article_column_title_index` (`title`);
 
-create index list
-    on ha_article_tag (list);
+--
+-- 表的索引 `ha_article_content`
+--
+ALTER TABLE `ha_article_content`
+    ADD PRIMARY KEY (`id`);
 
-create index status
-    on ha_article_tag (status);
+--
+-- 表的索引 `ha_article_content_1`
+--
+ALTER TABLE `ha_article_content_1`
+    ADD PRIMARY KEY (`id`);
 
-create index update_time
-    on ha_article_tag (update_time);
+--
+-- 表的索引 `ha_article_content_1s`
+--
+ALTER TABLE `ha_article_content_1s`
+    ADD PRIMARY KEY (`id`);
 
-create index view
-    on ha_article_tag (view);
+--
+-- 表的索引 `ha_article_field`
+--
+ALTER TABLE `ha_article_field`
+    ADD PRIMARY KEY (`id`);
 
-create table ha_article_tag_info
-(
-    id  int auto_increment
-        primary key,
-    aid bigint(22)    null comment '内容id',
-    tid int           null comment 'tag id',
-    mid int default 0 not null comment '模型id'
-)
-    comment 'tag关联信息';
+--
+-- 表的索引 `ha_article_model`
+--
+ALTER TABLE `ha_article_model`
+    ADD PRIMARY KEY (`id`),
+    ADD KEY `article_model_title_index` (`title`);
 
-create index astro_tag_info_aid_index
-    on ha_article_tag_info (aid);
+--
+-- 表的索引 `ha_article_tag`
+--
+ALTER TABLE `ha_article_tag`
+    ADD PRIMARY KEY (`id`),
+    ADD KEY `count` (`count`),
+    ADD KEY `list` (`list`),
+    ADD KEY `status` (`status`),
+    ADD KEY `view` (`view`),
+    ADD KEY `create_time` (`create_time`),
+    ADD KEY `update_time` (`update_time`);
 
-create index astro_tag_info_tid_index
-    on ha_article_tag_info (tid);
+--
+-- 表的索引 `ha_article_tag_info`
+--
+ALTER TABLE `ha_article_tag_info`
+    ADD PRIMARY KEY (`id`),
+    ADD KEY `astro_tag_info_aid_index` (`aid`),
+    ADD KEY `astro_tag_info_tid_index` (`tid`),
+    ADD KEY `mid` (`mid`);
 
-create index mid
-    on ha_article_tag_info (mid);
-INSERT INTO ha_article_model (id, title, info, list, is_del)
-VALUES (-1, '栏目', '栏目模型，内置字段不可修改，仅支持扩展字段', -100, 0);
-INSERT INTO ha_article_model (id, title, info, list, is_del)
-VALUES (1, '文章模型', '', 100, 1);
-INSERT INTO ha_article_field (id, mid, name, type, title, options, help, required, list, edit, extend, status,
-                              create_time, update_time, is_search)
-VALUES (1, 1, 'title', 'text', '标题', '', null, 1, 1000, 1,
-        '{"field":{"type":"VARCHAR","length":"256","unsigned":"0","null":"0","default":"\'\'"},"search":{"is_open":"1","linq":"like"},"tables":{"is_show":"1","templet":"","switch":{"name":""},"edit":"0"},"add":{"is_show":"1"}}',
-        1, 1735613014, 1735613014, null);
-INSERT INTO ha_article_field (id, mid, name, type, title, options, help, required, list, edit, extend, status,
-                              create_time, update_time, is_search)
-VALUES (2, 1, 'keywords', 'text', '关键词', '', null, 0, 100, 1,
-        '{"field":{"type":"VARCHAR","length":"2000","unsigned":"0","null":"0","default":"\'\'"},"search":{"is_open":"0","linq":""},"tables":{"is_show":"0","templet":"","switch":{"name":""},"edit":"0"},"add":{"is_show":"0"}}',
-        1, 1735613014, 1735613014, null);
-INSERT INTO ha_article_field (id, mid, name, type, title, options, help, required, list, edit, extend, status,
-                              create_time, update_time, is_search)
-VALUES (3, 1, 'description', 'textarea', '简介', '', null, 0, 100, 1,
-        '{"field":{"type":"TEXT","length":"","unsigned":"0","null":"0","default":""},"search":{"is_open":"0","linq":""},"tables":{"is_show":"0","templet":"","switch":{"name":""},"edit":"0"},"add":{"is_show":"1"}}',
-        1, 1735613014, 1735613014, null);
-INSERT INTO ha_article_field (id, mid, name, type, title, options, help, required, list, edit, extend, status,
-                              create_time, update_time, is_search)
-VALUES (4, 1, 'content', 'editor', '内容', '', null, 1, 1, 1,
-        '{"field":{"type":"LONGTEXT","length":"","unsigned":"0","null":"0","default":""},"search":{"is_open":"0","linq":""},"tables":{"is_show":"0","templet":"","switch":{"name":""},"edit":"0"},"add":{"is_show":"1"}}',
-        1, 1735613014, 1735613014, null);
-INSERT INTO ha_article_field (id, mid, name, type, title, options, help, required, list, edit, extend, status,
-                              create_time, update_time, is_search)
-VALUES (5, 1, 'images', 'images', '组图', '', null, 0, 80, 1,
-        '{"field":{"type":"TEXT","length":"","unsigned":"0","null":"0","default":""},"search":{"is_open":"0","linq":""},"tables":{"is_show":"1","templet":"image","switch":{"name":""},"edit":"0"},"add":{"is_show":"1"}}',
-        1, 1735613014, 1735662989, null);
+--
+-- 在导出的表使用AUTO_INCREMENT
+--
+
+--
+-- 使用表AUTO_INCREMENT `ha_article_column`
+--
+ALTER TABLE `ha_article_column`
+    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,
+    AUTO_INCREMENT = 5;
+
+--
+-- 使用表AUTO_INCREMENT `ha_article_content`
+--
+ALTER TABLE `ha_article_content`
+    MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+    AUTO_INCREMENT = 12;
+
+--
+-- 使用表AUTO_INCREMENT `ha_article_content_1`
+--
+ALTER TABLE `ha_article_content_1`
+    MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+    AUTO_INCREMENT = 12;
+
+--
+-- 使用表AUTO_INCREMENT `ha_article_content_1s`
+--
+ALTER TABLE `ha_article_content_1s`
+    MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+    AUTO_INCREMENT = 12;
+
+--
+-- 使用表AUTO_INCREMENT `ha_article_field`
+--
+ALTER TABLE `ha_article_field`
+    MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    AUTO_INCREMENT = 6;
+
+--
+-- 使用表AUTO_INCREMENT `ha_article_model`
+--
+ALTER TABLE `ha_article_model`
+    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,
+    AUTO_INCREMENT = 2;
+
+--
+-- 使用表AUTO_INCREMENT `ha_article_tag`
+--
+ALTER TABLE `ha_article_tag`
+    MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+    AUTO_INCREMENT = 45;
+
+--
+-- 使用表AUTO_INCREMENT `ha_article_tag_info`
+--
+ALTER TABLE `ha_article_tag_info`
+    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,
+    AUTO_INCREMENT = 5;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT = @OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS = @OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION = @OLD_COLLATION_CONNECTION */;
