@@ -44,7 +44,7 @@ class LoginLog extends BaseUser
             return $this->fetch();
         } catch (TemplateNotFoundException $exception) {
             //模板不存在时 尝试读取公用模板
-            return $this->fetch('common/page_table');
+            return $this->fetch('common@page_table');
         }
     }
 

@@ -14,15 +14,21 @@ trait ViewTheme
     /**
      * 设置模板路径
      * @return void
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
      */
     protected function setView(): void
     {
-        $this->app->config->set(['view_path' => $this->getPath()], 'view');
+        $this->app->config->set(['view_dir_name' => $this->getPath()], 'view');
     }
 
     /**
      * 获取模板根路径
      * @return string
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
      */
     protected function getPath(): string
     {
@@ -30,7 +36,7 @@ trait ViewTheme
         $theme = $this->getTheme();
 
         // 构建完整的模板路径
-        return $this->app->getRootPath() . 'view' . DIRECTORY_SEPARATOR . $this->getStylePath() . DIRECTORY_SEPARATOR . $theme . DIRECTORY_SEPARATOR . $this->request->layer(true) . DIRECTORY_SEPARATOR;
+        return 'view' . DIRECTORY_SEPARATOR . $this->getStylePath() . DIRECTORY_SEPARATOR . $theme;
     }
 
     /**
