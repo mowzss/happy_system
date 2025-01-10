@@ -163,6 +163,22 @@ class Index extends BaseHome
         return file_put_contents($configPath, $configContent) !== false;
     }
 
+    protected function writeInstallFileLock($data): bool
+    {
+        // 定义默认配置模板路径
+        $templatePath = app()->getBasePath() . 'common/install/install.tpl';
+        $configPath = app()->getConfigPath() . 'install.php';
+
+        // 检查模板文件是否存在
+        if (!file_exists($templatePath)) {
+            return false;
+        }
+        // 读取模板内容
+        $configContent = file_get_contents($templatePath);
+        // 写入配置文件
+        return file_put_contents($configPath, $configContent) !== false;
+    }
+
     protected function createAdmin($data)
     {
         // 假设有一个admin表用于存储管理员信息
