@@ -8,7 +8,7 @@ return [
 //入口文件
 'admin_entrance'=>"admin.php"
 //系统安装状态 true 状态锁定安装
-'installed' => false,
+'installed' => true,
 // 32位加密密钥 用于为\mowzs\lib\helper\CryptoHelper::aesEncrypt()提供默认密钥 可自行修改
 'default_encryption_key' => 'thisisaverysecretkey!thisisaverysecretkey!'
 ];
