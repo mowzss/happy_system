@@ -780,7 +780,7 @@ CREATE TABLE `ha_user_info`
     KEY `user_info_create_time_index` (`create_time`),
     KEY `user_info_last_time_index` (`last_time`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 10001
+  AUTO_INCREMENT = 10000
   DEFAULT CHARSET = utf8mb4 COMMENT ='用户表';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
