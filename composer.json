@@ -34,7 +34,8 @@
         "app/common/util": "src/common/util",
         "app/service/system": "src/service/system",
         "app/service/user": "src/service/user",
-        "app/service/BaseService.php": "src/service/BaseService.php"
+        "app/service/BaseService.php": "src/service/BaseService.php",
+        "app/admin/event/AutoContent.php": "src/admin/event/AutoContent.php"
       },
       "copy": {
         "app/common.php": "src/common.php",
