@@ -65,11 +65,8 @@ class Index extends BaseHome
         if (!$this->createAdmin($data)) {
             return json(['status' => 'error', 'msg' => '创建管理员账户失败']);
         }
-        if (!$this->writeAuthConfigFile($data)) {
-            return json(['status' => 'error', 'msg' => '权限分配失败！']);
-        }
-        if (!$this->writeInstallFileLock()) {
-            return json(['status' => 'error', 'msg' => '创建安装锁失败']);
+        if (!$this->writeHappyConfigFile($data)) {
+            return json(['status' => 'error', 'msg' => 'Happy.php配置文件设置失败！']);
         }
         return json(['status' => 'success', 'msg' => '安装成功']);
     }
@@ -171,7 +168,7 @@ class Index extends BaseHome
         return file_put_contents($configPath, $configContent) !== false;
     }
 
-    protected function writeAuthConfigFile($data): bool
+    protected function writeHappyConfigFile($data): bool
     {
         // 定义默认配置模板路径
         $templatePath = app()->getBasePath() . 'common/install/system/happy.tpl';
