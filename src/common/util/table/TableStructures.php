@@ -42,7 +42,7 @@ class TableStructures
                 'extend' => ['type' => 'TEXT', 'null' => true, 'comment' => '扩展字段',],
                 'create_time' => ['type' => 'INT', 'length' => 10, 'unsigned' => true, 'null' => false, 'default' => 0, 'comment' => '创建时间',],
                 'update_time' => ['type' => 'INT', 'length' => 10, 'unsigned' => true, 'null' => false, 'default' => 0, 'comment' => '修改时间',],
-                'delete_time' => ['type' => 'INT', 'length' => 10, 'unsigned' => true, 'null' => false, 'default' => 0, 'comment' => '软删除',],
+                'delete_time' => ['type' => 'INT', 'length' => 10, 'unsigned' => true, 'null' => true, 'default' => null, 'comment' => '软删除',],
             ],
             //内容表
             4 => [
