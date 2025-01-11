@@ -72,6 +72,6 @@ class Index extends BaseAdmin
     public function logout(): void
     {
         $this->app->session->delete('user');
-        $this->success('您已安全退出', hurl('index/index'));
+        $this->success('您已安全退出', hurl('index/index/index'));
     }
 }
