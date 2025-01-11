@@ -92,16 +92,22 @@ class Index extends BaseHome
         return true;
     }
 
-    protected function checkEnvironment()
+    public function checkEnvironment(): \think\response\Json
     {
-        // 检查PHP版本
-        if (version_compare(PHP_VERSION, '8.0', '<')) {
-            return false;
+        $requirements = [
+            'php版本: >=8.0' => version_compare(PHP_VERSION, '8.0', '>='),
+            'curl扩展' => extension_loaded('curl'),
+            'fileinfo扩展' => extension_loaded('fileinfo'),
+            'openssl扩展' => extension_loaded('openssl'),
+            'pdo扩展' => extension_loaded('pdo'),
+        ];
+
+        foreach ($requirements as &$requirement) {
+            $requirement = $requirement ? '支持' : '不支持';
         }
 
-        // 检查其他环境要求（例如扩展）
-        // 可以根据需要添加更多检查
-        return extension_loaded('pdo') && extension_loaded('mysqli');
+
+        return json(['status' => 'success', 'requirements' => $requirements]);
     }
 
     public function checkDbConnection()
@@ -129,10 +135,23 @@ class Index extends BaseHome
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             ]);
+
+            // 获取MySQL版本
+            $stmt = $pdo->query("SELECT VERSION() AS mysql_version");
+            $mysqlVersion = $stmt->fetch(PDO::FETCH_ASSOC)['mysql_version'];
+
+            // 检查MySQL版本是否为5.7或更高
+            if (version_compare($mysqlVersion, '5.7', '<')) {
+                throw new \Exception("MySQL版本太低，需要5.7或更高版本。当前版本：{$mysqlVersion}");
+            }
+
             // 测试连接
             $pdo->query('SELECT 1');
             return true;
-        } catch (\PDOException $e) {
+        } catch (\PDOException|\Exception $e) {
+            // 记录错误信息或直接返回
+            // 这里简单处理，您可以根据实际情况调整
+            error_log($e->getMessage());
             return false;
         }
     }
@@ -204,4 +223,6 @@ class Index extends BaseHome
             'email' => $data['admin_email'],
         ]);
     }
+
+
 }

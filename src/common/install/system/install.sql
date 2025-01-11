@@ -424,6 +424,7 @@ CREATE TABLE `ha_system_menu`
     `pid`    int(11)      DEFAULT '0' COMMENT '父级栏目ID',
     `title`  varchar(64)  DEFAULT NULL COMMENT '菜单名称',
     `icon`   varchar(64)  DEFAULT NULL,
+    `slot`   varchar(64)  DEFAULT '' COMMENT '菜单扩展标记 用于模块插入菜单',
     `node`   varchar(128) DEFAULT NULL COMMENT '节点',
     `params` varchar(512) DEFAULT NULL COMMENT '参数',
     `class`  int(11)      DEFAULT '1' COMMENT '类型 1节点 2链接',
@@ -445,36 +446,36 @@ LOCK TABLES `ha_system_menu` WRITE;
 /*!40000 ALTER TABLE `ha_system_menu`
     DISABLE KEYS */;
 INSERT INTO `ha_system_menu`
-VALUES (1, 0, '系统管理', 'layui-icon layui-icon-set', '#', '', 1, 9000, 1),
-       (2, 1, '设置管理', 'layui-icon layui-icon-set', '#', '', 1, 1000, 1),
-       (3, 2, '系统设置', '', 'system/setting/index', '', 1, 800, 1),
-       (4, 24, '后台菜单', '', 'system/menu/index', '', 1, 700, 1),
-       (5, 0, '用户管理', 'layui-icon layui-icon-username', '#', '', 1, 1000, 1),
-       (6, 5, '用户信息', 'layui-icon layui-icon-username', '#', '', 1, 900, 1),
-       (7, 6, '用户资料', '', 'user/info/index', '', 1, 800, 1),
-       (8, 24, '图标管理', '', 'system/icon/index', '', 1, 900, 1),
-       (9, 2, '设置分组', '', 'system/configGroup/index', '', 1, 100, 1),
-       (10, 0, '内容模块', 'layui-icon layui-icon-list', '#', '', 1, 11, 1),
-       (12, 0, '扩展功能', 'layui-icon layui-icon-slider', '#', '', 1, 11, 1),
-       (13, 6, '用户权限', 'layui-icon layui-icon-vercode', 'user/auth/index', '', 1, 0, 1),
-       (14, 24, '文件管理', 'layui-icon layui-icon-folder', 'system/attachment/index', '', 1, 0, 1),
-       (15, 1, '事件管理', 'layui-icon layui-icon-rate-half', '#', '', 1, 800, 1),
-       (16, 15, '事件设置', '', 'system/event/index', '', 1, 0, 1),
-       (17, 15, '事件监听', '', 'system/eventListen/index', '', 1, 0, 1),
-       (24, 1, '系统功能', 'layui-icon layui-icon-slider', '#', '', 1, 900, 1),
-       (25, 2, '设置字段', '', 'system/config/index', '', 1, 0, 1),
-       (26, 24, '系统模块', '', 'system/module/index', '', 1, 0, 1),
-       (27, 12, '系统扩展', 'layui-icon layui-icon-cols', '#', '', 1, 0, 1),
-       (28, 27, '友情链接', '', 'system/links/index', '', 1, 0, 1),
-       (29, 27, '投诉反馈', '', 'system/feedback/index', '', 1, 0, 1),
-       (30, 5, '用户功能', 'layui-icon layui-icon-survey', '#', '', 1, 0, 1),
-       (31, 30, '用户收藏', '', 'user/fav/index', '', 1, 0, 1),
-       (32, 6, '用户组', '', 'user/group/index', '', 1, 0, 1),
-       (33, 6, '积分记录', '', 'user/PointsLog/index', '', 1, 0, 1),
-       (34, 1, '系统日志', 'layui-icon layui-icon-tips', '#', '', 1, 0, 1),
-       (35, 34, '操作日志', '', 'system/OperationLog/index', '', 1, 0, 1),
-       (36, 1, '网站管理', 'layui-icon layui-icon-website', '', '#', 1, 700, 1),
-       (37, 36, '网站菜单', '', 'system/nav/index', '', 1, 0, 1);
+VALUES (1, 0, '系统管理', 'layui-icon layui-icon-set', 'system', '#', '', 1, 9000, 1),
+       (2, 1, '设置管理', 'layui-icon layui-icon-set', 'system_config', '#', '', 1, 1000, 1),
+       (3, 2, '系统设置', '', NULL, 'system/setting/index', '', 1, 800, 1),
+       (4, 24, '后台菜单', '', NULL, 'system/menu/index', '', 1, 700, 1),
+       (5, 0, '用户管理', 'layui-icon layui-icon-username', 'user', '#', '', 1, 1000, 1),
+       (6, 5, '用户信息', 'layui-icon layui-icon-username', 'user_info', '#', '', 1, 900, 1),
+       (7, 6, '用户资料', '', NULL, 'user/info/index', '', 1, 800, 1),
+       (8, 24, '图标管理', '', NULL, 'system/icon/index', '', 1, 900, 1),
+       (9, 2, '设置分组', '', NULL, 'system/configGroup/index', '', 1, 100, 1),
+       (10, 0, '内容模块', 'layui-icon layui-icon-list', 'content', '#', '', 1, 11, 1),
+       (12, 0, '扩展功能', 'layui-icon layui-icon-slider', 'ext', '#', '', 1, 11, 1),
+       (13, 6, '用户权限', 'layui-icon layui-icon-vercode', NULL, 'user/auth/index', '', 1, 0, 1),
+       (14, 24, '文件管理', 'layui-icon layui-icon-folder', NULL, 'system/attachment/index', '', 1, 0, 1),
+       (15, 1, '事件管理', 'layui-icon layui-icon-rate-half', 'system_event', '#', '', 1, 800, 1),
+       (16, 15, '事件设置', '', NULL, 'system/event/index', '', 1, 0, 1),
+       (17, 15, '事件监听', '', NULL, 'system/eventListen/index', '', 1, 0, 1),
+       (24, 1, '系统功能', 'layui-icon layui-icon-slider', 'system_ext', '#', '', 1, 900, 1),
+       (25, 2, '设置字段', '', NULL, 'system/config/index', '', 1, 0, 1),
+       (26, 24, '系统模块', '', NULL, 'system/module/index', '', 1, 0, 1),
+       (27, 12, '系统扩展', 'layui-icon layui-icon-cols', 'ext_sys', '#', '', 1, 0, 1),
+       (28, 27, '友情链接', '', NULL, 'system/links/index', '', 1, 0, 1),
+       (29, 27, '投诉反馈', '', NULL, 'system/feedback/index', '', 1, 0, 1),
+       (30, 5, '用户功能', 'layui-icon layui-icon-survey', 'user_ext', '#', '', 1, 0, 1),
+       (31, 30, '用户收藏', '', NULL, 'user/fav/index', '', 1, 0, 1),
+       (32, 6, '用户组', '', NULL, 'user/group/index', '', 1, 0, 1),
+       (33, 6, '积分记录', '', NULL, 'user/PointsLog/index', '', 1, 0, 1),
+       (34, 1, '系统日志', 'layui-icon layui-icon-tips', 'system_log', '#', '', 1, 0, 1),
+       (35, 34, '操作日志', '', NULL, 'system/OperationLog/index', '', 1, 0, 1),
+       (36, 1, '网站管理', 'layui-icon layui-icon-website', 'system_site', '', '#', 1, 700, 1),
+       (37, 36, '网站菜单', '', NULL, 'system/nav/index', '', 1, 0, 1);
 /*!40000 ALTER TABLE `ha_system_menu`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -492,6 +493,7 @@ CREATE TABLE `ha_system_module`
     `title`       varchar(64) DEFAULT '' COMMENT '模块名称',
     `dir`         varchar(64) DEFAULT '' COMMENT '模块标记/目录',
     `type`        int(11)     DEFAULT '1' COMMENT '模块类型 1为系统模块 2插件',
+    `is_copy`     int(11)     DEFAULT '0' COMMENT '是否允许复制',
     `status`      int(11)     DEFAULT NULL COMMENT '状态 1正常 0禁用',
     `create_time` int(11)     DEFAULT '0' COMMENT '创建时间',
     `update_time` int(11)     DEFAULT '0' COMMENT '修改时间',
@@ -509,7 +511,7 @@ LOCK TABLES `ha_system_module` WRITE;
 /*!40000 ALTER TABLE `ha_system_module`
     DISABLE KEYS */;
 INSERT INTO `ha_system_module`
-VALUES (1, '系统核心', 'system', 1, 1, 0, 0);
+VALUES (1, '系统核心', 'system', 1, 0, 1, 0, 0);
 /*!40000 ALTER TABLE `ha_system_module`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -778,20 +780,9 @@ CREATE TABLE `ha_user_info`
     KEY `user_info_create_time_index` (`create_time`),
     KEY `user_info_last_time_index` (`last_time`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 10000
+  AUTO_INCREMENT = 10001
   DEFAULT CHARSET = utf8mb4 COMMENT ='用户表';
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `ha_user_info`
---
-
-LOCK TABLES `ha_user_info` WRITE;
-/*!40000 ALTER TABLE `ha_user_info`
-    DISABLE KEYS */;
-/*!40000 ALTER TABLE `ha_user_info`
-    ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `ha_user_login_log`
@@ -858,6 +849,37 @@ LOCK TABLES `ha_user_points_log` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `system_upgrade_log`
+--
+
+DROP TABLE IF EXISTS `system_upgrade_log`;
+/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `system_upgrade_log`
+(
+    `id`          int(11) NOT NULL AUTO_INCREMENT,
+    `module`      varchar(64)  DEFAULT NULL COMMENT '所属模块',
+    `filename`    varchar(128) DEFAULT NULL,
+    `create_time` int(11)      DEFAULT NULL COMMENT '升级日期',
+    PRIMARY KEY (`id`),
+    KEY `system_upgrade_log_filename_index` (`filename`),
+    KEY `system_upgrade_log_module_index` (`module`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='升级日志';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `system_upgrade_log`
+--
+
+LOCK TABLES `system_upgrade_log` WRITE;
+/*!40000 ALTER TABLE `system_upgrade_log`
+    DISABLE KEYS */;
+/*!40000 ALTER TABLE `system_upgrade_log`
+    ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Dumping events for database 'md_cn'
 --
 
@@ -874,4 +896,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION = @OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES = @OLD_SQL_NOTES */;
 
--- Dump completed on 2025-01-10  2:06:16
+-- Dump completed on 2025-01-10  8:32:50
