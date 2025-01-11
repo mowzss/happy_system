@@ -79,7 +79,7 @@ class Index extends BaseHome
      */
     protected function isInstalled(): bool
     {
-        return Config::get('install.installed', false) === true;
+        return Config::get('happy.installed', false) === true;
     }
 
     protected function vali($data)
@@ -171,27 +171,11 @@ class Index extends BaseHome
         return file_put_contents($configPath, $configContent) !== false;
     }
 
-    protected function writeInstallFileLock(): bool
-    {
-        // 定义默认配置模板路径
-        $templatePath = app()->getBasePath() . 'common/install/system/install.tpl';
-        $configPath = app()->getConfigPath() . 'install.php';
-
-        // 检查模板文件是否存在
-        if (!file_exists($templatePath)) {
-            return false;
-        }
-        // 读取模板内容
-        $configContent = file_get_contents($templatePath);
-        // 写入配置文件
-        return file_put_contents($configPath, $configContent) !== false;
-    }
-
     protected function writeAuthConfigFile($data): bool
     {
         // 定义默认配置模板路径
-        $templatePath = app()->getBasePath() . 'common/install/system/auth.tpl';
-        $configPath = app()->getConfigPath() . 'auth.php';
+        $templatePath = app()->getBasePath() . 'common/install/system/happy.tpl';
+        $configPath = app()->getConfigPath() . 'happy.php';
 
         // 检查模板文件是否存在
         if (!file_exists($templatePath)) {
