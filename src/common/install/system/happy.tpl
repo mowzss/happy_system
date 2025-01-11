@@ -5,7 +5,7 @@ return [
     'auth_login' => 'index/login/index',
 //超管账号 全权限 不做限制
 'auth_admin' => '{USERNAME}',
-//入口文件
+//后台入口文件
 'admin_entrance'=>"admin.php"
 //系统安装状态 true 状态锁定安装
 'installed' => true,
