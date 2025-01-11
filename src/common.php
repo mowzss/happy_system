@@ -3,6 +3,14 @@
 // 应用公共文件
 use app\common\util\SendMailUtil;
 
+if (!function_exists('get_user_avatar')) {
+    function get_user_avatar($uid = '')
+    {
+        if (empty($uid)) {
+            $uid = \mowzs\lib\helper\UserHelper::instance()->getUserId();
+        }
+    }
+}
 if (!function_exists('get_hello')) {
     /**
      * 问候语

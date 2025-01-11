@@ -1,11 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace app\admin\user;
 
 use app\common\controllers\BaseAdmin;
 use app\common\traits\CrudTrait;
-use app\model\user\User;
 use app\model\user\UserFav;
+use app\model\user\UserInfo;
 use think\App;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
@@ -163,6 +164,6 @@ class Fav extends BaseAdmin
     protected function getUserById(int $userId)
     {
         // 假设有一个 User 模型用于获取用户信息
-        return User::find($userId);
+        return UserInfo::find($userId);
     }
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace app\home\install;
 
@@ -217,7 +218,7 @@ class Index extends BaseHome
 
         return Db::name('UserInfo')->insert([
             'username' => $data['admin_username'],
-            'nickname'=>'管理员',
+            'nickname' => '管理员',
             'password' => $hashedPassword,
             'email' => $data['admin_email'],
         ]);
