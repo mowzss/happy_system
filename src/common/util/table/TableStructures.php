@@ -34,7 +34,7 @@ class TableStructures
                 'uid' => ['type' => 'INT', 'length' => 11, 'unsigned' => true, 'null' => false, 'default' => 0, 'comment' => '用户ID',],
                 'view' => ['type' => 'INT', 'length' => 11, 'unsigned' => true, 'null' => false, 'default' => 0, 'comment' => '浏览量',],
                 'status' => ['type' => 'TINYINT', 'length' => 1, 'null' => false, 'default' => 1, 'comment' => '状态：0未审 1已审 2推荐',],
-                'replynum' => ['type' => 'INT', 'length' => 11, 'unsigned' => true, 'null' => false, 'default' => 0, 'comment' => '评论数',],
+                'reply_num' => ['type' => 'INT', 'length' => 11, 'unsigned' => true, 'null' => false, 'default' => 0, 'comment' => '评论数',],
                 'description' => ['type' => 'TEXT', 'null' => true, 'comment' => '简介',],
                 'list' => ['type' => 'INT', 'length' => 10, 'unsigned' => true, 'null' => false, 'default' => 0, 'comment' => '排序值',],
                 'images' => ['type' => 'TEXT', 'null' => true, 'comment' => '封面图',],
