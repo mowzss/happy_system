@@ -21,6 +21,16 @@ class UtilBase
     public function __construct(App $app = null)
     {
         $this->app = $app ?: app();
+        $this->initialize();
+    }
+
+    /**
+     * 初始化
+     * @return void
+     */
+    protected function initialize()
+    {
+
     }
 
     /**
