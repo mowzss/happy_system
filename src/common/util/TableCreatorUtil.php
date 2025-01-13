@@ -298,7 +298,7 @@ class TableCreatorUtil extends UtilBase
     public function addIndexes(string $tableName, array $indexes): array
     {
         try {
-            $sql = "ALTER TABLE `" . $this->getTableName('$tableName') . "`";
+            $sql = "ALTER TABLE `" . $this->getTableName($tableName) . "`";
             // 存储索引定义
             $indexDefinitions = [];
             foreach ($indexes as $indexName => $fields) {

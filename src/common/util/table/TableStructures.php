@@ -52,4 +52,31 @@ class TableStructures
             ],
         ];
     }
+
+    /**
+     * 索引记录
+     * @param $key
+     * @return array
+     */
+    public static function getTypeFieldsIndex($key): array
+    {
+        $data = [
+            2 => [
+                'idx_list' => 'list'
+            ],
+            3 => [
+                'idx_status' => 'status',
+                'idx_cid' => 'cid',
+                'idx_is_pic' => 'is_pic',
+                'idx_uid' => 'uid',
+                'idx_mid' => 'mid',
+                'idx_view' => 'view',
+                'idx_reply_num' => 'reply_num',
+                'idx_create_time' => 'create_time',
+                'idx_update_time' => 'update_time',
+                'idx_delete_time' => 'delete_time',
+            ]
+        ];
+        return $data[$key] ?? [];
+    }
 }
