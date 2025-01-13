@@ -61,8 +61,11 @@ trait ViewTheme
             $configKey = $isMobile ? 'home_wap_style' : 'home_pc_style';
         }
 
-        // 从配置中读取模板风格，如果没有设置则使用默认值
-        $theme = sys_config($configKey, $this->getDefaultTheme($configKey));
+        try {// 从配置中读取模板风格，如果没有设置则使用默认值
+            $theme = sys_config($configKey, $this->getDefaultTheme($configKey));
+        } catch (DataNotFoundException|DbException $e) {
+            $theme = $this->getDefaultTheme($configKey);
+        }
 
         // 如果是 WAP 风格，设置缓存前缀
         if (in_array($configKey, ['user_wap_style', 'home_wap_style'])) {
