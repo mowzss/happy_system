@@ -86,9 +86,9 @@ class ContentSaveFilterUtil extends UtilBase
             default => $this->app->request->host(true),
         };
         if (stristr($url, $host) !== false) {
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**
@@ -131,9 +131,9 @@ class ContentSaveFilterUtil extends UtilBase
         // 设置允许出现的CSS样式属性
         $config->set(
             'CSS.AllowedProperties',
-            $plugins_config['content_purifer_css'] ?? 'font,font-size,font-weight,font-style,font-family,text-decoration,padding-left,color,background-color,text-align'
+            $this->config['content_purifer_css'] ?? 'font,font-size,font-weight,font-style,font-family,text-decoration,padding-left,color,background-color,text-align'
         );
-        $config->set('AutoFormat.RemoveEmpty', (bool)$plugins_config['content_purifer_remove_empty']);
+        $config->set('AutoFormat.RemoveEmpty', (bool)$this->config['content_purifer_remove_empty']);
         $purifier = new HTMLPurifier($config);
         return $purifier->purify($content);
     }
@@ -153,16 +153,17 @@ class ContentSaveFilterUtil extends UtilBase
                 if ($this->isPuriferHtml()) {
                     $updata['content'] = $info['content'] = $this->puriferContent($info['content']);
                 }
-                $pattern = "/<img.*?src=['\"]((?:https?:)?\/\/.*?(?:\.gif|\.jpg|\.png|\.jpeg).*?)['\"].*?[\/]?>/i";
+                $pattern = "/<img[^>]*src=[\'\"]((?:https?:)?\/\/[^\s\'\"]+\.(?:gif|jpg|png|jpeg|webp))[\'\"][^>]*>/i";
                 preg_match_all($pattern, $info['content'], $images);
                 $newContent = $info['content'];
                 //下载远程图片
                 if ($this->isDownImage()) {
                     foreach ($images[1] as $image) {
                         $oldSrc = $image;
-                        if ($this->isDownFilterHost($oldSrc)) {
+                        if (!$this->isDownFilterHost($oldSrc)) {
                             try {
-                                $newSrc = (new RemoteFileUtil)->downloadAndSave($oldSrc);
+                                $file_info = (new RemoteFileUtil)->downloadAndSave($oldSrc);
+                                $newSrc = $file_info['url'];
                             } catch (\Exception $e) {
                                 Log::error('保存远程图片失败:' . $e->getMessage());
                                 $newSrc = $oldSrc;

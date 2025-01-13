@@ -63,7 +63,7 @@ class RemoteFileUtil
             curl_close($ch);
 
             // 检查文件头以获取文件信息
-            $headers = get_headers($url, 1);
+            $headers = get_headers($url, true);
             $mimeType = $headers['Content-Type'] ?? '';
             $fileSize = (int)($headers['Content-Length'] ?? 0);
 
@@ -104,7 +104,7 @@ class RemoteFileUtil
                 ];
 
                 // 如果是图片文件，获取宽度和高度
-                if (in_array($mimeType, ['image/jpeg', 'image/png', 'image/gif'])) {
+                if (in_array($mimeType, ['image/jpeg', 'image/png', 'image/gif', 'image/webp'])) {
                     list($width, $height) = getimagesize($tmpFile);
                     $data['imagewidth'] = $width;
                     $data['imageheight'] = $height;
