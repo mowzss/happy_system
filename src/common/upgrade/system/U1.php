@@ -1,6 +1,6 @@
 <?php
 
-namespace app\common\upgrade;
+namespace app\common\upgrade\system;
 
 class U1
 {
