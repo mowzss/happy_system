@@ -849,33 +849,33 @@ LOCK TABLES `ha_user_points_log` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `system_upgrade_log`
+-- Table structure for table `ha_system_upgrade_log`
 --
 
-DROP TABLE IF EXISTS `system_upgrade_log`;
+DROP TABLE IF EXISTS `ha_system_upgrade_log`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `system_upgrade_log`
+CREATE TABLE `ha_system_upgrade_log`
 (
     `id`          int(11) NOT NULL AUTO_INCREMENT,
     `module`      varchar(64)  DEFAULT NULL COMMENT '所属模块',
     `filename`    varchar(128) DEFAULT NULL,
     `create_time` int(11)      DEFAULT NULL COMMENT '升级日期',
     PRIMARY KEY (`id`),
-    KEY `system_upgrade_log_filename_index` (`filename`),
-    KEY `system_upgrade_log_module_index` (`module`)
+    KEY `ha_system_upgrade_log_filename_index` (`filename`),
+    KEY `ha_system_upgrade_log_module_index` (`module`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='升级日志';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `system_upgrade_log`
+-- Dumping data for table `ha_system_upgrade_log`
 --
 
-LOCK TABLES `system_upgrade_log` WRITE;
-/*!40000 ALTER TABLE `system_upgrade_log`
+LOCK TABLES `ha_system_upgrade_log` WRITE;
+/*!40000 ALTER TABLE `ha_system_upgrade_log`
     DISABLE KEYS */;
-/*!40000 ALTER TABLE `system_upgrade_log`
+/*!40000 ALTER TABLE `ha_system_upgrade_log`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
