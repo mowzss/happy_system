@@ -17,6 +17,20 @@ class UserInfo extends Model
     }
 
     /**
+     * 查询后处理
+     * @param $model
+     * @return \think\Model|void
+     */
+    public static function onAfterRead($model)
+    {
+        if (empty($model['avatar'])) {
+            $model['avatar'] = '/static/libs/image/error/no_avatar.png';
+        }
+        $model['home_url'] = urls('user/index/home', ['id' => $model['id']]);
+        return $model;
+    }
+
+    /**
      * 群组关联
      * @return \think\model\relation\HasOne
      */
