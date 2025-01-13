@@ -48,6 +48,7 @@ class TableStructures
             4 => [
                 'id' => ['type' => 'BIGINT', 'length' => 22, 'unsigned' => true, 'auto_increment' => true, 'null' => false, 'default' => null, 'comment' => '主键ID',],
                 'content' => ['type' => 'LONGTEXT', 'null' => true, 'comment' => '内容',],
+                'delete_time' => ['type' => 'INT', 'length' => 10, 'unsigned' => true, 'null' => true, 'default' => null, 'comment' => '软删除',],
             ],
         ];
     }
