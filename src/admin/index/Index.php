@@ -48,7 +48,8 @@ class Index extends BaseAdmin
     public function menu()
     {
         if ($this->request->isAjax()) {
-            return json(SystemMenu::getMenuTree());
+            $menu = SystemMenu::getMenuTree();
+            return json($menu);
         }
         $this->error('访问方式错误');
     }

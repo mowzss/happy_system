@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace app\admin\index;
 
 use app\common\controllers\BaseAdmin;
-use app\model\user\UserAuth;
 use app\model\user\UserInfo;
 use mowzs\lib\helper\AuthHelper;
 
@@ -44,10 +43,6 @@ class Login extends BaseAdmin
             }
 
             $this->app->session->set('user', $user->toArray());
-            if (!empty($user->auth_id)) {
-                $data = $user->toArray();
-                $this->app->session->set('user.nodes', UserAuth::where(['id' => $user->auth_id])->value('nodes'));
-            }
 
             $save_data = [
                 'id' => $user['id'],

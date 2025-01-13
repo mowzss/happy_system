@@ -80,6 +80,7 @@ class Setting extends BaseAdmin
 
     /**
      * 获取设置表单
+     * @auth true
      * @param int $group_id
      * @return string|void
      * @throws DataNotFoundException
