@@ -49,18 +49,22 @@ class SystemMenu extends Model
     public static function getMenuTree(array $where = ['status' => 1]): array
     {
         $menu = self::where($where)->order('list', 'desc')->select()->toArray();
-        $userNodes = AuthHelper::instance()->getUserNodesModule();
-        // 过滤函数或循环处理
-        $filteredMenu = array_filter($menu, function ($item) use ($userNodes) {
-            // 如果 node 是 '#' 或者空字符串，则直接保留该项目
-            if ($item['node'] === '#' || $item['node'] === '') {
-                return true;
-            }
-            // 否则，仅当 node 存在于 userNodes 中时保留该项目
-            return in_array($item['node'], $userNodes);
-        });
-        // 保存 过滤无权限的菜单
-        $menu = array_values($filteredMenu); // 重置键值以保持数组连续性
+        // 判断是否为超管账号，如果是，则不进行权限过滤
+        if (!AuthHelper::instance()->isAuthAdmin()) {
+            $userNodes = AuthHelper::instance()->getUserNodesModule();
+
+            // 过滤函数或循环处理
+            $filteredMenu = array_filter($menu, function ($item) use ($userNodes) {
+                // 如果 node 是 '#' 或者空字符串，则直接保留该项目
+                if ($item['node'] === '#' || $item['node'] === '') {
+                    return true;
+                }
+                // 否则，仅当 node 存在于 userNodes 中时保留该项目
+                return in_array($item['node'], $userNodes);
+            });
+            // 保存 过滤无权限的菜单
+            $menu = array_values($filteredMenu); // 重置键值以保持数组连续性
+        }
         return DataHelper::instance()->arrToTree($menu);
     }
 
