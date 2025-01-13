@@ -109,6 +109,7 @@ class Auth extends BaseAdmin
             $this->error('id不能为空');
         }
         $this->nodes = $this->buildHierarchicalArray(NodeHelper::instance()->getMethods(true));
+
         $this->info = $this->model->findOrEmpty($id);
         if ($this->info->isEmpty()) {
             $this->error('权限组不存在');

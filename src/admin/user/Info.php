@@ -5,6 +5,7 @@ namespace app\admin\user;
 
 use app\common\controllers\BaseAdmin;
 use app\common\traits\CrudTrait;
+use app\model\user\UserAuth;
 use app\model\user\UserGroup;
 use app\model\user\UserInfo;
 use mowzs\lib\Forms;
@@ -113,6 +114,11 @@ class Info extends BaseAdmin
                     'name' => 'group_id',
                     'label' => '用户组',
                     'options' => $this->getUserGroupOptions(),
+                ], [
+                    'type' => 'select',
+                    'name' => 'auth_id',
+                    'label' => '管理组',
+                    'options' => $this->getUserAuthOptions(),
                 ],
             ]
         ];  // 定义搜索条件
@@ -121,6 +127,7 @@ class Info extends BaseAdmin
             'username#like#username',
             'nickname#like#nickname',
             'mobile#like#mobile',
+            'auth_id#=#auth_id',
             'group_id#=#group_id',
             'login_num#=#login_num',
             'last_time#between#last_time',
@@ -162,6 +169,16 @@ class Info extends BaseAdmin
     {
         // 假设有一个 UserGroup 模型用于获取用户组信息
         return UserGroup::where('status', 1)->column('name', 'id');
+    }
+
+    /**
+     * 获取用户组选项
+     * @return array
+     */
+    protected function getUserAuthOptions(): array
+    {
+        // 假设有一个 UserGroup 模型用于获取用户组信息
+        return UserAuth::where('status', 1)->column('title', 'id');
     }
 
     /**
@@ -222,7 +239,11 @@ class Info extends BaseAdmin
                 'name' => 'password2',
                 'label' => '确认密码',
                 'required' => true
-            ],
+            ], [
+                'type' => 'hidden',
+                'name' => 'id',
+                'value' => $id
+            ]
         ]);
     }
 }
