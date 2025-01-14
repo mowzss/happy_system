@@ -6,6 +6,7 @@ namespace app\common\util;
 use app\common\util\table\TableStructures;
 use InvalidArgumentException;
 use PDO;
+use think\db\exception\DbException;
 use think\facade\Db;
 use think\facade\Log;
 
@@ -97,6 +98,90 @@ class TableCreatorUtil extends UtilBase
             return [
                 'success' => false,
                 'message' => "Error " . ($create ? 'creating' : 'modifying') . " table: " . $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * 复制表结构
+     * @param string $sourceTable 源表名
+     * @param string $targetTable 目标表名
+     * @return array 返回结果
+     */
+    public function copyTableStructure(string $sourceTable, string $targetTable): array
+    {
+        try {
+            $sourceTable = $this->getTableName($sourceTable);
+            $targetTable = $this->getTableName($targetTable);
+            // 获取源表的创建语句
+            $showCreateTable = Db::query("SHOW CREATE TABLE `{$sourceTable}`");
+
+            if (empty($showCreateTable)) {
+                throw new \Exception("Source table '{$sourceTable}' does not exist.");
+            }
+
+            // 提取CREATE TABLE语句
+            $createTableSql = $showCreateTable[0]['Create Table'];
+
+            // 替换表名为目标表名
+            $newCreateTableSql = str_replace("CREATE TABLE `{$sourceTable}`", "CREATE TABLE `{$targetTable}`", $createTableSql);
+
+            // 执行修改后的SQL语句
+            Db::execute($newCreateTableSql);
+
+            return [
+                'success' => true,
+                'message' => "Table structure copied from '{$sourceTable}' to '{$targetTable}' successfully.",
+            ];
+        } catch (\Exception $e) {
+            Log::error("Error copying table structure: " . $e->getMessage());
+            return [
+                'success' => false,
+                'message' => "Error copying table structure: " . $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * 复制表中的特定记录并根据指定字段进行修改后重新插入
+     * @param string $tableName 表名
+     * @param array $sourceConditions 原始记录的查询条件
+     * @param array $newValues 新记录中需要修改或新增的字段及其值
+     * @return array 返回结果
+     */
+    public function copyTableRows(string $tableName, array $sourceConditions, array $newValues): array
+    {
+        try {
+            // 查询所有符合条件的源记录
+            $sourceDataList = Db::name($tableName)->where($sourceConditions)->select()->toArray();
+
+            if (empty($sourceDataList)) {
+                throw new DbException("Source records with conditions '" . json_encode($sourceConditions) . "' do not exist.");
+            }
+
+            $insertedCount = 0;
+
+            foreach ($sourceDataList as $sourceData) {
+                // 移除主键以避免冲突（假设主键是自增的id）
+                unset($sourceData['id']);
+
+                // 合并原数据与新的字段值
+                $insertData = array_merge($sourceData, $newValues);
+
+                // 插入新记录
+                Db::name($tableName)->insert($insertData);
+                $insertedCount++;
+            }
+
+            return [
+                'success' => true,
+                'message' => "{$insertedCount} records copied and modified successfully.",
+            ];
+        } catch (DbException $e) {
+            Log::error("Error copying table rows: " . $e->getMessage());
+            return [
+                'success' => false,
+                'message' => "Error copying table rows: " . $e->getMessage(),
             ];
         }
     }

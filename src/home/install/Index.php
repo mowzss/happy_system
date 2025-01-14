@@ -29,6 +29,8 @@ class Index extends Controller
         if ($this->isInstalled()) {
             $this->error('您已安装过系统!');
         }
+
+
         // 显示安装表单
         return $this->fetch();
     }
