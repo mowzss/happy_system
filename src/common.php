@@ -3,6 +3,40 @@
 // 应用公共文件
 use app\common\util\SendMailUtil;
 
+if (!function_exists('fun')) {
+    /**
+     * 动态调用app\common\fun下的类及方法
+     *
+     * @param string $className 类名
+     * @param string $method 方法名
+     * @param mixed ...$params 参数列表
+     * @return mixed
+     * @throws \Exception
+     */
+    function fun(string $className, string $method, ...$params): mixed
+    {
+        // 构建完整的类名，包含命名空间
+        $fullClassName = '\\app\\common\\fun\\' . ucfirst($className);
+        if (!class_exists($fullClassName)) {
+            throw new \Exception("Class {$fullClassName} not found.");
+        }
+        // 检查方法是否存在
+        if (!method_exists($fullClassName, $method) && !method_exists($fullClassName, '__callStatic')) {
+            throw new \Exception("Method {$method} not found in class {$fullClassName}.");
+        }
+        // 使用反射获取方法信息
+        $reflectionMethod = new \ReflectionMethod($fullClassName, $method);
+        // 判断是否为静态方法
+        if ($reflectionMethod->isStatic()) {
+            // 调用静态方法
+            return $reflectionMethod->invokeArgs((object)null, $params);
+        } else {
+            // 创建类的实例并调用非静态方法
+            $instance = new $fullClassName();
+            return $reflectionMethod->invokeArgs($instance, $params);
+        }
+    }
+}
 if (!function_exists('get_user_avatar')) {
     function get_user_avatar($uid = '')
     {
