@@ -182,8 +182,24 @@ trait UploadTraits
         // 检查文件类型
 
         $mime = $file->getMime();
-        $ext = MimeHelper::instance()->getExtensionByMimeType($mime);
-        if (!in_array($ext, $this->allowed_types)) {
+        $possibleExtensions = MimeHelper::instance()->getExtensionByMimeType($mime);
+
+
+        // 确保 $possibleExtensions 是数组，并且至少包含一个元素
+        if (!is_array($possibleExtensions) || empty($possibleExtensions)) {
+            throw new ValidateException('无法识别的文件类型');
+        }
+
+        // 判断允许的文件类型是否包含任意一个可能的扩展名
+        $isValidType = false;
+        foreach ($possibleExtensions as $ext) {
+            if (in_array($ext, $this->allowed_types)) {
+                $isValidType = true;
+                break;
+            }
+        }
+
+        if (!$isValidType) {
             throw new ValidateException('不允许的文件类型');
         }
     }
