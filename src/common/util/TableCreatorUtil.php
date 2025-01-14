@@ -113,6 +113,7 @@ class TableCreatorUtil extends UtilBase
         try {
             $sourceTable = $this->getTableName($sourceTable);
             $targetTable = $this->getTableName($targetTable);
+            
             // 获取源表的创建语句
             $showCreateTable = Db::query("SHOW CREATE TABLE `{$sourceTable}`");
 
