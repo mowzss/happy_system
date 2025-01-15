@@ -6,7 +6,7 @@ use app\common\util\SendMailUtil;
 if (!function_exists('static_version')) {
     function static_version()
     {
-        $type = sys_config('static_cache_time');
+        $type = sys_config('static_cache_time', 's');
         switch ($type) {
             case 'y':
                 return date('Y');
