@@ -3,6 +3,28 @@
 // 应用公共文件
 use app\common\util\SendMailUtil;
 
+if (!function_exists('static_version')) {
+    function static_version()
+    {
+        $type = sys_config('static_cache_time');
+        switch ($type) {
+            case 'y':
+                return date('Y');
+            case 'm':
+                return date('Ym');
+            case 'd':
+                return date('ym.d');
+            case 'h':
+                return date('ym.dH');
+            case 'i':
+                return date('ym.dH.i');
+            case 's':
+                return date('ym.dH.is');
+            default:
+                return $type;
+        }
+    }
+}
 if (!function_exists('fun')) {
     /**
      * 动态调用app\common\fun下的类及方法
