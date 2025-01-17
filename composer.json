@@ -23,7 +23,6 @@
         "app/home/install": "src/home/install",
         "app/model/system": "src/model/system",
         "app/model/user": "src/model/user",
-        "route/system.php": "stc/route/system.php",
         "app/common/controllers": "src/common/controllers",
         "app/common/event": "src/common/event",
         "app/common/extra": "src/common/extra",
@@ -35,9 +34,11 @@
         "app/service/system": "src/service/system",
         "app/service/user": "src/service/user",
         "app/service/BaseService.php": "src/service/BaseService.php",
-        "app/admin/event/AutoContent.php": "src/admin/event/AutoContent.php"
+        "app/admin/event/AutoContent.php": "src/admin/event/AutoContent.php",
+        "route/zzzz_system.php": "stc/route/zzzz_system.php"
       },
       "copy": {
+        "route/system.php": "stc/route/system.php",
         "app/common.php": "src/common.php",
         "app/provider.php": "src/provider.php",
         "public/admin.php": "stc/public/admin.php",
