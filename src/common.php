@@ -179,11 +179,11 @@ if (!function_exists('del_html')) {
     /**
      * 清除 HTML 代码并优化文章内容
      *
-     * @param string $content 需要清理的 HTML 内容
+     * @param string|null $content 需要清理的 HTML 内容
      * @param array|null $allowedTags 可选参数，允许保留的 HTML 标签，默认为空数组（即清理所有标签）
      * @return string 清理后的纯文本内容
      */
-    function del_html(string $content = '', ?array $allowedTags = []): string
+    function del_html(?string $content = null, ?array $allowedTags = []): string
     {
         // 如果内容为空，直接返回空字符串
         if (empty($content)) {
@@ -202,16 +202,12 @@ if (!function_exists('del_html')) {
             $allowedTagsString = implode('', $allowedTags);
             $content = strip_tags($content, $allowedTagsString);
         }
-
         // 3. 转换 HTML 实体为对应的字符
         $content = html_entity_decode($content, ENT_QUOTES, 'UTF-8');  // 解码 HTML 实体
-
         // 4. 处理空白字符
         $content = str_replace(["\r", "\n", '　'], ' ', $content);  // 替换回车、换行和全角空格为半角空格
         $content = preg_replace('/\s+/', ' ', $content);            // 将多个连续的空白字符替换为一个空格
-        $content = trim($content);                                  // 去除首尾空白字符
-
-        return $content;
+        return trim($content);
     }
 }
 if (!function_exists('format_datetime')) {
