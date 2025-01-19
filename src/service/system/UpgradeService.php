@@ -70,14 +70,9 @@ class UpgradeService extends BaseService
                 ];
             }
         }
-
-        // 批量查询已升级的文件
-        $upgradedFiles = $this->batchIsUpgrade($filesToCheck);
-        dump($upgradedFiles);
         // 组织返回的数据结构
         foreach ($filesToCheck as $fileInfo) {
             $subDirName = $fileInfo['module'];
-            $isUpgraded = isset($upgradedFiles[$subDirName][$fileInfo['filename']]);
 
             if (!isset($allFilesData[$subDirName])) {
                 $allFilesData[$subDirName] = [];
@@ -85,59 +80,12 @@ class UpgradeService extends BaseService
             $allFilesData[$subDirName][] = [
                 'filename' => $fileInfo['filename'],
                 'relative_path' => $fileInfo['relative_path'],
-                'is_upgraded' => $isUpgraded,
             ];
         }
 
         return $allFilesData;
     }
 
-    /**
-     * 批量查询指定模块和文件名的文件是否已升级
-     * @param array $files 文件信息数组，每个元素包含 'module' 和 'filename'
-     * @return array 已升级文件的映射表
-     */
-    protected function batchIsUpgrade(array $files): array
-    {
-        // 提取所有的模块和文件名组合
-        $conditions = [];
-        foreach ($files as $file) {
-            $conditions[] = ['module' => $file['module'], 'filename' => $file['filename']];
-        }
-
-        // 构建批量查询条件
-        $queryConditions = [];
-        foreach ($conditions as $condition) {
-            $queryConditions[] = function ($query) use ($condition) {
-                $query->where('module', $condition['module'])
-                    ->where('filename', $condition['filename']);
-            };
-        }
-
-        // 执行批量查询
-        $results = $this->model
-            ->when(!empty($queryConditions), function ($query) use ($queryConditions) {
-                foreach ($queryConditions as $index => $condition) {
-                    if ($index === 0) {
-                        $condition($query);
-                    } else {
-                        $query->orWhere(function ($q) use ($condition) {
-                            $condition($q);
-                        });
-                    }
-                }
-            })
-            ->select(['module', 'filename'])
-            ->column('*', 'module');
-
-        // 组织结果为便于查找的格式
-        $upgradedFiles = [];
-        foreach ($results as $result) {
-            $upgradedFiles[$result['module']][$result['filename']] = true;
-        }
-
-        return $upgradedFiles;
-    }
 
     /**
      * @param $module
