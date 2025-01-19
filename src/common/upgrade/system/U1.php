@@ -2,6 +2,8 @@
 
 namespace app\common\upgrade\system;
 
+use app\model\system\SystemEvent;
+
 class U1
 {
     /**
@@ -38,6 +40,7 @@ class U1
                 'params_info' => 'POST数据,无数据回传'
             ],
         ];
-        (new \app\model\system\SystemEvent)->insertAll($data);
+        $event = new SystemEvent();
+        $event->insertAll($data);
     }
 }

@@ -73,7 +73,7 @@ class UpgradeService extends BaseService
 
         // 批量查询已升级的文件
         $upgradedFiles = $this->batchIsUpgrade($filesToCheck);
-
+        dump($upgradedFiles);
         // 组织返回的数据结构
         foreach ($filesToCheck as $fileInfo) {
             $subDirName = $fileInfo['module'];
