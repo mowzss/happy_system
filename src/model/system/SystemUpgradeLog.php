@@ -10,14 +10,5 @@ use think\Model;
  */
 class SystemUpgradeLog extends Model
 {
-    /**
-     * @param string $module
-     * @param string $filename
-     * @return bool
-     */
-    public function chekLog(string $module = '', string $filename = ''): bool
-    {
-        $this->where('module', $module)->where('filename', $filename)->findOrEmpty();
-        return !$this->isEmpty();
-    }
+  
 }
