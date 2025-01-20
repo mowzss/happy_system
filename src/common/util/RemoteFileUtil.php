@@ -16,7 +16,7 @@ class RemoteFileUtil
      * 文件类型
      * @var array|string[]
      */
-    protected array $allowed_types = ['jpg', 'jpeg', 'png', 'gif'];
+    protected array $allowed_types = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 
     /**
      * 文件大小
