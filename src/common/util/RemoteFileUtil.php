@@ -48,6 +48,7 @@ class RemoteFileUtil
      */
     public function downloadAndSave(string $url, ?string $savePath = null): array
     {
+        $tmpFile = null; // 用于存储临时文件路径以便最后清理
         try {
             // 使用 cURL 获取远程文件内容
             $ch = curl_init($url);
@@ -74,7 +75,7 @@ class RemoteFileUtil
             }
 
             // 验证文件
-            $this->validateFile($tmpFile, $mimeType, $fileSize);
+            $tmpFile = $this->validateFile($tmpFile, $mimeType, $fileSize);
 
             // 确定保存路径
             $path = $savePath ?: '/';
@@ -90,11 +91,11 @@ class RemoteFileUtil
                 // 成功上传后 获取上传信息
                 $data = [
                     'uid' => 0, // 假设用户ID存储在session中，这里可以根据实际情况调整
-                    'name' => basename(parse_url($url, PHP_URL_PATH)),
+                    'name' => basename($tmpFile), // 使用更新后的文件名
                     'path' => $savedPath,
                     'url' => $disk->url($savedPath),
-                    'mime' => $mimeType,
-                    'ext' => pathinfo(basename(parse_url($url, PHP_URL_PATH)), PATHINFO_EXTENSION),
+                    'mime' => mime_content_type($tmpFile), // 使用实际MIME类型
+                    'ext' => pathinfo($tmpFile, PATHINFO_EXTENSION), // 使用更新后的扩展名
                     'size' => $fileSize,
                     'md5' => md5_file($tmpFile),
                     'sha1' => sha1_file($tmpFile),
@@ -104,7 +105,7 @@ class RemoteFileUtil
                 ];
 
                 // 如果是图片文件，获取宽度和高度
-                if (in_array($mimeType, ['image/jpeg', 'image/png', 'image/gif', 'image/webp'])) {
+                if (in_array(mime_content_type($tmpFile), ['image/jpeg', 'image/png', 'image/gif', 'image/webp'])) {
                     list($width, $height) = getimagesize($tmpFile);
                     $data['imagewidth'] = $width;
                     $data['imageheight'] = $height;
@@ -122,7 +123,7 @@ class RemoteFileUtil
             }
         } catch (\Exception $e) {
             // 清理临时文件（如果存在）
-            if (isset($tmpFile) && file_exists($tmpFile)) {
+            if ($tmpFile && file_exists($tmpFile)) {
                 unlink($tmpFile);
             }
             Log::error('Remote file download failed: ' . $e->getMessage());
@@ -134,19 +135,37 @@ class RemoteFileUtil
      * 文件验证
      *
      * @param string $filePath 文件路径
-     * @param string $mimeType MIME类型
+     * @param string $providedMimeType
      * @param int $fileSize 文件大小
-     * @throws ValidateException|\Exception
+     * @return string
+     * @throws \Exception
      */
-    protected function validateFile(string $filePath, string $mimeType, int $fileSize): void
+    protected function validateFile(string $filePath, string $providedMimeType, int $fileSize)
     {
         // 检查文件大小
         if ($fileSize > $this->max_size) {
             throw new ValidateException('文件大小超过限制');
         }
 
-        // 检查文件类型
+        // 获取文件的实际 MIME 类型
+        $actualMimeType = mime_content_type($filePath);
+
+        // 如果提供的 MIME 类型与实际的 MIME 类型不匹配，使用实际的 MIME 类型
+        if ($providedMimeType !== $actualMimeType) {
+            Log::warning("提供的MIME类型与实际的MIME类型不匹配: 提供的: {$providedMimeType}, 实际的: {$actualMimeType}");
+            $mimeType = $actualMimeType;
+        } else {
+            $mimeType = $providedMimeType;
+        }
+
+        // 根据实际的 MIME 类型获取扩展名
         $ext = MimeHelper::instance()->getExtensionByMimeType($mimeType);
+
+        // 确保 ext 是数组
+        if (!is_array($ext)) {
+            $ext = [$ext];
+        }
+
         // 检查 $ext 中任意值是否在 $this->allowed_types 中
         $intersection = array_intersect($ext, $this->allowed_types);
 
@@ -154,11 +173,19 @@ class RemoteFileUtil
             throw new ValidateException('不允许的文件类型: ' . implode(', ', $ext));
         }
 
-        // 额外检查：确保文件的实际MIME类型与提供的MIME类型一致
-        $actualMimeType = mime_content_type($filePath);
-        if ($mimeType !== $actualMimeType) {
-            throw new ValidateException('文件类型与提供的MIME类型不匹配');
+        // 选择第一个交集作为最终的扩展名
+        $finalExt = reset($intersection);
+
+        // 更新文件路径以反映正确的扩展名
+        $newFilePath = pathinfo($filePath, PATHINFO_DIRNAME) . DIRECTORY_SEPARATOR . pathinfo($filePath, PATHINFO_FILENAME) . '.' . $finalExt;
+
+        // 重命名文件
+        if (!rename($filePath, $newFilePath)) {
+            throw new \Exception('无法重命名文件以更新其扩展名');
         }
+
+        // 更新 filePath 变量以便后续使用
+        return $newFilePath;
     }
 
 
