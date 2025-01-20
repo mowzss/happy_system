@@ -163,7 +163,7 @@ class ContentSaveFilterUtil extends UtilBase
                 if ($this->isDownImage()) {
                     foreach ($images[1] as $image) {
                         $oldSrc = $image;
-                        if (!$this->isDownFilterHost($oldSrc)) {
+                        if ($this->isDownFilterHost($oldSrc)) {
                             try {
                                 $file_info = (new RemoteFileUtil)->downloadAndSave($oldSrc);
                                 $newSrc = $file_info['url'];
