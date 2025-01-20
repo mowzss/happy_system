@@ -147,8 +147,11 @@ class RemoteFileUtil
 
         // 检查文件类型
         $ext = MimeHelper::instance()->getExtensionByMimeType($mimeType);
-        if (!in_array($ext, $this->allowed_types)) {
-            throw new ValidateException('不允许的文件类型');
+        // 检查 $ext 中任意值是否在 $this->allowed_types 中
+        $intersection = array_intersect($ext, $this->allowed_types);
+
+        if (empty($intersection)) {
+            throw new ValidateException('不允许的文件类型: ' . implode(', ', $ext));
         }
 
         // 额外检查：确保文件的实际MIME类型与提供的MIME类型一致
