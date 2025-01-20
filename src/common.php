@@ -378,7 +378,7 @@ if (!function_exists('aurl')) {
      */
     function aurl(string $url = '', string|array $vars = [], bool $suffix = true, bool $domain = false): string
     {
-        $root = app()->config->get('happy.admin_entrance', 'admin.php');
+        $root = '/' . app()->config->get('happy.admin_entrance', 'admin.php');
         return urls($url, $vars, $suffix, $domain, $root);
     }
 }
