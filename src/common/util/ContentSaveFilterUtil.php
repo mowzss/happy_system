@@ -5,6 +5,8 @@ namespace app\common\util;
 use app\model\system\SystemConfig;
 use HTMLPurifier;
 use HTMLPurifier_Config;
+use mowzs\lib\baidu\AipNlp;
+use mowzs\lib\module\service\TagBaseService;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
@@ -190,7 +192,32 @@ class ContentSaveFilterUtil extends UtilBase
             }
             return array_merge($info, $updata);
         }
+        $info = $this->setTag($info);
         return $info;
     }
 
+    /**
+     * @param $data
+     * @return mixed
+     * @throws \think\Exception
+     */
+    protected function setTag($data)
+    {
+        if (empty($data['huati']) && empty($data['tag'])) {
+            $data['huati'] = (new AipNlp())->getStringTag(
+                $data['title'],
+                get_word(del_html($data['content']), 300)
+            );
+        }
+        //处理tag
+        $tags = [];
+        if (!empty($data['huati']) && empty($data['tag'])) {
+            $huati = str2arr($data['huati']);
+            foreach ($huati as $k => $v) {
+                $tags[$k] = TagBaseService::instance()->getTagIdByTitle($v);
+            }
+            $data['tag'] = arr2str($tags);
+        }
+        return $data;
+    }
 }
