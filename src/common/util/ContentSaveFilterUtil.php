@@ -148,6 +148,7 @@ class ContentSaveFilterUtil extends UtilBase
      */
     public function setProcessingData($info): array
     {
+        $info = $this->setTag($info);
         //检测功能是否开启
         if ($this->cheek()) {
             if (!empty($info['content'])) {
@@ -192,7 +193,6 @@ class ContentSaveFilterUtil extends UtilBase
             }
             return array_merge($info, $updata);
         }
-        $info = $this->setTag($info);
         return $info;
     }
 
@@ -201,7 +201,7 @@ class ContentSaveFilterUtil extends UtilBase
      * @return mixed
      * @throws \think\Exception
      */
-    protected function setTag($data)
+    protected function setTag($data): mixed
     {
         if (empty($data['huati']) && empty($data['tag'])) {
             $data['huati'] = (new AipNlp())->getStringTag(
