@@ -180,8 +180,8 @@ class ContentSaveFilterUtil extends UtilBase
                 if ($this->isImagesThum()) {
                     preg_match_all($pattern, $info['content'], $images);
                     $picurls = $images[1];
-                    if (count($picurls) > $this->config['is_content_thum']) {
-                        $picurls = array_slice($picurls, 0, $this->config['is_content_thum']);
+                    if (count($picurls) > $this->config['is_content_thum_num']) {
+                        $picurls = array_slice($picurls, 0, $this->config['is_content_thum_num']);
                     }
                     if (!empty($picurls)) {
                         $picurl = implode(',', $picurls);
