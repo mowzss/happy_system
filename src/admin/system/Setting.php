@@ -64,6 +64,9 @@ class Setting extends BaseAdmin
                     $this->error('测试邮件发送失败:' . $e->getMessage());
                 }
             }
+            if (!empty($data['square_logo'])) {
+                $this->app->console->call('admin:favicon');
+            }
             if ($this->model->saveConfig($data)) {
                 $this->success('保存成功');
             } else {
