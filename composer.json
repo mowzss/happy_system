@@ -35,14 +35,14 @@
         "app/service/user": "src/service/user",
         "app/service/BaseService.php": "src/service/BaseService.php",
         "app/admin/event/AutoContent.php": "src/admin/event/AutoContent.php",
-        "route/zzzz_system.php": "stc/route/zzzz_system.php"
+        "route/zzzz_system.php": "stc/route/zzzz_system.php",
+        "app/common.php": "src/common.php",
+        "public/admin.php": "stc/public/admin.php",
+        "public/index.php": "stc/public/index.php"
       },
       "copy": {
         "route/system.php": "stc/route/system.php",
-        "app/common.php": "src/common.php",
         "app/provider.php": "src/provider.php",
-        "public/admin.php": "stc/public/admin.php",
-        "public/index.php": "stc/public/index.php",
         "public/robots.txt": "stc/public/robots.txt",
         "public/router.php": "stc/public/router.php"
       },

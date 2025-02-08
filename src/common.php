@@ -444,7 +444,7 @@ if (!function_exists('urls')) {
      * @param string $root
      * @return string
      */
-    function urls(string $url = '', array|string $vars = [], bool $suffix = true, bool $domain = false, string $root = '/index.php'): string
+    function urls(string $url = '', array|string $vars = [], bool $suffix = true, bool $domain = false, string $root = ''): string
     {
 
         // 分割路径为模块、控制器和方法
