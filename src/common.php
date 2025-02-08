@@ -438,13 +438,13 @@ if (!function_exists('urls')) {
     /**
      * 通用链接
      * @param string $url
-     * @param array $vars
+     * @param array|string $vars
      * @param bool $suffix
      * @param bool $domain
-     * @param $root
+     * @param string $root
      * @return string
      */
-    function urls(string $url = '', array|string $vars = [], bool $suffix = true, bool $domain = false, $root = ''): string
+    function urls(string $url = '', array|string $vars = [], bool $suffix = true, bool $domain = false, string $root = '/index.php'): string
     {
 
         // 分割路径为模块、控制器和方法
