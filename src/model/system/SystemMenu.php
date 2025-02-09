@@ -48,7 +48,18 @@ class SystemMenu extends Model
      */
     public static function getMenuTree(array $where = ['status' => 1]): array
     {
-        $menu = self::where($where)->order('list', 'desc')->select()->toArray();
+        $menu = self::where($where)->order('list', 'desc')->select()->each(function ($model) {
+            if (empty($model['node']) || $model['node'] == '#') {
+                $model['type'] = 0;
+                return $model;
+            }
+            $model['type'] = 1;
+//            $model['openType'] = '_component';
+            $model['href'] = $model['class'] == 1
+                ? url($model['node'], $model['params'] ?: [])->build()
+                : $model['node'];
+            return $model;
+        })->toArray();
         // 判断是否为超管账号，如果是，则不进行权限过滤
         if (!AuthHelper::instance()->isAuthAdmin()) {
             $userNodes = AuthHelper::instance()->getUserNodesModule();
