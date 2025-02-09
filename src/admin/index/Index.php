@@ -62,6 +62,7 @@ class Index extends BaseAdmin
     public function clean(): void
     {
         Console::call('clear');
+        $this->app->cache->clear();
         $this->success('清理成功');
     }
 
