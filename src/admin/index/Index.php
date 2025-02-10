@@ -5,6 +5,7 @@ namespace app\admin\index;
 
 use app\common\controllers\BaseAdmin;
 use app\model\system\SystemMenu;
+use mowzs\lib\helper\ComposerHelper;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
@@ -63,6 +64,14 @@ class Index extends BaseAdmin
             'openssl' => extension_loaded('openssl') ? 'on' : 'off',
             'gd' => extension_loaded('gd') ? 'on' : 'off',
         ];
+        try {
+            $happyModules = ComposerHelper::getPackagesByType();
+            $systemModules = ComposerHelper::getPackagesExceptType();
+            $this->assign('system_modules', $systemModules);
+            $this->assign('happy_modules', $happyModules);
+        } catch (\Exception $e) {
+
+        }
         $this->assign('php_ext', $php_ext);
         $this->assign('system', $system);
         return $this->fetch();
