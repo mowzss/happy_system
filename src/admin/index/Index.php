@@ -9,6 +9,7 @@ use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
 use think\facade\Console;
+use think\facade\Db;
 use think\response\Json;
 
 /**
@@ -34,6 +35,36 @@ class Index extends BaseAdmin
      */
     public function main(): string
     {
+        $system = [
+            //系统信息
+            'info' => php_uname(),
+            //服务器ip
+            'ip' => $this->request->server('server_addr', $this->request->server('local_addr', getHostByName(getHostName()))),
+            //php版本
+            'php_version' => PHP_VERSION,
+            //mysql版本
+            'mysql_version' => Db::query("select version()")[0]['version()'],
+            //运行内存
+            'php_run_memory' => round(memory_get_peak_usage() / 1024 / 1024 / 1024, 6) . 'G',
+            //磁盘空间
+            'disk_total_space' => round(disk_total_space('/') / 1024 / 1024 / 1024, 2) . 'G',
+            //剩余空间
+            'disk_free_space' => round(disk_free_space('/') / 1024 / 1024 / 1024, 2) . 'G',
+            //运行模式
+            'php_sapi' => php_sapi_name(),
+            //运行环境
+            'php_os' => PHP_OS,
+        ];
+        // PHP 扩展支持状态
+        $php_ext = [
+            'pdo' => extension_loaded('pdo') ? 'on' : 'off',
+            'curl' => extension_loaded('curl') ? 'on' : 'off',
+            'fileinfo' => extension_loaded('fileinfo') ? 'on' : 'off',
+            'openssl' => extension_loaded('openssl') ? 'on' : 'off',
+            'gd' => extension_loaded('gd') ? 'on' : 'off',
+        ];
+        $this->assign('php_ext', $php_ext);
+        $this->assign('system', $system);
         return $this->fetch();
     }
 
