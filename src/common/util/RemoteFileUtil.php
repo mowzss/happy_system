@@ -170,7 +170,7 @@ class RemoteFileUtil
         $intersection = array_intersect($ext, $this->allowed_types);
 
         if (empty($intersection)) {
-            throw new ValidateException('不允许的文件类型: ' . implode(', ', $ext));
+            throw new ValidateException('不允许的文件类型: ' . implode(',', $ext));
         }
 
         // 选择第一个交集作为最终的扩展名
