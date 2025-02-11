@@ -140,7 +140,7 @@ class RemoteFileUtil
      * @return string
      * @throws \Exception
      */
-    protected function validateFile(string $filePath, string $providedMimeType, int $fileSize)
+    protected function validateFile(string $filePath, string $providedMimeType, int $fileSize): string
     {
         // 检查文件大小
         if ($fileSize > $this->max_size) {
