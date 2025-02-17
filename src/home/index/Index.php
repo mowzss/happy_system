@@ -15,9 +15,5 @@ class Index extends BaseHome
     {
         return $this->fetch();
     }
-
-    public function text()
-    {
-        echo '';
-    }
+    
 }
