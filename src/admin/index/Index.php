@@ -6,6 +6,7 @@ namespace app\admin\index;
 use app\common\controllers\BaseAdmin;
 use app\model\system\SystemMenu;
 use mowzs\lib\helper\ComposerHelper;
+use mowzs\lib\Run;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
@@ -72,9 +73,27 @@ class Index extends BaseAdmin
         } catch (\Exception $e) {
 
         }
+        $this->assign('is_debug', $this->app->isDebug());
         $this->assign('php_ext', $php_ext);
         $this->assign('system', $system);
         return $this->fetch();
+    }
+
+    /**
+     * 切换运行模式
+     * @auth true
+     * @return void
+     */
+    public function runMode(): void
+    {
+        $status = $this->request->post('status/d', 0);
+        if ($status === 0) {
+            Run::setRun();
+            $this->success('已切换线上模式');
+        } else {
+            Run::setRun(true);
+            $this->success('已切换为调试模式');
+        }
     }
 
     /**
