@@ -32,7 +32,7 @@ class SqlExecutor extends UtilBase
     {
         if ($type == 'install') {//安装
             $path = '/common/install/';
-        } else if ($type == 'update') {//升级
+        } else if ($type == 'update' || $type == 'upgrade') {//升级
             $path = '/common/upgrade/';
         }
         $this->filePath = $this->app->getBasePath() . $path . $filePath;
