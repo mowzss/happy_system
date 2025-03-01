@@ -630,3 +630,28 @@ if (!function_exists('send_code_email')) {
         return $mailUtil->sendVerificationCode($email, $code, $subject);
     }
 }
+if (!function_exists('tableExists')) {
+    /**
+     * 判断数据库表是否存在（MySQL）
+     *
+     * @param string $tableName 数据库表名
+     * @param string|null $connection 数据库连接名称（可选）
+     * @return bool
+     */
+    function table_exists(string $tableName, ?string $connection = null): bool
+    {
+        try {
+            // 使用 \think\db\Db 类获取数据库连接
+            $db = \think\facade\Db::connect($connection);
+
+            // 执行 SHOW TABLES 查询
+            $result = $db->query("SHOW TABLES LIKE ?", [$tableName]);
+
+            // 如果结果不为空，则表示表存在
+            return !empty($result);
+        } catch (\Exception $e) {
+            // 捕获异常并返回 false
+            return false;
+        }
+    }
+}
