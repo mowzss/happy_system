@@ -37,6 +37,7 @@
         "app/admin/event/AutoContent.php": "src/admin/event/AutoContent.php",
         "route/zzzz_system.php": "stc/route/zzzz_system.php",
         "app/common.php": "src/common.php",
+        "app/sys.php": "src/sys.php",
         "public/admin.php": "stc/public/admin.php",
         "public/index.php": "stc/public/index.php",
         ".env.admin": "stc/.env.admin",
