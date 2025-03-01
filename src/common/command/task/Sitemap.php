@@ -20,11 +20,11 @@ class Sitemap extends Command
     /**
      * @var int[]
      */
-    protected array $where = ['status' => 1, 'deleted' => 0];
+    protected array $where = ['status' => 1];
     /**
      * @var int[]
      */
-    protected array $delWhere = ['status' => 0, 'deleted' => 1];
+    protected array $delWhere = ['status' => 0, 'delete_time' => null];
     /**
      * 域名
      * @var string
@@ -145,12 +145,12 @@ class Sitemap extends Command
         $domain = $this->domain;
         $this->app->db->name($this->table)
             ->where($this->where)
-            ->field('id,url,create_time')
+            ->field('id,create_time')
             ->chunk($num, function (Collection $data) use (&$count, $total, $module, $type, $class, $domain) {
                 $count++;
                 $sitemap = new SiteMapHelper($this->config);
                 foreach ($data->toArray() as $value) {
-                    $url = $domain . $value['url'];
+                    $url = $domain . urls($module . '/content/index', ['id' => $value['id']]);
                     $sitemap->addItem($url, format_datetime($value['create_time'], 'Y-m-d'));
                 }
                 $this->extracted($sitemap, $type, $class, $count, $module, $total);
