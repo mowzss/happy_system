@@ -20,7 +20,6 @@ class MenuService
     {
         if (!empty($parentSlot)) {
             $parent = SystemMenu::where('slot', $parentSlot)->value('id');
-            p($parent);
         } else {
             $parent = 0;
         }
