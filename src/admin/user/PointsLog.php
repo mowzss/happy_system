@@ -9,6 +9,9 @@ use app\model\user\UserInfo;
 use app\model\user\UserPointsLog;
 use think\App;
 
+/**
+ *用户积分日志
+ */
 class PointsLog extends BaseAdmin
 {
     use CrudTrait;

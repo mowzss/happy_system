@@ -128,6 +128,10 @@ class Auth extends BaseAdmin
             if ($this->model->update($data)) {
                 $this->success('保存成功');
             }
+        } else {
+            if (is_string($this->info['nodes']) && empty($this->info['nodes'])) {
+                $this->info['nodes'] = [];
+            }
         }
         return $this->fetch();
     }

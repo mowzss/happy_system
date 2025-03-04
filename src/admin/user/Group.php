@@ -8,6 +8,9 @@ use app\common\traits\CrudTrait;
 use app\model\user\UserGroup;
 use think\App;
 
+/**
+ * 用户组管理
+ */
 class Group extends BaseAdmin
 {
     use CrudTrait;

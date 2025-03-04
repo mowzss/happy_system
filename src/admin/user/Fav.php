@@ -12,6 +12,9 @@ use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
 
+/**
+ * 收藏夹
+ */
 class Fav extends BaseAdmin
 {
     use CrudTrait;

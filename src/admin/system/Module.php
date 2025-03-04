@@ -42,7 +42,6 @@ class Module extends BaseAdmin
                     'field' => 'title',
                     'title' => '模块名称',
                     'align' => 'content',
-                    'width' => 360,
                 ], [
                     'field' => 'dir',
                     'title' => '模块目录',
