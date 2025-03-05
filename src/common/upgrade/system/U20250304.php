@@ -4,6 +4,7 @@ namespace app\common\upgrade\system;
 
 
 use app\model\system\SystemConfig;
+use app\model\system\SystemConfigGroup;
 use app\service\system\MenuService;
 use think\Exception;
 
@@ -25,7 +26,7 @@ class U20250304
      */
     private function addSystemConfig(): void
     {
-        $group_id = (new SystemConfig())->where(['title' => '基础设置', 'module' => 'system'])->value('id');
+        $group_id = (new SystemConfigGroup())->where(['title' => '基础设置', 'module' => 'system'])->value('id');
         SystemConfig::create([
             'name' => 'site_domain',
             'type' => 'text',
