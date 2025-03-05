@@ -3,6 +3,7 @@
 namespace app\common\upgrade\system;
 
 
+use app\model\system\SystemConfig;
 use app\service\system\MenuService;
 use think\Exception;
 
@@ -16,6 +17,28 @@ class U20250304
     public function run(): void
     {
         $this->addSystemMenu();
+        $this->addSystemConfig();
+    }
+
+    /**
+     * @return void
+     */
+    private function addSystemConfig(): void
+    {
+        $group_id = (new SystemConfig())->where(['title' => '基础设置', 'module' => 'system'])->value('id');
+        SystemConfig::create([
+            'name' => 'site_domain',
+            'type' => 'text',
+            'title' => '网站域名',
+            'group_id' => $group_id,
+            'options' => '',
+            'help' => '尽量填写域名，需要带http://或https:// 命令行等模式下部分服务需使用域名',
+            'value' => '',
+            'extend' => NULL,
+            'list' => '0',
+            'module' => 'system',
+            'status' => '1',
+        ]);
     }
 
     /**
