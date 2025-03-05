@@ -138,35 +138,27 @@ class Task extends BaseAdmin
     {
         // 获取前端传递的 Cron 表达式
         $cron = $this->request->param('cron');
-
         // 检查 Cron 表达式是否为空
         if (empty($cron)) {
             $this->error('Cron 表达式不能为空');
         }
-
         // 分割 Cron 表达式为数组
         $cronParts = explode(' ', $cron);
-
         // 如果是 6 字段格式，忽略第一个字段（秒）
         if (count($cronParts) === 6) {
             array_shift($cronParts); // 移除秒字段
         }
-
         // 重新组合 Cron 表达式
         $cron = implode(' ', $cronParts);
-
         // 创建 Cron 表达式对象（使用 createFromFormat 替代 factory）
         $expression = new CronExpression($cron);
-
         // 获取当前时间
         $now = new \DateTime();
-
         // 获取未来 10 次任务时间
         $nextRuns = [];
         for ($i = 0; $i < 10; $i++) {
             $nextRuns[] = $expression->getNextRunDate($now, $i, true)->format('Y-m-d H:i:s');
         }
-
         $this->success('运行结果', $nextRuns);
 
     }
