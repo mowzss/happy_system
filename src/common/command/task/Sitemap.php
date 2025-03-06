@@ -151,7 +151,7 @@ class Sitemap extends Command
                 $sitemap = new SiteMapHelper($this->config);
                 foreach ($data->toArray() as $value) {
                     $url = $domain . urls($module . '/content/index', ['id' => $value['id']]);
-                    $sitemap->addItem($url, format_datetime($value['create_time'], 'Y-m-d'));
+                    $sitemap->addItem($url, format_datetime($value['create_time'] ?? time(), 'Y-m-d'));
                 }
                 $this->extracted($sitemap, $type, $class, $count, $module, $total);
             }, 'id', 'desc');
@@ -243,7 +243,7 @@ class Sitemap extends Command
                 $sitemap = new SiteMapHelper($this->config);
                 foreach ($data->toArray() as $value) {
                     $url = $this->domain . urls($module . '/tag/show', ['id' => $value['id']]);
-                    $sitemap->addItem($url, format_datetime($value['create_time'], 'Y-m-d'));
+                    $sitemap->addItem($url, format_datetime($value['create_time'] ?? time(), 'Y-m-d'));
                 }
                 $this->extracted($sitemap, $type, $class, $count, $module, $total);
             },
