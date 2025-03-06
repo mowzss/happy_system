@@ -67,16 +67,7 @@ class U20250304
             'list' => '0',
             'status' => '1',
         ], [
-            'title' => '队列任务',
-            'slot' => '',
-            'icon' => 'layui-icon layui-icon-senior',
-            'node' => 'system/queue/index',
-            'params' => '',
-            'class' => '1',
-            'list' => '0',
-            'status' => '1',
-        ], [
-            'title' => 'Sitemap地图',
+            'title' => 'SiteMap',
             'slot' => '',
             'icon' => 'layui-icon layui-icon-senior',
             'node' => 'system/sitemap/index',

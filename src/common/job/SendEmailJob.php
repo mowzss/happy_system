@@ -8,6 +8,7 @@ use think\queue\Job;
 
 class SendEmailJob
 {
+    
     /**
      * 执行队列任务.
      *

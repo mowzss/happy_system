@@ -1,7 +1,6 @@
 <?php
 
 // 应用公共文件
-use app\common\util\SendMailUtil;
 
 if (!function_exists('static_version')) {
     function static_version()
@@ -590,28 +589,11 @@ if (!function_exists('send_email')) {
      * @param string $body 邮件正文
      * @param bool $isHtml 是否为HTML格式
      * @param array $attachments 附件列表
-     * @return bool
-     * @throws \PHPMailer\PHPMailer\Exception
+     * @return mixed|null
      */
-    function send_email(array|string $to, string $subject, string $body, bool $isHtml = false, array $attachments = []): bool
+    function send_email(array|string $to, string $subject, string $body, bool $isHtml = false, array $attachments = []): mixed
     {
-        $mailUtil = new SendMailUtil();
-        if (is_array($to)) {
-            foreach ($to as $recipient) {
-                $mailUtil->addTo($recipient);
-            }
-        } else {
-            $mailUtil->addTo($to);
-        }
-        $mailUtil->setSubject($subject)
-            ->setBody($body, $isHtml);
-
-        // 添加附件（如果有）
-        foreach ($attachments as $attachment) {
-            $mailUtil->addAttachment($attachment['path'], $attachment['name'] ?? null);
-        }
-
-        return $mailUtil->send();
+        return \think\facade\Queue::push(\app\common\job\SendEmailJob::class, ['to' => $to, 'subject' => $subject, 'body' => $body, 'isHtml' => $isHtml, 'attachments' => $attachments]);
     }
 }
 if (!function_exists('send_code_email')) {
@@ -621,13 +603,11 @@ if (!function_exists('send_code_email')) {
      * @param string $email 收件人邮箱地址
      * @param string $code 验证码
      * @param string $subject 邮件主题
-     * @return bool
-     * @throws \PHPMailer\PHPMailer\Exception
+     * @return mixed|null
      */
-    function send_code_email(string $email, string $code, string $subject = '注意查收！您申请的验证码'): bool
+    function send_code_email(string $email, string $code, string $subject = '注意查收！您申请的验证码'): mixed
     {
-        $mailUtil = new SendMailUtil();
-        return $mailUtil->sendVerificationCode($email, $code, $subject);
+        return \think\facade\Queue::push(\app\common\job\SendCodeEmailJob::class, ['email' => $email, 'code' => $code, 'subject' => $subject]);
     }
 }
 if (!function_exists('table_exists')) {
