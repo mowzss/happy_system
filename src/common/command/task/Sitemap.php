@@ -45,7 +45,7 @@ class Sitemap extends Command
      */
     protected function configure(): void
     {
-        $this->setName('task:sitemap');
+        $this->setName('system:sitemap');
         $this->addArgument('type', Argument::OPTIONAL, '生成sitemap地图', 'xml');
         $this->addOption('module', null, Option::VALUE_REQUIRED, '模块名称');
         $this->addOption('class', null, Option::VALUE_OPTIONAL, 'sitemap内容类型', 'content');
