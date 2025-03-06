@@ -87,8 +87,8 @@ class Sitemap extends Command
         if ($class == 'content') {
             $this->buildContentMap($module, $type, $num, $class);
         }
-        if ($class == 'cate') {
-            $this->buildCateMap($module, $type, $class);
+        if ($class == 'column') {
+            $this->buildColumnMap($module, $type, $class);
         }
         if ($class == 'tag') {
             $this->buildTagMap($module, $type, $num, $class);
@@ -112,7 +112,7 @@ class Sitemap extends Command
         } elseif ($class == 'tag') {
             $this->table = strtolower($module) . '_tag';
         } elseif ($class == 'cate') {
-            $this->table = strtolower($module) . '_cate';
+            $this->table = strtolower($module) . '_column';
         }
         $this->config = [
             'path' => $this->app->getRootPath() . 'public' . DIRECTORY_SEPARATOR . 'sitemap' . DIRECTORY_SEPARATOR . $module . DIRECTORY_SEPARATOR,
@@ -200,12 +200,12 @@ class Sitemap extends Command
      * @throws DataNotFoundException
      * @throws ModelNotFoundException
      */
-    private function buildCateMap(string $module, string $type = '', string $class = 'cate'): void
+    private function buildColumnMap(string $module, string $type = '', string $class = 'cate'): void
     {
-        $data = $this->app->db->name($this->table)->where($this->where)->field('url')->select();
+        $data = $this->app->db->name($this->table)->where($this->where)->field('id')->select();
         $sitemap = new SiteMapHelper($this->config);
         foreach ($data->toArray() as $value) {
-            $url = $this->domain . $value['url'];
+            $url = $this->domain . urls($module . '/column/index', ['id' => $value['id']]);
             $sitemap->addItem($url, date('Y-m-d', time()));
         }
         $in_data = [
@@ -235,14 +235,14 @@ class Sitemap extends Command
         [
             $total,
             $count,
-        ] = [(int)ceil($this->app->db->name($this->table)->field('id,url,create_time')->where($this->where)->count() / $num), 0];
+        ] = [(int)ceil($this->app->db->name($this->table)->field('id,create_time')->where($this->where)->count() / $num), 0];
         $this->app->db->name($this->table)->where($this->where)->chunk(
             $num,
             function (Collection $data) use (&$count, $total, $module, $type, $class) {
                 $count++;
                 $sitemap = new SiteMapHelper($this->config);
                 foreach ($data->toArray() as $value) {
-                    $url = $this->domain . $value['url'];
+                    $url = $this->domain . urls($module . '/tag/show', ['id' => $value['id']]);
                     $sitemap->addItem($url, format_datetime($value['create_time'], 'Y-m-d'));
                 }
                 $this->extracted($sitemap, $type, $class, $count, $module, $total);
