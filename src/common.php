@@ -1,6 +1,5 @@
 <?php
 
-// 应用公共文件
 
 if (!function_exists('static_version')) {
     function static_version()
