@@ -111,7 +111,7 @@ class Sitemap extends Command
             $this->table = strtolower($module) . '_content';
         } elseif ($class == 'tag') {
             $this->table = strtolower($module) . '_tag';
-        } elseif ($class == 'cate') {
+        } elseif ($class == 'column') {
             $this->table = strtolower($module) . '_column';
         }
         $this->config = [
