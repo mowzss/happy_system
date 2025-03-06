@@ -15,7 +15,7 @@ class SendCodeEmailJob
      * @param array $data 传递的数据
      * @return void
      */
-    public function fire(Job $job, $data): void
+    public function fire(Job $job, array $data): void
     {
         // 检查数据完整性
         if (empty($data['email']) || empty($data['code'])) {
