@@ -50,11 +50,6 @@
         "public/router.php": "stc/public/router.php"
       },
       "del": true
-    },
-    "think": {
-      "services": [
-        "app\\common\\CommonService"
-      ]
     }
   }
 }

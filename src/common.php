@@ -1,6 +1,8 @@
 <?php
 
 
+use think\Console;
+
 if (!function_exists('static_version')) {
     function static_version()
     {
@@ -634,3 +636,6 @@ if (!function_exists('table_exists')) {
         }
     }
 }
+Console::starting(function (Console $console) {
+    $console->addCommands([\app\common\command\task\Sitemap::class]);
+});
