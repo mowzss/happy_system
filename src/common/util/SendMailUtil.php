@@ -8,6 +8,8 @@ use PHPMailer\PHPMailer\PHPMailer;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
+use think\Exception;
+use think\facade\Log;
 
 class SendMailUtil
 {
@@ -25,6 +27,7 @@ class SendMailUtil
     {
         // 初始化配置
         $this->getConfig();
+
         // 初始化 PHPMailer
         $this->mail = new PHPMailer(true);
     }
@@ -33,22 +36,25 @@ class SendMailUtil
      * 获取邮件服务器配置.
      *
      * @return void
-     * @throws DataNotFoundException
-     * @throws DbException
-     * @throws ModelNotFoundException
+     * @throws MailException
      */
     protected function getConfig(): void
     {
-        $this->config = [
-            'host' => sys_config('mail_host'),
-            'port' => sys_config('mail_port'),
-            'username' => sys_config('mail_username'),
-            'password' => sys_config('mail_password'),
-            'smtp_secure' => sys_config('mail_smtp_secure', 'ssl'), // 默认为 ssl
-            'charset' => sys_config('mail_charset', 'utf-8'), // 默认为 utf-8
-        ];
-        $this->fromEmail = sys_config('mail_username');
-        $this->fromName = sys_config('mail_from_name', 'No Reply');
+        try {
+            $this->config = [
+                'host' => sys_config('mail_host'),
+                'port' => sys_config('mail_port'),
+                'username' => sys_config('mail_username'),
+                'password' => sys_config('mail_password'),
+                'smtp_secure' => sys_config('mail_smtp_secure', 'ssl'), // 默认为 ssl
+                'charset' => sys_config('mail_charset', 'utf-8'), // 默认为 utf-8
+            ];
+            $this->fromEmail = sys_config('mail_username');
+            $this->fromName = sys_config('mail_from_name', 'No Reply');
+        } catch (DataNotFoundException|ModelNotFoundException|DbException $e) {
+            Log::error('获取邮件服务器配置失败:' . $e->getMessage());
+            throw new MailException('获取邮件服务器配置失败:' . $e->getMessage());
+        }
     }
 
     /**
@@ -184,8 +190,9 @@ class SendMailUtil
 
             return $this->mail->send();
         } catch (MailException $e) {
+            Log::error('邮件发送失败:' . $e->getMessage());
             // 处理异常
-            throw $e;
+            throw new Exception($e->getMessage(), $e->getCode(), $e->getPrevious());
         }
     }
 

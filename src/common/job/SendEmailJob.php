@@ -8,7 +8,7 @@ use think\queue\Job;
 
 class SendEmailJob
 {
-    
+
     /**
      * 执行队列任务.
      *
@@ -18,12 +18,6 @@ class SendEmailJob
      */
     public function fire(Job $job, $data): void
     {
-        // 检查数据完整性
-        if (empty($data['to']) || empty($data['subject']) || empty($data['body'])) {
-            // 不调用 delete 或 release，任务会自动失败
-            return;
-        }
-
         try {
             // 初始化邮件工具类
             $mailUtil = new SendMailUtil();
@@ -59,16 +53,18 @@ class SendEmailJob
             if ($mailUtil->send()) {
                 $job->delete(); // 如果发送成功，删除任务
             } else {
-                throw new \Exception('Failed to send email.');
+                $job->failed(throw new \Exception('Failed to send email.'));
             }
         } catch (\Exception $e) {
+            $job->failed($e);
             // 如果任务失败，允许重试
             if ($job->attempts() > 3) { // 最大尝试次数为3次
                 // 不调用 delete 或 release，任务会自动失败
-                return;
+                $job->delete();
             } else {
                 $job->release(5); // 延迟5秒重试
             }
+
         }
     }
 }
