@@ -13,6 +13,13 @@ use think\facade\Log;
 class SiteMap extends Task
 {
     protected array $sitemap_class = ['content', 'tag', 'column'];
+    /**
+     * 单线程
+     * @var bool
+     */
+    public bool $onOneServer = true;
+
+    public int $expiresAt = 36000;
 
     /**
      * 生成sitemap
@@ -26,7 +33,7 @@ class SiteMap extends Task
                 if (sys_config($dir . '.is_open_sitemap', 0)) {
                     foreach ($this->sitemap_class as $class) {
                         Console::call('system:sitemap', ['xml', '--module=' . $dir, '--class=' . $class]);
-                        sleep(60);
+                        sleep(40);
                     }
                 }
             } catch (DataNotFoundException|ModelNotFoundException|DbException $e) {
