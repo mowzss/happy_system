@@ -33,7 +33,7 @@ class SiteMap extends Task
                 if (sys_config($dir . '.is_open_sitemap', 0)) {
                     foreach ($this->sitemap_class as $class) {
                         Console::call('system:sitemap', ['xml', '--module=' . $dir, '--class=' . $class]);
-                        sleep(40);
+                        sleep(10);
                     }
                 }
             } catch (DataNotFoundException|ModelNotFoundException|DbException $e) {
