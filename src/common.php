@@ -1,5 +1,11 @@
 <?php
-
+// 应用公共文件
+/*
+ * 私有助手函数引入
+ */
+if (is_file(__DIR__ . 'function.php')) {
+    include_once __DIR__ . 'function.php';
+}
 
 if (!function_exists('static_version')) {
     function static_version()
