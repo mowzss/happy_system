@@ -13,6 +13,11 @@
     "mowzs/lib": "dev-master"
   },
   "extra": {
+    "think": {
+      "services": [
+        "\\app\\common\\CommonService"
+      ]
+    },
     "module": {
       "make": {
         "app/admin/index": "src/admin/index",
@@ -33,7 +38,6 @@
         "app/common/util": "src/common/util",
         "app/common/command": "src/common/command",
         "app/common/task": "src/common/task",
-        "app/common/sys.php": "src/common/sys.php",
         "app/service/system": "src/service/system",
         "app/service/user": "src/service/user",
         "app/service/BaseService.php": "src/service/BaseService.php",
