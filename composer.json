@@ -47,7 +47,8 @@
         "public/admin.php": "stc/public/admin.php",
         "public/index.php": "stc/public/index.php",
         ".env.admin": "stc/.env.admin",
-        ".env.home": "stc/.env.home"
+        ".env.home": "stc/.env.home",
+        "app/common/CommonService.php": "src/common/CommonService.php"
       },
       "copy": {
         "route/system.php": "stc/route/system.php",
