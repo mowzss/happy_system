@@ -10,6 +10,7 @@ use think\App;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
+use think\template\exception\TemplateNotFoundException;
 
 class IndexNow extends BaseAdmin
 {
@@ -45,6 +46,10 @@ class IndexNow extends BaseAdmin
      */
     public function index(): string
     {
+        $this->list = $this->groupModel->where([
+            'module' => 'p_index_now',
+            'status' => 1
+        ])->select();
         if ($this->request->isPost()) {
             $data = $this->request->post();
 
@@ -54,18 +59,26 @@ class IndexNow extends BaseAdmin
             if (!empty($data['index_key'])) {
                 file_put_contents(public_path() . $data['index_key'] . 'txt', $data['index_key']);
             }
+            foreach ($data as $key => $value) {
+                if (is_array($value)) {
+                    $data[$key] = implode(',', $value);
+                }
+            }
             if ($this->model->saveConfig($data)) {
                 $this->success('保存成功');
             } else {
                 $this->error('保存失败');
             }
         }
-        $this->list = $this->groupModel->where([
-            'module' => 'p_index_now',
-            'status' => 1
-        ])->select();
 
-        return $this->fetch();
+
+        //渲染页面
+        try {
+            return $this->fetch();
+        } catch (TemplateNotFoundException $exception) {
+            //模板不存在时 尝试读取公用模板
+            return $this->fetch('common@/setting');
+        }
     }
 
     /**
