@@ -102,7 +102,7 @@ class IndexNow extends Command
      * @return void
      * @throws DbException
      */
-    function updateContent($data, string $content_table): void
+    protected function updateContent($data, string $content_table): void
     {
         foreach ($data as $key => $value) {
             $up_data['extend'][$this->upJsonField] = 1;
