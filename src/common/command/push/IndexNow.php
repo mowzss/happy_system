@@ -2,6 +2,7 @@
 
 namespace app\common\command\push;
 
+use mowzs\lib\extend\push\IndexNowPush;
 use think\console\Command;
 use think\console\Input;
 use think\console\input\Option;
@@ -22,15 +23,17 @@ class IndexNow extends Command
      * @var string
      */
     protected string $domain;
-    protected string $jsonField = 'push->index_now';
+    protected string $jsonField = 'extend->index_now';
     protected string $upJsonField = 'index_now';
+
 
     protected function configure(): void
     {
         $this->setName('push:indexnow');
         $this->addOption('module', null, Option::VALUE_REQUIRED, '模块名称');
         $this->addOption('num', null, Option::VALUE_OPTIONAL, '默认条数', 1000);
-        $this->setDescription('生成sitemap网站地图');
+        $this->addOption('domain', null, Option::VALUE_OPTIONAL, 'bing indexNow 域名 参数为pc 或者wap', 'pc');
+        $this->setDescription('IndexNow推送');
     }
 
     /**
@@ -49,6 +52,14 @@ class IndexNow extends Command
             $output->error("没有指定模块");
         }
         $num = (int)$input->getOption('num');
+        $domain = $input->getOption('domain');
+        if ($domain == 'pc') {
+            $this->domain = sys_config('site_domain');
+        } else {
+            $this->domain = sys_config('site_wap_domain', sys_config('site_domain'));
+            $this->jsonField = 'extend->m_index_now';
+            $this->upJsonField = 'm_index_now';
+        }
         $this->contentPush($module, $num);
     }
 
@@ -59,52 +70,61 @@ class IndexNow extends Command
      * @return void
      * @throws DataNotFoundException
      * @throws DbException
-     * @throws Exception
      * @throws ModelNotFoundException
      */
     private function contentPush(string $module, int $num): void
     {
-        [$total, $count] = [
-            (int)round(ceil($this->app->db->name($this->table)->json(['push'])
-                    ->where($this->where)
-                    ->where([$this->jsonField => 0])
-                    ->whereOr([$this->jsonField => null])
-                    ->setFieldType([$this->jsonField => 'int'])
-                    ->count() / $num)),
-            0];
-        for ($i = 0; $i < $total; $i++) {
-            $model = $this->app->db->name($this->table)->json(['push'])
-                ->where($this->where)
-                ->where([$this->jsonField => 0])
-                ->whereOr([$this->jsonField => null])
-                ->setFieldType([$this->jsonField => 'int'])
-                ->field('id,url')->limit($num)->order('id', 'desc')->select()->toArray();
-            $count++;
-            $urls = [];
-            foreach ($model as $value) {
-                $urls[] = $this->domain . $value['url'];
-            }
-            $push = new BingIndexNowPusher($this->domain, sysconf('pusher.index_now_key'));
-            try {
+        $push = new IndexNowPush($this->domain, sys_config('p_index_now.index_key'));
+        $model_table = $module . '_model';
+        $models = $this->app->db->name($model_table)->where('id', '>', 0)->where('deleted_time', null)->column('title', 'id');
+        foreach ($models as $mid => $model_name) {
+            $content_table = $module . '_content_' . $mid;
+            $this->app->db->name($content_table)->json(['extend'])->where($this->where)->where(function ($query) {
+                $query->where($this->jsonField, 0)->whereOr($this->jsonField, null);
+            })->field('id')->chunk($num, function ($data) use ($module, $push, $content_table) {
+                $urls = $this->createContentUrl($module, $data);
                 $ret = $push->pushUrls($urls);
                 if ($ret['code'] == 1) {
-                    $this->queue->message($total, $count, "推送成功", 1);
-                    foreach ($model as $key => $value) {
-                        $up_data['push'][$this->upJsonField] = 1;
-                        $this->app->db->name($this->table)
-                            ->json(['push'])
-                            ->where('id', $value['id'])
-                            ->update($up_data);
-                        $this->queue->message($total, $count, (count($model) - 1) . "/{$key}--正在更新数据库记录--[{$value['id']}]成功", 1);
-                    }
+                    $this->output->info("推送成功");
+                    $this->updateContent($data, $content_table);
                 } else {
-                    $this->queue->message($total, $count, "推送失败" . json_encode($ret), 1);
+                    $this->output->error("推送失败" . json_encode($ret));
                 }
-            } catch (\Exception $e) {
-                $this->queue->message($total, $count, $e->getMessage(), 1);
-            }
+            });
         }
+        $this->output->info('推送完成');
+    }
 
-        $this->setQueueSuccess("本次共计推送 {$total}条数据。");
+    /**
+     * 更新记录
+     * @param $data
+     * @param string $content_table
+     * @return void
+     * @throws DbException
+     */
+    function updateContent($data, string $content_table): void
+    {
+        foreach ($data as $key => $value) {
+            $up_data['extend'][$this->upJsonField] = 1;
+            $this->app->db->name($content_table)
+                ->json(['extend'])
+                ->where('id', $value['id'])
+                ->update($up_data);
+            $this->output->info("正在更新数据库记录--[{$value['id']}]成功");
+        }
+    }
+
+    /**
+     * 创建内容链接
+     * @param string $module
+     * @param $data
+     * @return array|string[]
+     */
+
+    private function createContentUrl(string $module, $data)
+    {
+        return array_map(function ($value) use ($module) {
+            return $this->domain . urls($module . '/content/index', ['id' => $value['id']]);
+        }, $data);
     }
 }
