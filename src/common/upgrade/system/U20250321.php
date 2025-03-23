@@ -3,12 +3,40 @@
 namespace app\common\upgrade\system;
 
 use app\model\system\SystemConfigGroup;
+use app\model\system\SystemMenu;
+use app\model\system\SystemTasks;
 
 class U20250321
 {
     public function run()
     {
         $this->addIndexNowConfigGroup();
+        $this->addSystemMenu();
+        $this->addTask();
+    }
+
+    protected function addTask(): void
+    {
+        SystemTasks::create([
+            'title' => 'indexNow推送',
+            'exptime' => mt_rand(0, 59) . ' */2 * * *',
+            'task' => '\app\common\task\IndexNow'
+        ]);
+    }
+
+    protected function addSystemMenu()
+    {
+        $pid = \app\model\system\SystemMenu::where('slot', 'ext_sys')->value('id');
+        $menu_model = SystemMenu::where('pid', $pid)->where('node', 'system/indexNow/index')->findOrEmpty();
+        if (!$menu_model->isEmpty()) {
+            SystemMenu::create([
+                'title' => 'IndexNow',
+                'pid' => $pid,
+                'node' => 'system/indexNow/index',
+                'icon' => '',
+                'list' => 100,
+            ]);
+        }
     }
 
     protected function addIndexNowConfigGroup()

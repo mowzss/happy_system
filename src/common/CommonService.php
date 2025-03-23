@@ -2,6 +2,8 @@
 
 namespace app\common;
 
+use app\common\command\push\IndexNow;
+use app\common\command\task\Sitemap;
 use think\Service;
 
 class CommonService extends Service
@@ -22,7 +24,8 @@ class CommonService extends Service
     private function registerCommand(): void
     {
         $this->commands([
-            \app\common\command\task\Sitemap::class
+            Sitemap::class,
+            IndexNow::class
         ]);
     }
 }
