@@ -19,7 +19,7 @@ class U20250321
     {
         SystemTasks::create([
             'title' => 'indexNow推送',
-            'exptime' => mt_rand(0, 59) . ' */2 * * *',
+            'exptime' => mt_rand(0, 59) . ' */4 * * *',
             'task' => '\app\common\task\IndexNow'
         ]);
     }
