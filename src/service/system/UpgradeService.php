@@ -6,7 +6,6 @@ use app\common\util\SqlExecutor;
 use app\model\system\SystemUpgradeLog;
 use app\service\BaseService;
 use think\Exception;
-use think\facade\Log;
 
 class UpgradeService extends BaseService
 {
@@ -33,7 +32,6 @@ class UpgradeService extends BaseService
         if (empty($filename)) {
             throw new \think\Exception('filename empty');
         }
-        Log::write('module:' . $module . ' filename:' . $filename, 'task');
         $query = SystemUpgradeLog::where('module', $module)->where('filename', $filename)->findOrEmpty();
         return !$query->isEmpty();
     }
