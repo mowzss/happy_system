@@ -28,10 +28,11 @@ class U20250321
     {
         $pid = \app\model\system\SystemMenu::where('slot', 'ext_sys')->value('id');
         $menu_model = SystemMenu::where('pid', $pid)->where('node', 'system/indexNow/index')->findOrEmpty();
-        if (!$menu_model->isEmpty()) {
+        if ($menu_model->isEmpty()) {
             SystemMenu::create([
                 'title' => 'IndexNow',
                 'pid' => $pid,
+                'params' => '',
                 'node' => 'system/indexNow/index',
                 'icon' => '',
                 'list' => 100,
