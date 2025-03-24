@@ -35,6 +35,7 @@ class U20250321
                 'node' => 'system/indexNow/index',
                 'icon' => '',
                 'list' => 100,
+                'class' => 1
             ]);
         }
     }
