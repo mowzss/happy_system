@@ -30,13 +30,8 @@ class U20250321
         $menu_model = SystemMenu::where('pid', $pid)->where('node', 'system/indexNow/index')->findOrEmpty();
         if ($menu_model->isEmpty()) {
             SystemMenu::create([
-                'title' => 'IndexNow',
-                'pid' => $pid,
-                'params' => '',
-                'node' => 'system/indexNow/index',
-                'icon' => '',
-                'list' => 100,
-                'class' => 1
+                'title' => 'IndexNow', 'pid' => $pid, 'params' => '', 'node' => 'system/indexNow/index',
+                'icon' => '', 'list' => 100, 'class' => 1
             ]);
         }
     }
