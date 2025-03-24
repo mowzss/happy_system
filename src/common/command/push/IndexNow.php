@@ -5,6 +5,7 @@ namespace app\common\command\push;
 use mowzs\lib\extend\push\IndexNowPush;
 use think\console\Command;
 use think\console\Input;
+use think\console\input\Argument;
 use think\console\input\Option;
 use think\console\Output;
 use think\db\exception\DataNotFoundException;
@@ -30,7 +31,7 @@ class IndexNow extends Command
     protected function configure(): void
     {
         $this->setName('push:indexnow');
-        $this->addOption('module', null, Option::VALUE_REQUIRED, '模块名称');
+        $this->addArgument('module', Argument::OPTIONAL, '模块标记', 'article');
         $this->addOption('num', null, Option::VALUE_OPTIONAL, '默认条数', 1000);
         $this->addOption('domain', null, Option::VALUE_OPTIONAL, 'bing indexNow 域名 参数为pc 或者wap', 'pc');
         $this->setDescription('IndexNow推送');
@@ -47,7 +48,7 @@ class IndexNow extends Command
     protected function execute(Input $input, Output $output): void
     {
         //参数处理
-        $module = $input->getOption('module');
+        $module = $input->getArgument('module');
         if (empty($module)) {
             $output->error("没有指定模块");
         }

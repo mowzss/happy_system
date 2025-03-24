@@ -32,7 +32,7 @@ class IndexNow extends Task
             if (!empty(sys_config('p_index_now.is_open'))) {
                 $models = explode(',', sys_config('p_index_now.open_module'));
                 foreach ($models as $model) {
-                    Console::call('push:indexnow', ['--module=' . $model]);
+                    Console::call('push:indexnow', [$model]);
                     sleep(5);
                 }
 
