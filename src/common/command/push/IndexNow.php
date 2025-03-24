@@ -18,7 +18,7 @@ class IndexNow extends Command
     /**
      * @var int[]
      */
-    protected array $where = ['status' => 1, 'deleted_time' => null];
+    protected array $where = ['status' => 1, 'delete_time' => null];
     /**
      * 域名
      * @var string
