@@ -60,7 +60,7 @@ class U20250321
                 'type' => 'xmselect',
                 'title' => '开启模块',
                 'group_id' => $group_id,
-                'options' => '\app\common\fun\SystemModule@getAllModule',
+                'options' => '\app\common\fun\system\SystemModule@getAllModule',
                 'help' => '选择开启IndexNow推送模块',
                 'value' => '',
                 'extend' => NULL,

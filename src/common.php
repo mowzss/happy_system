@@ -39,10 +39,10 @@ if (!function_exists('fun')) {
      * @return mixed
      * @throws \Exception
      */
-    function fun(string $className, string $method, ...$params): mixed
+    function fun(string $module, string $className, string $method, ...$params): mixed
     {
         // 构建完整的类名，包含命名空间
-        $fullClassName = '\\app\\common\\fun\\' . ucfirst($className);
+        $fullClassName = '\\app\\common\\fun\\' . strtolower($module) . '\\' . ucfirst($className);
         if (!class_exists($fullClassName)) {
             throw new \Exception("Class {$fullClassName} not found.");
         }

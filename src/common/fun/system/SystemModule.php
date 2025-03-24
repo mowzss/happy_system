@@ -1,6 +1,6 @@
 <?php
 
-namespace app\common\fun;
+namespace app\common\fun\system;
 
 class SystemModule
 {
