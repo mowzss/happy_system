@@ -77,7 +77,7 @@ class IndexNow extends Command
     {
         $push = new IndexNowPush($this->domain, sys_config('p_index_now.index_key'));
         $model_table = $module . '_model';
-        $models = $this->app->db->name($model_table)->where('id', '>', 0)->where('deleted_time', null)->column('title', 'id');
+        $models = $this->app->db->name($model_table)->where('id', '>', 0)->column('title', 'id');
         foreach ($models as $mid => $model_name) {
             $content_table = $module . '_content_' . $mid;
             $this->app->db->name($content_table)->json(['extend'])->where($this->where)->where(function ($query) {
@@ -124,8 +124,10 @@ class IndexNow extends Command
 
     private function createContentUrl(string $module, $data)
     {
-        return array_map(function ($value) use ($module) {
-            return $this->domain . urls($module . '/content/index', ['id' => $value['id']]);
-        }, $data);
+        $urls = [];
+        foreach ($data as $value) {
+            $urls[] = $this->domain . urls($module . '/content/index', ['id' => $value['id']]);
+        }
+        return $urls;
     }
 }
