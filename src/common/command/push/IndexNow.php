@@ -24,9 +24,14 @@ class IndexNow extends Command
      * @var string
      */
     protected string $domain;
+    /**
+     * @var string
+     */
     protected string $jsonField = 'extend->index_now';
+    /**
+     * @var string
+     */
     protected string $upJsonField = 'index_now';
-
 
     protected function configure(): void
     {
