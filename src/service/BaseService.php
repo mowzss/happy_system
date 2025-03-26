@@ -104,9 +104,8 @@ abstract class BaseService
     {
         // 将模型名称转换为标准命名空间路径
         $modelName = $this->resolveModelName($model);
-
         // 从容器中获取模型实例
-        return $this->app->make($modelName);
+        return $this->app->make($modelName, [], true);
     }
 
     /**
