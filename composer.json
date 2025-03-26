@@ -41,7 +41,7 @@
         "app/common/fun": "src/common/fun",
         "app/logic/system": "src/service/system",
         "app/logic/user": "src/service/user",
-        "app/logic/BaseLogic.php": "src/service/BaseLogic.php",
+        "app/logic/BaseLogic.php": "src/logic/BaseLogic.php",
         "app/admin/event/AutoContent.php": "src/admin/event/AutoContent.php",
         "route/zzzz_system.php": "stc/route/zzzz_system.php",
         "app/common.php": "src/common.php",
