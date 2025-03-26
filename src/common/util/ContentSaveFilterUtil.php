@@ -6,7 +6,7 @@ use app\model\system\SystemConfig;
 use HTMLPurifier;
 use HTMLPurifier_Config;
 use mowzs\lib\baidu\AipNlp;
-use mowzs\lib\module\service\TagBaseService;
+use mowzs\lib\module\logic\TagBaseLogic;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
@@ -214,7 +214,7 @@ class ContentSaveFilterUtil extends UtilBase
         if (!empty($data['huati']) && empty($data['tag'])) {
             $huati = str2arr($data['huati']);
             foreach ($huati as $k => $v) {
-                $tags[$k] = TagBaseService::instance()->getTagIdByTitle($v);
+                $tags[$k] = TagBaseLogic::instance()->getTagIdByTitle($v);
             }
             $data['tag'] = arr2str($tags);
         }

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace app\service;
+namespace app\logic;
 
 use think\App;
 use think\Container;
@@ -15,7 +15,7 @@ use think\Model;
 /**
  * 基础服务类
  */
-abstract class BaseService
+abstract class BaseLogic
 {
     /**
      * @var App 应用程序实例
@@ -57,7 +57,7 @@ abstract class BaseService
      * 设置 module 的值
      *
      * @param string $module
-     * @return BaseService
+     * @return BaseLogic
      */
     public function setModule(string $module): static
     {

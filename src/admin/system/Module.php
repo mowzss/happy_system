@@ -6,7 +6,7 @@ namespace app\admin\system;
 use app\common\controllers\BaseAdmin;
 use app\common\traits\CrudTrait;
 use app\model\system\SystemModule;
-use app\service\system\ModuleService;
+use app\service\system\ModuleLogic;
 use think\App;
 
 /**
@@ -90,14 +90,14 @@ class Module extends BaseAdmin
 
     public function add(): string
     {
-        $this->modules = ModuleService::instance()->notInstalledModules();
+        $this->modules = ModuleLogic::instance()->notInstalledModules();
         if ($this->request->isPost()) {
             $module = $this->request->post('module');
             if (empty($module)) {
                 $this->error("提交信息有误请检查！");
             }
             try {
-                ModuleService::instance()->install($module);
+                ModuleLogic::instance()->install($module);
             } catch (\Exception $e) {
                 $this->error($e->getMessage());
             }

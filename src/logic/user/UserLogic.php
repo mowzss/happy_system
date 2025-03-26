@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace app\service\user;
+namespace app\logic\user;
 
 use app\model\user\UserInfo;
-use app\service\BaseService;
+use app\service\BaseLogic;
 
-class UserService extends BaseService
+class UserLogic extends BaseLogic
 {
     /**
      * 用户信息模型

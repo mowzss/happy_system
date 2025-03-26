@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace app\service\system;
+namespace app\logic\system;
 
 use app\model\system\SystemMenu;
 use think\Exception;

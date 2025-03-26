@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace app\service\system;
+namespace app\logic\system;
 
 use app\model\system\SystemLinks;
-use app\service\BaseService;
+use app\service\BaseLogic;
 
-class LinksService extends BaseService
+class LinksLogic extends BaseLogic
 {
     protected SystemLinks $model;
 

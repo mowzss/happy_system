@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace app\service\system;
+namespace app\logic\system;
 
 use app\common\util\SqlExecutor;
 use app\model\system\SystemModule;
-use app\service\BaseService;
+use app\service\BaseLogic;
 use mowzs\lib\helper\ModuleInstallHelper;
 
-class ModuleService extends BaseService
+class ModuleLogic extends BaseLogic
 {
     /**
      * 未安装模块

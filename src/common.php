@@ -130,7 +130,7 @@ if (!function_exists('get_links')) {
      */
     function get_links(int|string $cid = 1): mixed
     {
-        return \app\service\system\LinksService::instance()->getLinksByCid($cid);
+        return \app\service\system\LinksLogic::instance()->getLinksByCid($cid);
     }
 }
 
@@ -143,7 +143,7 @@ if (!function_exists('get_nav')) {
      */
     function get_nav(string $dir = 'pc'): mixed
     {
-        return \app\service\system\NavService::instance()->getNavByDir($dir);
+        return \app\service\system\NavLogic::instance()->getNavByDir($dir);
     }
 }
 if (!function_exists('get_word')) {

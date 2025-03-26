@@ -1,13 +1,13 @@
 <?php
 
-namespace app\service\system;
+namespace app\logic\system;
 
 use app\common\util\SqlExecutor;
 use app\model\system\SystemUpgradeLog;
-use app\service\BaseService;
+use app\service\BaseLogic;
 use think\Exception;
 
-class UpgradeService extends BaseService
+class UpgradeLogic extends BaseLogic
 {
 
     /**

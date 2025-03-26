@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace app\service\system;
+namespace app\logic\system;
 
 use app\model\system\SystemNav;
-use app\service\BaseService;
+use app\service\BaseLogic;
 use mowzs\lib\helper\DataHelper;
 
-class NavService extends BaseService
+class NavLogic extends BaseLogic
 {
     protected SystemNav $model;
 
