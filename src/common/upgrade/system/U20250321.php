@@ -57,7 +57,7 @@ class U20250321
                 'status' => '1',
             ], [
                 'name' => 'open_module',
-                'type' => 'xmselect',
+                'type' => 'checkbox',
                 'title' => '开启模块',
                 'group_id' => $group_id,
                 'options' => '\app\common\fun\system\SystemModule@getAllModule',
