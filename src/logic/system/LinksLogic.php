@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace app\logic\system;
 
+use app\logic\BaseLogic;
 use app\model\system\SystemLinks;
-use app\service\BaseLogic;
 
 class LinksLogic extends BaseLogic
 {

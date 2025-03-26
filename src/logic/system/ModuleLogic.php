@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace app\logic\system;
 
 use app\common\util\SqlExecutor;
+use app\logic\BaseLogic;
 use app\model\system\SystemModule;
-use app\service\BaseLogic;
 use mowzs\lib\helper\ModuleInstallHelper;
 
 class ModuleLogic extends BaseLogic

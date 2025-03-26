@@ -3,8 +3,8 @@
 namespace app\logic\system;
 
 use app\common\util\SqlExecutor;
+use app\logic\BaseLogic;
 use app\model\system\SystemUpgradeLog;
-use app\service\BaseLogic;
 use think\Exception;
 
 class UpgradeLogic extends BaseLogic

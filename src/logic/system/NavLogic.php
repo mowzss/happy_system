@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace app\logic\system;
 
+use app\logic\BaseLogic;
 use app\model\system\SystemNav;
-use app\service\BaseLogic;
 use mowzs\lib\helper\DataHelper;
 
 class NavLogic extends BaseLogic
