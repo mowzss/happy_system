@@ -3,6 +3,10 @@
 /*
  * 私有助手函数引入
  */
+
+use app\logic\system\LinksLogic;
+use app\logic\system\NavLogic;
+
 if (is_file(__DIR__ . 'function.php')) {
     include_once __DIR__ . 'function.php';
 }
@@ -130,7 +134,7 @@ if (!function_exists('get_links')) {
      */
     function get_links(int|string $cid = 1): mixed
     {
-        return \app\service\system\LinksLogic::instance()->getLinksByCid($cid);
+        return LinksLogic::instance()->getLinksByCid($cid);
     }
 }
 
@@ -143,7 +147,7 @@ if (!function_exists('get_nav')) {
      */
     function get_nav(string $dir = 'pc'): mixed
     {
-        return \app\service\system\NavLogic::instance()->getNavByDir($dir);
+        return NavLogic::instance()->getNavByDir($dir);
     }
 }
 if (!function_exists('get_word')) {
