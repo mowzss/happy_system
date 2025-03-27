@@ -3,7 +3,7 @@
 namespace app\admin\system;
 
 use app\common\controllers\BaseAdmin;
-use app\model\system\SystemConfig;
+use app\logic\system\SystemConfigLogic;
 use app\model\system\SystemConfigGroup;
 use mowzs\lib\Forms;
 use think\App;
@@ -14,11 +14,7 @@ use think\template\exception\TemplateNotFoundException;
 
 class IndexNow extends BaseAdmin
 {
-    /**
-     * 当前模型
-     * @var SystemConfig
-     */
-    protected SystemConfig $model;
+
     /**
      * 分组模型
      * @var SystemConfigGroup
@@ -29,10 +25,9 @@ class IndexNow extends BaseAdmin
      */
     protected $list;
 
-    public function __construct(App $app, SystemConfig $config, SystemConfigGroup $configGroup)
+    public function __construct(App $app, SystemConfigGroup $configGroup)
     {
         parent::__construct($app);
-        $this->model = $config;
         $this->groupModel = $configGroup;
     }
 
@@ -64,7 +59,7 @@ class IndexNow extends BaseAdmin
                     $data[$key] = implode(',', $value);
                 }
             }
-            if ($this->model->saveConfig($data)) {
+            if (SystemConfigLogic::instance()->saveConfig($data)) {
                 $this->success('保存成功');
             } else {
                 $this->error('保存失败');
@@ -96,7 +91,7 @@ class IndexNow extends BaseAdmin
         if (empty($group_id)) {
             $this->error('group_id 不能为空');
         }
-        $data = $this->model->getListByGroup($group_id);
+        $data = SystemConfigLogic::instance()->getListByGroup($group_id);
         if (!empty($data)) {
             return Forms::instance(['action' => urls('index')])
                 ->setInputs([['type' => 'hidden', 'name' => 'group_id', 'value' => $group_id]])

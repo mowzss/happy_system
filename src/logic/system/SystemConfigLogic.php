@@ -1,21 +1,17 @@
 <?php
-declare (strict_types=1);
 
-namespace app\model\system;
+namespace app\logic\system;
 
-use Exception;
+use app\logic\BaseLogic;
+use app\model\system\SystemConfig;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
+use think\Exception;
 use think\facade\Cache;
-use think\Model;
 
-class SystemConfig extends Model
+class SystemConfigLogic extends BaseLogic
 {
-    public static function onAfterRead($model): void
-    {
-
-    }
 
     /**
      * 清理重复的配置项
@@ -29,7 +25,6 @@ class SystemConfig extends Model
     {
         // 1. 按 module 分组清理
         $this->clearByField('module');
-
         // 2. 按 group_id 分组清理
         $this->clearByField('group_id');
     }
@@ -46,7 +41,7 @@ class SystemConfig extends Model
     private function clearByField(string $field): void
     {
         // 获取所有不同的分组值
-        $groups = $this->group($field)->column($field);
+        $groups = SystemConfig::group($field)->column($field);
 
         foreach ($groups as $group) {
             // 如果分组值为空，跳过
@@ -55,14 +50,14 @@ class SystemConfig extends Model
             }
 
             // 找到该分组下所有 name 相同的记录，并按 update_time 降序排序
-            $names = $this->where($field, $group)
+            $names = SystemConfig::where($field, $group)
                 ->group('name')
                 ->having('COUNT(name) > 1')  // 只选择有重复 name 的记录
                 ->column('name');
 
             foreach ($names as $name) {
                 // 查询该分组下 name 相同的记录，并按 update_time 降序排序
-                $records = $this->where([$field => $group, 'name' => $name])
+                $records = SystemConfig::where([$field => $group, 'name' => $name])
                     ->order('update_time', 'desc')
                     ->select();
 
@@ -79,7 +74,7 @@ class SystemConfig extends Model
 
                 // 删除重复的记录
                 foreach ($duplicates as $duplicate) {
-                    $this->destroy($duplicate['id']);
+                    SystemConfig::destroy($duplicate['id']);
                 }
             }
         }
@@ -92,9 +87,9 @@ class SystemConfig extends Model
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    public static function getListByGroup($gid): array
+    public function getListByGroup($gid): array
     {
-        return self::where('group_id', $gid)->where(['status' => 1])->order('list', 'desc')->select()->each(function ($item) {
+        return SystemConfig::where('group_id', $gid)->where(['status' => 1])->order('list', 'desc')->select()->each(function ($item) {
             $item['label'] = $item['title'];
         })->toArray();
     }
@@ -125,10 +120,12 @@ class SystemConfig extends Model
                     // 查找是否存在该 name 的配置项
                     $config = SystemConfig::where(['name' => $key, 'group_id' => $data['group_id']])->fetchSql()->findOrEmpty();
                     // 如果存在，更新现有记录
-                    dump($config);
+                    if (!$config->isEmpty()) {
+                        $config->save(['value' => $value]);
+                    }
                 }
-                self::clearConfigCache();//清理缓存
-                self::loadAllConfigsToCache();//加载缓存
+                $this->clearConfigCache();//清理缓存
+                $this->loadAllConfigsToCache();//加载缓存
                 return true;
             });
         } catch (\Exception $e) {
@@ -136,34 +133,6 @@ class SystemConfig extends Model
         }
     }
 
-    /**
-     * 将所有配置项加载到缓存中
-     * @return void
-     * @throws DataNotFoundException
-     * @throws DbException
-     * @throws ModelNotFoundException
-     */
-    public static function loadAllConfigsToCache(): void
-    {
-        // 构建缓存键
-        $cacheKey = 'all_configs';
-
-        // 如果缓存中没有，则从数据库加载并设置缓存
-        if (!Cache::has($cacheKey)) {
-            $configs = self::field('name, module, value')
-                ->select()
-                ->toArray();
-
-            // 转换为所需的结构
-            $formattedConfigs = [];
-            foreach ($configs as $config) {
-                $formattedConfigs[$config['module']][$config['name']] = $config['value'];
-            }
-
-            // 设置缓存，可以指定过期时间，这里假设7200秒
-            Cache::set($cacheKey, $formattedConfigs, 7200);
-        }
-    }
 
     /**
      * 根据名称获取配置值，名称可以是单个名称或 "module.name" 的形式
@@ -175,10 +144,10 @@ class SystemConfig extends Model
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public static function getConfigValue(?string $name = null, mixed $default = null): mixed
+    public function getConfigValue(?string $name = null, mixed $default = null): mixed
     {
         // 确保所有配置已加载到缓存
-        self::loadAllConfigsToCache();
+        $this->loadAllConfigsToCache();
 
         // 构建缓存键
         $cacheKey = 'all_configs';
@@ -205,6 +174,34 @@ class SystemConfig extends Model
         // 尝试从缓存中获取特定模块和名称的配置值
         $value = isset($allConfigs[$module][$name]) ? $allConfigs[$module][$name] : $default;
         return $value;
+    }
+
+    /**
+     * 将所有配置项加载到缓存中
+     * @return void
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
+     */
+    public function loadAllConfigsToCache(): void
+    {
+        // 构建缓存键
+        $cacheKey = 'all_configs';
+
+        // 如果缓存中没有，则从数据库加载并设置缓存
+        if (!Cache::has($cacheKey)) {
+            $configs = SystemConfig::field('name, module, value')
+                ->select()
+                ->toArray();
+
+            // 转换为所需的结构
+            $formattedConfigs = [];
+            foreach ($configs as $config) {
+                $formattedConfigs[$config['module']][$config['name']] = $config['value'];
+            }
+            // 设置缓存，可以指定过期时间，这里假设7200秒
+            Cache::set($cacheKey, $formattedConfigs, 7200);
+        }
     }
 
     /**
