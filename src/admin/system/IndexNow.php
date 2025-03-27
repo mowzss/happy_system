@@ -57,7 +57,7 @@ class IndexNow extends BaseAdmin
                 $this->error('group_id不能为空');
             }
             if (!empty($data['index_key'])) {
-                file_put_contents(public_path() . $data['index_key'] . 'txt', $data['index_key']);
+                file_put_contents(public_path() . $data['index_key'] . '.txt', $data['index_key']);
             }
             foreach ($data as $key => $value) {
                 if (is_array($value)) {
