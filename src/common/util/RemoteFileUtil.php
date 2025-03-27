@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace app\common\util;
 
-use app\logic\system\SystemConfigLogic;
+use app\logic\system\ConfigLogic;
 use app\model\system\SystemAttachment;
 use mowzs\lib\helper\MimeHelper;
 use think\exception\ValidateException;
@@ -33,9 +33,9 @@ class RemoteFileUtil
     public function __construct()
     {
         // 初始化配置
-        $this->max_size = $this->convertMbToBytes(SystemConfigLogic::instance()->getConfigValue('file_size'));
-        $this->allowed_types = str2arr(SystemConfigLogic::instance()->getConfigValue('file_type'));
-        $this->storage_driver = SystemConfigLogic::instance()->getConfigValue('storage_driver');
+        $this->max_size = $this->convertMbToBytes(ConfigLogic::instance()->getConfigValue('file_size'));
+        $this->allowed_types = str2arr(ConfigLogic::instance()->getConfigValue('file_type'));
+        $this->storage_driver = ConfigLogic::instance()->getConfigValue('storage_driver');
     }
 
     /**

@@ -10,7 +10,7 @@ use think\db\exception\ModelNotFoundException;
 use think\Exception;
 use think\facade\Cache;
 
-class SystemConfigLogic extends BaseLogic
+class ConfigLogic extends BaseLogic
 {
 
     /**
@@ -118,7 +118,7 @@ class SystemConfigLogic extends BaseLogic
                     }
 
                     // 查找是否存在该 name 的配置项
-                    $config = SystemConfig::where(['name' => $key, 'group_id' => $data['group_id']])->fetchSql()->findOrEmpty();
+                    $config = SystemConfig::where(['name' => $key, 'group_id' => $data['group_id']])->findOrEmpty();
                     // 如果存在，更新现有记录
                     if (!$config->isEmpty()) {
                         $config->save(['value' => $value]);

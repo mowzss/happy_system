@@ -4,9 +4,9 @@
  * 私有助手函数引入
  */
 
+use app\logic\system\ConfigLogic;
 use app\logic\system\LinksLogic;
 use app\logic\system\NavLogic;
-use app\logic\system\SystemConfigLogic;
 
 if (is_file(__DIR__ . 'function.php')) {
     include_once __DIR__ . 'function.php';
@@ -346,7 +346,7 @@ if (!function_exists('sys_config')) {
      */
     function sys_config(?string $name = null, mixed $default = null): mixed
     {
-        return SystemConfigLogic::instance()->getConfigValue($name, $default);
+        return ConfigLogic::instance()->getConfigValue($name, $default);
     }
 }
 if (!function_exists('sys_opt_log')) {

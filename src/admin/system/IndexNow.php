@@ -3,7 +3,7 @@
 namespace app\admin\system;
 
 use app\common\controllers\BaseAdmin;
-use app\logic\system\SystemConfigLogic;
+use app\logic\system\ConfigLogic;
 use app\model\system\SystemConfigGroup;
 use mowzs\lib\Forms;
 use think\App;
@@ -59,7 +59,7 @@ class IndexNow extends BaseAdmin
                     $data[$key] = implode(',', $value);
                 }
             }
-            if (SystemConfigLogic::instance()->saveConfig($data)) {
+            if (ConfigLogic::instance()->saveConfig($data)) {
                 $this->success('保存成功');
             } else {
                 $this->error('保存失败');
@@ -91,7 +91,7 @@ class IndexNow extends BaseAdmin
         if (empty($group_id)) {
             $this->error('group_id 不能为空');
         }
-        $data = SystemConfigLogic::instance()->getListByGroup($group_id);
+        $data = ConfigLogic::instance()->getListByGroup($group_id);
         if (!empty($data)) {
             return Forms::instance(['action' => urls('index')])
                 ->setInputs([['type' => 'hidden', 'name' => 'group_id', 'value' => $group_id]])
