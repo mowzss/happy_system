@@ -1,6 +1,6 @@
 <?php
 
-namespace app\common\command\task;
+namespace app\common\command;
 
 use app\model\system\SystemSitemap;
 use mowzs\lib\helper\SiteMapHelper;

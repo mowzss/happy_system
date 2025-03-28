@@ -3,7 +3,7 @@
 namespace app\common;
 
 use app\common\command\push\IndexNow;
-use app\common\command\task\Sitemap;
+use app\common\command\Sitemap;
 use think\Service;
 
 class CommonService extends Service
