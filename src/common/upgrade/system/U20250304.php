@@ -3,9 +3,9 @@
 namespace app\common\upgrade\system;
 
 
+use app\logic\system\MenuLogic;
 use app\model\system\SystemConfig;
 use app\model\system\SystemConfigGroup;
-use app\service\system\MenuService;
 use think\Exception;
 
 class U20250304
@@ -49,7 +49,7 @@ class U20250304
      */
     private function addSystemMenu(): void
     {
-        (new MenuService())->insertMenusBySlot($this->systemMenu, 'system_ext');
+        (new MenuLogic())->insertMenusBySlot($this->systemMenu, 'system_ext');
     }
 
     /**

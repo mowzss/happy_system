@@ -6,7 +6,7 @@ namespace app\logic\system;
 use app\model\system\SystemMenu;
 use think\Exception;
 
-class MenuService
+class MenuLogic
 {
     /**
      * 插入菜单数据。
