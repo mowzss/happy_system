@@ -149,12 +149,13 @@ class ContentSaveFilterUtil extends UtilBase
     public function setProcessingData($info): array
     {
         $info = $this->setTag($info);
+        $update = [];
         //检测功能是否开启
         if ($this->cheek()) {
             if (!empty($info['content'])) {
                 //过滤内容
                 if ($this->isPuriferHtml()) {
-                    $updata['content'] = $info['content'] = $this->puriferContent($info['content']);
+                    $update['content'] = $info['content'] = $this->puriferContent($info['content']);
                 }
                 $pattern = "/<img[^>]*src=[\'\"]((?:https?:)?\/\/[^\s\'\"]+\.(?:gif|jpg|png|jpeg|webp))[\'\"][^>]*>/i";
                 preg_match_all($pattern, $info['content'], $images);
@@ -174,7 +175,7 @@ class ContentSaveFilterUtil extends UtilBase
                             $newContent = str_replace($oldSrc, $newSrc, $newContent);
                         }
                     }
-                    $updata['content'] = $info['content'] = $newContent;
+                    $update['content'] = $info['content'] = $newContent;
                 }
                 //处理缩略图
                 if ($this->isImagesThum()) {
@@ -187,11 +188,11 @@ class ContentSaveFilterUtil extends UtilBase
                         $picurl = implode(',', $picurls);
                         $ispic = 1;
                     }
-                    $updata['images'] = $picurl ?? '';
-                    $updata['is_pic'] = $ispic ?? 0;
+                    $update['images'] = $picurl ?? '';
+                    $update['is_pic'] = $ispic ?? 0;
                 }
             }
-            return array_merge($info, $updata);
+            return array_merge($info, $update);
         }
         return $info;
     }
