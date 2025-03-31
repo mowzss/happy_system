@@ -48,10 +48,6 @@ class Index extends BaseAdmin
             'mysql_version' => Db::query("select version()")[0]['version()'],
             //运行内存
             'php_run_memory' => round(memory_get_peak_usage() / 1024 / 1024 / 1024, 6) . 'G',
-            //磁盘空间
-            'disk_total_space' => round(disk_total_space('/') / 1024 / 1024 / 1024, 2) . 'G',
-            //剩余空间
-            'disk_free_space' => round(disk_free_space('/') / 1024 / 1024 / 1024, 2) . 'G',
             //运行模式
             'php_sapi' => php_sapi_name(),
             //运行环境
