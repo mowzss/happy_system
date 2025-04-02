@@ -1,6 +1,6 @@
 <?php
 
-namespace app\common\command;
+namespace app\command\system;
 
 use app\model\system\SystemSitemap;
 use mowzs\lib\helper\SiteMapHelper;

@@ -36,7 +36,7 @@
         "app/common/traits": "src/common/traits",
         "app/common/upgrade/system": "src/common/upgrade/system",
         "app/common/util": "src/common/util",
-        "app/common/command": "src/common/command",
+        "app/command/system": "src/command/system",
         "app/common/task": "src/common/task",
         "app/common/fun": "src/common/fun",
         "app/logic/system": "src/logic/system",

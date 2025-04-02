@@ -1,6 +1,6 @@
 <?php
 
-namespace app\common\command\push;
+namespace app\command\system;
 
 use mowzs\lib\extend\push\IndexNowPush;
 use think\console\Command;
