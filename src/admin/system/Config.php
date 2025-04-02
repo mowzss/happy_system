@@ -7,6 +7,7 @@ use app\common\controllers\BaseAdmin;
 use app\common\traits\CrudTrait;
 use app\model\system\SystemConfig;
 use app\model\system\SystemConfigGroup;
+use app\model\system\SystemModule;
 use think\App;
 
 /**
@@ -104,7 +105,7 @@ class Config extends BaseAdmin
                     'type' => 'select',
                     'name' => 'group_id',
                     'label' => '所属分组',
-                    'options' => $this->group_model->where('status', 1)->column('title', 'id'),
+                    'options' => $this->getConfigGroupAll(),
                     'required' => true,
                 ], [
                     'type' => 'textarea',
@@ -125,15 +126,49 @@ class Config extends BaseAdmin
     }
 
     /**
+     * 获取分组信息
+     * @return array
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    protected function getConfigGroupAll(): array
+    {
+        $data = SystemConfigGroup::where('status', 1)->field('title,id,module')->select()->toArray();
+        $group = [];
+        foreach ($data as $key => $item) {
+            $module_title = SystemModule::where('dir', $item['module'])->value('title') ?: '未知';
+            $group[$item['id']] = $item['title'] . '[' . $module_title . ']';
+        }
+        return $group;
+    }
+
+    /**
+     * 获取分组信息
+     * @param string|int $group_id
+     * @return string
+     */
+    protected function getConfigGroupInfo(string|int $group_id = 0): string
+    {
+        $data = SystemConfigGroup::field('title,id,module')->findOrEmpty($group_id);
+        if (!$data->isEmpty()) {
+            $module_title = SystemModule::where('dir', $data['module'])->value('title') ?: '未知';
+            return $data['title'] . '[' . $module_title . ']';
+        }
+        return '未知';
+    }
+
+    /**
      * 列表数据回调
      * @param $data
      * @return void
      */
-    protected function _index_list_filter(&$data)
+    protected function _index_list_filter(&$data): void
     {
         $forms = $this->app->config->get('form');
         foreach ($data['data'] as &$item) {
-            $item['group_name'] = $this->group_model->where(['id' => $item['group_id']])->value('title');
+
+            $item['group_name'] = $this->getConfigGroupInfo($item['group_id']);
             $item['type_name'] = $forms[$item['type']] ?? '未定义类型';
         }
     }
