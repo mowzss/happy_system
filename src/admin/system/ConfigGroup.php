@@ -18,11 +18,10 @@ class ConfigGroup extends BaseAdmin
 
     protected SystemModule $module;
 
-    public function __construct(App $app, SystemConfigGroup $model, SystemModule $module)
+    public function __construct(App $app, SystemConfigGroup $model)
     {
         parent::__construct($app);
         $this->model = $model;
-        $this->module = $module;
         $this->setParams();
     }
 
@@ -34,7 +33,7 @@ class ConfigGroup extends BaseAdmin
     protected function _index_list_filter(&$data): void
     {
         foreach ($data['data'] as &$v) {
-            $v['module_name'] = $this->module->where('dir', $v['module'])->value('title');
+            $v['module_name'] = SystemModule::where('dir', $v['module'])->value('title') ?: $v['module'];
         }
     }
 

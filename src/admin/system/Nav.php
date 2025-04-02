@@ -6,7 +6,9 @@ namespace app\admin\system;
 
 use app\common\controllers\BaseAdmin;
 use app\common\traits\CrudTrait;
+use app\common\util\CrudUtil;
 use app\model\system\SystemNav;
+use mowzs\lib\Forms;
 use mowzs\lib\helper\DataHelper;
 use think\App;
 
@@ -53,6 +55,63 @@ class Nav extends BaseAdmin
         $this->app->config->load('extra/nav', 'nav'); // 加载反馈配置
         $this->menuType = (array)$app->config->get('nav');
         $this->setParams();
+    }
+
+    public function index(): string
+    {
+        $params = $this->request->param();
+        //  返回数据表格数据
+        if ($this->isLayTable()) {
+            // 构建查询
+            $query = $this->buildWhereConditions($this->model, $params);
+            // 处理关联查询
+            if (isset($params['with'])) {
+                foreach (explode(',', $params['with']) as $relation) {
+                    $query->with(trim($relation));
+                }
+            }
+
+            //设置排序
+            $query = $this->setListOrder($query, $params);
+            // 分页
+            $page = $params['page'] ?? 1;
+            $limit = $params['limit'] ?? ($this->limit ?? 20);
+            if (!$this->is_page) {
+                $limit = 200;
+            }
+            $paginateResult = $query->paginate([
+                'page' => $page,
+                'list_rows' => $limit
+            ]);
+
+
+            // 转换结果为数组
+            $data = $paginateResult->toArray();
+
+            // 回调过滤器
+            $this->callback('_list_filter', $data);
+            $this->success($data);
+        }
+        if (!empty($this->search)) {
+            $this->assign([
+                'search_code' => Forms::instance(['display' => false, 'outputMode' => 'code'])
+                    ->setFormHtml([
+                        'data-table-id' => get_lay_table_id()
+                    ])
+                    ->setSubmit('搜索')
+                    ->render($this->getSearchFields(), 'form_search'),
+            ]);
+        }
+
+        // 分配模板变量
+        $this->assign([
+            'where' => $this->bulidWhere(),
+            'right_button' => CrudUtil::getButtonHtml($this->tables['right_button'] ?? []),
+            'top_button' => CrudUtil::getButtonHtml($this->tables['top_button'] ?? [], 'top'),
+            'dirs' => $this->menuType
+        ]);
+        //渲染页面
+        return $this->fetch();
     }
 
     /**
