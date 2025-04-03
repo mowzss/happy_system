@@ -1,6 +1,6 @@
 {
   "name": "mowzs/system",
-  "description": "system",
+  "description": "系统核心模块",
   "type": "happy-module",
   "authors": [
     {
