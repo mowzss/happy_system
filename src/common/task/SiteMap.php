@@ -34,6 +34,8 @@ class SiteMap extends Task
                     foreach ($this->sitemap_class as $class) {
                         Console::call('system:sitemap', ['xml', '--module=' . $dir, '--class=' . $class]);
                         sleep(5);
+                        Console::call('system:sitemap', ['txt', '--module=' . $dir, '--class=' . $class]);
+                        sleep(5);
                     }
                 }
             } catch (DataNotFoundException|ModelNotFoundException|DbException $e) {
