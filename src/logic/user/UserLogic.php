@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace app\logic\user;
 
-use app\logic\BaseLogic;
 use app\model\user\UserInfo;
+use mowzs\lib\BaseLogic;
 
 class UserLogic extends BaseLogic
 {

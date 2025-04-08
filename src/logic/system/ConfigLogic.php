@@ -2,8 +2,9 @@
 
 namespace app\logic\system;
 
-use app\logic\BaseLogic;
+
 use app\model\system\SystemConfig;
+use mowzs\lib\BaseLogic;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
