@@ -5,8 +5,8 @@ namespace app\admin\system;
 
 use app\common\controllers\BaseAdmin;
 use app\common\traits\CrudTrait;
+use app\logic\system\ModuleLogic;
 use app\model\system\SystemModule;
-use app\service\system\ModuleLogic;
 use think\App;
 
 /**
