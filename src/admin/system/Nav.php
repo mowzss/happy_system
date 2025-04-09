@@ -42,6 +42,7 @@ class Nav extends BaseAdmin
      * @var array
      */
     protected array $menuType;
+    protected array $where;
 
     /**
      * @param App $app
@@ -60,6 +61,7 @@ class Nav extends BaseAdmin
     public function index(): string
     {
         $params = $this->request->param();
+        $this->where = ['dir' => $this->request->param('dir', 'pc')];
         //  返回数据表格数据
         if ($this->isLayTable()) {
             // 构建查询
@@ -172,18 +174,19 @@ class Nav extends BaseAdmin
         $this->forms = [
             'fields' => [
                 [
-                    'type' => 'select',
+                    'type' => 'hidden',
                     'name' => 'dir',
                     'label' => '分类',
                     'options' => $this->menuType,
                     'help' => '分类数据可以在项目配置目录下extra/menu.php文件中增加分类配置',
                     'required' => true,
+                    'value' => $this->request->param('dir')
                 ],
                 [
                     'type' => 'select',
                     'name' => 'pid',
                     'label' => '父级栏目',
-                    'options' => $this->model->getMenuForm(),
+                    'options' => $this->model->getMenuForm(['status' => 1, 'dir' => $this->request->param('dir')]),
                     'required' => true,
                 ],
                 [
@@ -290,4 +293,8 @@ class Nav extends BaseAdmin
         $data['data'] = DataHelper::instance()->arrToTree($data['data']);
     }
 
+    protected function _save_filter(&$data)
+    {
+
+    }
 }
