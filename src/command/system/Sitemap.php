@@ -3,7 +3,7 @@
 namespace app\command\system;
 
 use app\model\system\SystemSitemap;
-use mowzs\lib\helper\SiteMapHelper;
+use mowzs\lib\extend\SiteMapExtend;
 use think\Collection;
 use think\console\Command;
 use think\console\Input;
@@ -148,7 +148,7 @@ class Sitemap extends Command
             ->field('id,create_time')
             ->chunk($num, function (Collection $data) use (&$count, $total, $module, $type, $class, $domain) {
                 $count++;
-                $sitemap = new SiteMapHelper($this->config);
+                $sitemap = new SiteMapExtend($this->config);
                 foreach ($data->toArray() as $value) {
                     $url = $domain . urls($module . '/content/index', ['id' => $value['id']]);
                     $sitemap->addItem($url, format_datetime($value['create_time'] ?? time(), 'Y-m-d'));
@@ -160,7 +160,7 @@ class Sitemap extends Command
 
     /**
      * 生成SiteMap
-     * @param SiteMapHelper $sitemap
+     * @param SiteMapExtend $sitemap
      * @param string $type
      * @param string $table
      * @param int $count
@@ -170,7 +170,7 @@ class Sitemap extends Command
      * @throws DbException
      * @throws Exception
      */
-    private function extracted(SiteMapHelper $sitemap, string $type, string $table, int $count, string $module, int $total): void
+    private function extracted(SiteMapExtend $sitemap, string $type, string $table, int $count, string $module, int $total): void
     {
         $in_data = [
             'url' => $sitemap->generated($type, $table . '_' . $count),
@@ -203,7 +203,7 @@ class Sitemap extends Command
     private function buildColumnMap(string $module, string $type = '', string $class = 'cate'): void
     {
         $data = $this->app->db->name($this->table)->where($this->where)->field('id')->select();
-        $sitemap = new SiteMapHelper($this->config);
+        $sitemap = new SiteMapExtend($this->config);
         foreach ($data->toArray() as $value) {
             $url = $this->domain . urls($module . '/column/index', ['id' => $value['id']]);
             $sitemap->addItem($url, date('Y-m-d', time()));
@@ -240,7 +240,7 @@ class Sitemap extends Command
             $num,
             function (Collection $data) use (&$count, $total, $module, $type, $class) {
                 $count++;
-                $sitemap = new SiteMapHelper($this->config);
+                $sitemap = new SiteMapExtend($this->config);
                 foreach ($data->toArray() as $value) {
                     $url = $this->domain . urls($module . '/tag/show', ['id' => $value['id']]);
                     $sitemap->addItem($url, format_datetime($value['create_time'] ?? time(), 'Y-m-d'));
@@ -268,7 +268,7 @@ class Sitemap extends Command
         $data = $this->app->db->name($this->table)->field('id,url,create_time')->whereOr($this->delWhere)->field('id,create_time')->select()->toArray();
         while ($total > $count) {
             $count++;
-            $sitemap = new SiteMapHelper($this->config);
+            $sitemap = new SiteMapExtend($this->config);
             foreach ($data as $value) {
                 $url = $this->domain . $value['url'];
                 $sitemap->addItem($url, format_datetime($value['create_time'], 'Y-m-d H:i:s'));
