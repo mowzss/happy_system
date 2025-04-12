@@ -77,9 +77,15 @@ class Sitemap extends BaseAdmin
                     'title' => '格式',
                     'width' => 80,
 
+                ], [
+                    'field' => 'create_time',
+                    'title' => '生成时间',
+                    'width' => 120,
+
                 ]
             ],
             'top_button' => [
+                'event' => 'del'
 
             ],
             'right_button' => [
