@@ -85,7 +85,7 @@ class Sitemap extends BaseAdmin
                 ]
             ],
             'top_button' => [
-                'event' => 'del'
+                ['event' => 'del']
 
             ],
             'right_button' => [
