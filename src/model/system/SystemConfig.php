@@ -123,9 +123,10 @@ class SystemConfig extends Model
                     }
 
                     // 查找是否存在该 name 的配置项
-                    $config = SystemConfig::where(['name' => $key, 'group_id' => $data['group_id']])->fetchSql()->findOrEmpty();
-                    // 如果存在，更新现有记录
-                    dump($config);
+                    $config = SystemConfig::where(['name' => $key, 'group_id' => $data['group_id']])->findOrEmpty();
+                    if (!$config->isEmpty()) {
+                        $config->save(['value' => $value]);
+                    }
                 }
                 self::clearConfigCache();//清理缓存
                 self::loadAllConfigsToCache();//加载缓存
