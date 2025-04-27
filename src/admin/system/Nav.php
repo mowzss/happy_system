@@ -13,7 +13,7 @@ use mowzs\lib\helper\DataHelper;
 use think\App;
 
 /**
- * 系统菜单管理
+ * 网站导航管理
  */
 class Nav extends BaseAdmin
 {
@@ -23,7 +23,7 @@ class Nav extends BaseAdmin
      * 页面标题
      * @var string
      */
-    protected string $title = '网站菜单';
+    protected string $title = '网站导航菜单';
 
     /**
      * 默认排序
@@ -293,8 +293,15 @@ class Nav extends BaseAdmin
         $data['data'] = DataHelper::instance()->arrToTree($data['data']);
     }
 
-    protected function _save_filter(&$data)
+    /**
+     * 保存前数据处理
+     * @param $data
+     * @return void
+     */
+    protected function _save_filter(&$data): void
     {
-
+        if (!empty($data['node'])) {
+            $data['url'] = hurl($data['node'], $data['params'] ?: []);
+        }
     }
 }
