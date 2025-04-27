@@ -9,11 +9,11 @@ use app\common\controllers\BaseHome;
 class Index extends BaseHome
 {
     /**
+     * 系统首页
      * @return string
      */
-    public function index()
+    public function index(): string
     {
         return $this->fetch();
     }
-
 }

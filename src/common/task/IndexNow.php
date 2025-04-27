@@ -33,6 +33,7 @@ class IndexNow extends Task
                 $models = explode(',', sys_config('p_index_now.open_module'));
                 foreach ($models as $model) {
                     Console::call('push:indexnow', [$model]);
+                    $this->app->log->log('task', $model . '模块推送索引成功');
                     sleep(5);
                 }
 
