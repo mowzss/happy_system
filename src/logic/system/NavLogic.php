@@ -24,7 +24,7 @@ class NavLogic extends BaseLogic
         return $this->app->cache->remember('site_nav_' . $dir, function () use ($dir) {
             $where = ['dir' => $dir, 'status' => 1];
             $nav_data = SystemNav::where($where)->order('list', 'desc')->select()->each(function ($item) {
-                if (!empty($item['node'])) {
+                if (empty($item['url']) && !empty($item['node'])) {
                     $item['url'] = hurl($item['node'], $item['params'] ?: []);
                 }
                 return $item;
