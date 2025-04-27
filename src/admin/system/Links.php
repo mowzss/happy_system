@@ -151,4 +151,9 @@ class Links extends BaseAdmin
             $data['end_time'] = date('Y-m-d H:i:s');
         }
     }
+
+    protected function _save_result()
+    {
+        $this->app->cache->tag('system_link')->clear();
+    }
 }

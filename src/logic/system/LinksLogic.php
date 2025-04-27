@@ -27,6 +27,6 @@ class LinksLogic extends BaseLogic
     public function getLinksByCid(int|string $cid = 1): array
     {
         $where = ['cid' => $cid, 'status' => 1];
-        return SystemLinks::where($where)->order('list', 'desc')->cache(3600)->select()->toArray();
+        return SystemLinks::where($where)->order('list', 'desc')->cache(true, 3600, 'system_lisk')->select()->toArray();
     }
 }
