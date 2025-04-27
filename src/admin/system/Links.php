@@ -152,7 +152,11 @@ class Links extends BaseAdmin
         }
     }
 
-    protected function _save_result()
+    /**
+     * 保存后数据处理
+     * @return void
+     */
+    protected function _save_result(): void
     {
         $this->app->cache->tag('system_link')->clear();
     }
