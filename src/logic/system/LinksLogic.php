@@ -5,6 +5,9 @@ namespace app\logic\system;
 
 use app\model\system\SystemLinks;
 use mowzs\lib\BaseLogic;
+use think\db\exception\DataNotFoundException;
+use think\db\exception\DbException;
+use think\db\exception\ModelNotFoundException;
 
 class LinksLogic extends BaseLogic
 {
@@ -14,18 +17,16 @@ class LinksLogic extends BaseLogic
     }
 
     /**
+     * 获取分类下的链接
      * @param int|string $cid
-     * @return
-     * @throws \Throwable
+     * @return array
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
      */
-    public function getLinksByCid(int|string $cid = 1)
+    public function getLinksByCid(int|string $cid = 1): array
     {
         $where = ['cid' => $cid, 'status' => 1];
-        return SystemLinks::where($where)->order('list', 'desc')->cache(3600)->select()->each(function ($item) {
-            if (empty($item['url']) && !empty($item['node'])) {
-                $item['url'] = hurl($item['node'], $item['params'] ?: []);
-            }
-            return $item;
-        })->toArray();
+        return SystemLinks::where($where)->order('list', 'desc')->cache(3600)->select()->toArray();
     }
 }
