@@ -63,7 +63,7 @@ class XunsAdd extends Command
                 $this->xs->add([
                     'id' => $module . '_' . $data['id'],
                     'title' => $data['title'],
-                    'content' => $this->app->db->name($content_table . 's')->where('id', $data['id'])->value('content'),
+                    'content' => get_word(del_html($this->app->db->name($content_table . 's')->where('id', $data['id'])->value('content')), 300),
                     'module' => $module,
                     'aid' => $data['id'],
                     'images' => $data['images'],
