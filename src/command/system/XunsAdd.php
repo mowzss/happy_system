@@ -53,12 +53,13 @@ class XunsAdd extends Command
         $output->info('开始处理模块：' . $module);
         $modles = $this->app->db->name($model_table)->where('id', '>', 0)->select()->toArray();
         foreach ($modles as $model) {
-            $output->info('开始处理模块：' . $module . '下  ' . $model['title'] . '模型');
+            $output->info('开始处理模块：' . $module . $model['title'] . '模型');
             $content_table = $module . '_content_' . $model['id'];
-
             $content_data = $this->app->db->name($content_table)->json(['extend'])->where($this->where)->where(function ($query) {
                 $query->where($this->jsonField, 0)->whereOr($this->jsonField, null);
             })->field('id,title,images,create_time')->cursor();
+            $k = 0;
+            $count = count($content_data);
             foreach ($content_data as $data) {
                 $this->xs->add([
                     'id' => $module . '_' . $data['id'],
@@ -73,7 +74,8 @@ class XunsAdd extends Command
                 ]);
                 $up_data['extend'][$this->upJsonField] = 1;
                 $this->app->db->name($content_table)->json(['extend'])->where('id', $data['id'])->update($up_data);
-                $output->info("模块:{$module} 模型:{$model['title']} 模型id:{$model['id']} 内容id {$data['id']} 添加成功");
+                $output->info("[{$count}/{$k}]模块:{$module} 模型:{$model['title']} 模型id:{$model['id']} 内容id {$data['id']} 添加成功");
+                $k++;
             }
         }
     }
