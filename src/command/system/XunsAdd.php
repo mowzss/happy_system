@@ -59,7 +59,9 @@ class XunsAdd extends Command
                 $query->where($this->jsonField, 0)->whereOr($this->jsonField, null);
             })->field('id,title,images,create_time')->cursor();
             $k = 0;
-            $count = count($content_data);
+            $count = $this->app->db->name($content_table)->json(['extend'])->where($this->where)->where(function ($query) {
+                $query->where($this->jsonField, 0)->whereOr($this->jsonField, null);
+            })->count();
             foreach ($content_data as $data) {
                 $this->xs->add([
                     'id' => $module . '_' . $data['id'],
