@@ -126,8 +126,11 @@ class Sitemap extends BaseAdmin
 
         foreach ($data['data'] as &$vo) {
             $vo['class'] = $this->class_name[$vo['class']];
-            $vo['module'] = $this->modules[$vo['module']];
-//            $vo['url'] =  $vo['url'];
+            if ($vo['module'] == 'all') {
+                $vo['module'] = '全部模块';
+            } else {
+                $vo['module'] = $this->modules[$vo['module']] ?? '未知模块';
+            }
         }
     }
 

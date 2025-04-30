@@ -120,4 +120,27 @@ class ModuleLogic extends BaseLogic
         }
         return $module;
     }
+
+    /**
+     * @return array
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
+     */
+    public function getSitemapModule(): array
+    {
+        $data = SystemModule::where('status', 1)->field('dir,title')->select();
+        $module = [];
+        foreach ($data as $value) {
+            try {
+                if (!empty(sys_config($value['dir'] . '.is_open_sitemap'))) {
+                    $module[$value['dir']] = $value['title'];
+                }
+            } catch (DataNotFoundException|ModelNotFoundException|DbException $e) {
+                continue;
+            }
+        }
+        return $module;
+
+    }
 }
