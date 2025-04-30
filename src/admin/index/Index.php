@@ -89,8 +89,8 @@ class Index extends BaseAdmin
             Console::call('optimize:schema');
             $this->success('已切换线上模式');
         } else {
-            Run::setRun(true);
             Console::call('clear');
+            Run::setRun(true);
             $this->success('已切换为调试模式');
         }
     }
