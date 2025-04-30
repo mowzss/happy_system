@@ -15,7 +15,7 @@ use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
 use think\Exception;
 
-class Column extends Command
+class SitemapColumn extends Command
 {
     protected mixed $domain;
     /**
@@ -37,7 +37,7 @@ class Column extends Command
         $this->setName('sitemap:column');
         $this->addArgument('type', Argument::OPTIONAL, '生成sitemap地图', 'xml');
         $this->addOption('domain', null, Option::VALUE_OPTIONAL, '生成sitamap域名 参数为pc 或者wap', 'pc');
-        $this->setDescription('生成栏目sitemap网站地图');
+        $this->setDescription('生成网站全部模块的栏目sitemap网站地图');
     }
 
     /**

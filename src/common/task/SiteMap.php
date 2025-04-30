@@ -34,9 +34,9 @@ class SiteMap extends Task
             try {
                 if (sys_config($dir . '.is_open_sitemap', 0)) {
                     foreach ($this->sitemap_class as $class) {
-                        Console::call('system:sitemap', ['xml', '--module=' . $dir, '--class=' . $class]);
+                        Console::call('sitemap:build', ['xml', '--module=' . $dir, '--class=' . $class]);
                         sleep(5);
-                        Console::call('system:sitemap', ['txt', '--module=' . $dir, '--class=' . $class]);
+                        Console::call('sitemap:build', ['txt', '--module=' . $dir, '--class=' . $class]);
                         sleep(5);
                     }
                 }

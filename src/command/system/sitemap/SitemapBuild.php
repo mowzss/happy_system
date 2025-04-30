@@ -1,6 +1,6 @@
 <?php
 
-namespace app\command\system;
+namespace app\command\system\sitemap;
 
 use app\model\system\SystemSitemap;
 use mowzs\lib\extend\SiteMapExtend;
@@ -15,7 +15,7 @@ use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
 use think\Exception;
 
-class Sitemap extends Command
+class SitemapBuild extends Command
 {
     /**
      * @var int[]
@@ -45,12 +45,12 @@ class Sitemap extends Command
      */
     protected function configure(): void
     {
-        $this->setName('system:sitemap');
+        $this->setName('sitemap:build');
         $this->addArgument('type', Argument::OPTIONAL, '生成sitemap地图', 'xml');
-        $this->addOption('module', null, Option::VALUE_REQUIRED, '模块名称');
-        $this->addOption('class', null, Option::VALUE_OPTIONAL, 'sitemap内容类型', 'content');
+        $this->addOption('module', null, Option::VALUE_REQUIRED, '内容数据模块关键词如article');
+        $this->addOption('class', null, Option::VALUE_OPTIONAL, '内容数据类型支持content|tag|badlink', 'content');
         $this->addOption('domain', null, Option::VALUE_OPTIONAL, '生成sitamap域名 参数为pc 或者wap', 'pc');
-        $this->addOption('num', null, Option::VALUE_OPTIONAL, '默认条数', 10000);
+        $this->addOption('num', null, Option::VALUE_OPTIONAL, '单个文件url默认条数，默认值10000', 10000);
         $this->setDescription('生成sitemap网站地图');
     }
 
@@ -87,9 +87,6 @@ class Sitemap extends Command
         if ($class == 'content') {
             $this->buildContentMap($module, $type, $num, $class);
         }
-        if ($class == 'column') {
-            $this->buildColumnMap($module, $type, $class);
-        }
         if ($class == 'tag') {
             $this->buildTagMap($module, $type, $num, $class);
         }
@@ -111,8 +108,6 @@ class Sitemap extends Command
             $this->table = strtolower($module) . '_content';
         } elseif ($class == 'tag') {
             $this->table = strtolower($module) . '_tag';
-        } elseif ($class == 'column') {
-            $this->table = strtolower($module) . '_column';
         }
         $this->config = [
             'path' => $this->app->getRootPath() . 'public' . DIRECTORY_SEPARATOR . 'sitemap' . DIRECTORY_SEPARATOR . $module . DIRECTORY_SEPARATOR,
@@ -187,37 +182,6 @@ class Sitemap extends Command
         }
         SystemSitemap::create($in_data);
         $this->output->info("第[" . $count . "]条生成成功");
-    }
-
-    /**
-     * 生成栏目地图
-     * @param string $module 模块
-     * @param string $type sitemap类型 xml txt html
-     * @param string $class
-     * @return void
-     * @throws DbException
-     * @throws Exception
-     * @throws DataNotFoundException
-     * @throws ModelNotFoundException
-     */
-    private function buildColumnMap(string $module, string $type = '', string $class = 'cate'): void
-    {
-        $data = $this->app->db->name($this->table)->where($this->where)->field('id')->select();
-        $sitemap = new SiteMapExtend($this->config);
-        foreach ($data->toArray() as $value) {
-            $url = $this->domain . urls($module . '/column/index', ['id' => $value['id']]);
-            $sitemap->addItem($url, date('Y-m-d', time()));
-        }
-        $in_data = [
-            'url' => $sitemap->generated($type, $class),
-            'type' => $type,
-            'module' => $module,
-            'class' => $class,
-            'domain' => $this->domain,
-        ];
-        SystemSitemap::where('type', $type)->where('class', $class)->where('module', $module)->delete();
-        SystemSitemap::create($in_data);
-        $this->output->info("生成栏目sitemap成功");
     }
 
     /**
