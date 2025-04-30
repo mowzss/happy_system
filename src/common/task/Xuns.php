@@ -30,7 +30,7 @@ class Xuns extends Task
         foreach ($modules as $dir => $title) {
             try {
                 if (sys_config($dir . '.is_open_search', 0)) {
-                    Console::call('system:xuns_add', [$dir]);
+                    Console::call('xuns:add', [$dir]);
                     sleep(5);
                 }
             } catch (DataNotFoundException|ModelNotFoundException|DbException $e) {

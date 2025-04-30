@@ -2,11 +2,12 @@
 
 namespace app\common;
 
-use app\command\system\IndexNow;
+use app\command\system\indexnow\IndexNowClean;
+use app\command\system\indexnow\IndexNowPush;
 use app\command\system\sitemap\SitemapBuild;
 use app\command\system\sitemap\SitemapColumn;
-use app\command\system\XunsAdd;
-use app\command\system\XunsClean;
+use app\command\system\xuns\XunsAdd;
+use app\command\system\xuns\XunsClean;
 use think\Service;
 
 class CommonService extends Service
@@ -29,7 +30,8 @@ class CommonService extends Service
         $this->commands([
             SitemapColumn::class,
             SitemapBuild::class,
-            IndexNow::class,
+            IndexNowPush::class,
+            IndexNowClean::class,
             XunsAdd::class,
             XunsClean::class,
         ]);

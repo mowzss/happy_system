@@ -1,8 +1,7 @@
 <?php
 
-namespace app\command\system;
+namespace app\command\system\indexnow;
 
-use mowzs\lib\extend\push\IndexNowPush;
 use think\console\Command;
 use think\console\Input;
 use think\console\input\Argument;
@@ -12,7 +11,7 @@ use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
 
-class IndexNow extends Command
+class IndexNowPush extends Command
 {
 
     /**
@@ -35,7 +34,7 @@ class IndexNow extends Command
 
     protected function configure(): void
     {
-        $this->setName('push:indexnow');
+        $this->setName('indexnow:push');
         $this->addArgument('module', Argument::OPTIONAL, '模块标记', 'article');
         $this->addOption('num', null, Option::VALUE_OPTIONAL, '默认条数', 1000);
         $this->addOption('domain', null, Option::VALUE_OPTIONAL, 'bing indexNow 域名 参数为pc 或者wap', 'pc');
@@ -80,7 +79,7 @@ class IndexNow extends Command
      */
     private function contentPush(string $module, int $num): void
     {
-        $push = new IndexNowPush($this->domain, sys_config('p_index_now.index_key'));
+        $push = new \mowzs\lib\extend\push\IndexNowPush($this->domain, sys_config('p_index_now.index_key'));
         $model_table = $module . '_model';
         $models = $this->app->db->name($model_table)->where('id', '>', 0)->column('title', 'id');
         foreach ($models as $mid => $model_name) {

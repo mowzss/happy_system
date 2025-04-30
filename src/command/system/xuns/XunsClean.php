@@ -1,6 +1,6 @@
 <?php
 
-namespace app\command\system;
+namespace app\command\system\xuns;
 
 use app\logic\search\XunSearchLogic;
 use think\console\Command;
@@ -27,7 +27,7 @@ class XunsClean extends Command
      */
     protected function configure(): void
     {
-        $this->setName('system:xuns_clean');
+        $this->setName('xuns:clean');
     }
 
 

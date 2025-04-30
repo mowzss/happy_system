@@ -1,6 +1,6 @@
 <?php
 
-namespace app\command\system;
+namespace app\command\system\xuns;
 
 use app\logic\search\XunSearchLogic;
 use think\console\Command;
@@ -29,7 +29,7 @@ class XunsAdd extends Command
      */
     protected function configure(): void
     {
-        $this->setName('system:xuns_add');
+        $this->setName('xuns:add');
         $this->addArgument('module', Argument::OPTIONAL, '模块名称', 'article');
         $this->setDescription('XunSearch数据入库');
     }
