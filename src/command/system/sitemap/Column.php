@@ -61,14 +61,15 @@ class Column extends Command
         } else {
             $this->domain = sys_config('site_wap_domain', sys_config('site_domain'));
         }
-        $this->setConfig($this->domain);
+        $this->setConfig($domain);
         $sitemap = new SiteMapExtend($this->config);
         foreach ($module as $key => $item) {
             if (sys_config($key . '.is_open_sitemap', 0)) {
                 $table = "{$key}_column";
                 $data = $this->app->db->name($table)->where($this->where)->field('id')->select();
                 foreach ($data->toArray() as $value) {
-                    $url = $this->domain . urls($key . '/column/index', ['id' => $value['id']]);
+//                    $url = "{$this->domain}/{$key}/list_{$value['id']}.html";
+                    $url = $this->domain . urls("{$key}/column/index", ['id' => $value['id']]);
                     $sitemap->addItem($url, date('Y-m-d', time()));
                 }
             }
