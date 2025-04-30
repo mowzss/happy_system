@@ -12,7 +12,7 @@ use think\facade\Log;
 
 class SiteMap extends Task
 {
-    protected array $sitemap_class = ['content', 'tag', 'column'];
+    protected array $sitemap_class = ['content', 'tag'];
     /**
      * 单线程
      * @var bool
@@ -27,6 +27,8 @@ class SiteMap extends Task
      */
     public function handle(): void
     {
+        Console::call('sitemap:column', ['xml']);
+        Console::call('sitemap:column', ['txt']);
         $modules = (new SystemModule())->where(['status' => 1])->column('title', 'dir');
         foreach ($modules as $dir => $title) {
             try {
