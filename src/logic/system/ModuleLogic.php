@@ -7,6 +7,9 @@ use app\common\util\SqlExecutor;
 use app\model\system\SystemModule;
 use mowzs\lib\BaseLogic;
 use mowzs\lib\helper\ModuleInstallHelper;
+use think\db\exception\DataNotFoundException;
+use think\db\exception\DbException;
+use think\db\exception\ModelNotFoundException;
 
 class ModuleLogic extends BaseLogic
 {
@@ -93,5 +96,28 @@ class ModuleLogic extends BaseLogic
             return include $file;
         }
         return null;
+    }
+
+    /**
+     * 获取开启搜索功能的模块
+     * @return array
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
+     */
+    public function getSearchModule(): array
+    {
+        $data = SystemModule::where('status', 1)->field('dir,title')->select();
+        $module = [];
+        foreach ($data as $value) {
+            try {
+                if (!empty(sys_config($value['dir'] . '.is_open_search'))) {
+                    $module[$value['dir']] = $value['title'];
+                }
+            } catch (DataNotFoundException|ModelNotFoundException|DbException $e) {
+                continue;
+            }
+        }
+        return $module;
     }
 }
