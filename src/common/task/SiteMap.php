@@ -37,7 +37,7 @@ class SiteMap extends Task
                         Console::call('sitemap:build', ['xml', '--module=' . $dir, '--class=' . $class]);
                         sleep(5);
                         Console::call('sitemap:build', ['txt', '--module=' . $dir, '--class=' . $class]);
-                        sleep(5);
+                        sleep(3);
                     }
                 }
             } catch (DataNotFoundException|ModelNotFoundException|DbException $e) {
