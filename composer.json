@@ -37,7 +37,7 @@
         "app/common/util": "src/common/util",
         "app/command/system": "src/command/system",
         "app/common/task": "src/common/task",
-        "app/common/fun": "src/common/fun/system",
+        "app/common/fun/system": "src/common/fun/system",
         "app/logic/system": "src/logic/system",
         "app/logic/user": "src/logic/user",
         "route/zzzz_system.php": "stc/route/zzzz_system.php",
