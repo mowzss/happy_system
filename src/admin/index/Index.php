@@ -85,9 +85,12 @@ class Index extends BaseAdmin
         $status = $this->request->post('status/d', 0);
         if ($status === 0) {
             Run::setRun();
+            Console::call('optimize:route');
+            Console::call('optimize:schema');
             $this->success('已切换线上模式');
         } else {
             Run::setRun(true);
+            Console::call('clear');
             $this->success('已切换为调试模式');
         }
     }
@@ -118,6 +121,8 @@ class Index extends BaseAdmin
     {
         Console::call('clear');
         $this->app->cache->clear();
+        Console::call('optimize:route');
+        Console::call('optimize:schema');
         $this->success('清理成功');
     }
 
