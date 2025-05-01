@@ -43,7 +43,7 @@ class SitemapIndex extends Command
         } else {
             $this->domain = sys_config('site_wap_domain', sys_config('site_domain'));
         }
-        $url_path = $domain . DIRECTORY_SEPARATOR . 'sitemap' . DIRECTORY_SEPARATOR . 'sitemap_index.xml';
+        $url_path = $this->domain . DIRECTORY_SEPARATOR . 'sitemap' . DIRECTORY_SEPARATOR . 'sitemap_index.xml';
         $file_path = $this->app->getRootPath() . 'public' . DIRECTORY_SEPARATOR . 'sitemap' . DIRECTORY_SEPARATOR . 'sitemap_index.xml';
         $data = SystemSitemap::where('type', 'xml')->select()->toArray();
         $sitemap_index = new SitemapIndexExtend();
