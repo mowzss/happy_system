@@ -29,7 +29,11 @@ class Sitemap extends BaseAdmin
     protected array $class_name = [
         'content' => '内容',
         'column' => '栏目',
-        'tag' => '标签'
+        'tag' => '标签',
+        'sitemap' => '索引'
+    ];
+    protected array $type_name = [
+        'xml' => 'XML地图', 'txt' => 'TXT地图', 'html' => 'HTML地图', 'index_xml' => 'XML索引'
     ];
     /**
      * 模块列表
@@ -74,13 +78,13 @@ class Sitemap extends BaseAdmin
                     'align' => 'left',
                 ], [
                     'field' => 'type',
-                    'title' => '格式',
-                    'width' => 80,
+                    'title' => '类型',
+                    'width' => 120,
 
                 ], [
                     'field' => 'create_time',
                     'title' => '生成时间',
-                    'width' => 120,
+                    'width' => 160,
 
                 ]
             ],
@@ -89,7 +93,7 @@ class Sitemap extends BaseAdmin
 
             ],
             'right_button' => [
-
+                ['event' => 'del']
             ]
 
         ];
@@ -108,11 +112,17 @@ class Sitemap extends BaseAdmin
                     'label' => '数据',
                     'options' => $this->class_name,
                     'required' => true,
+                ], [
+                    'type' => 'select',
+                    'name' => 'type',
+                    'label' => '类型',
+                    'options' => $this->type_name,
+                    'required' => true,
                 ]
             ]
         ];
         $this->search = [
-            'id#=#id', 'module#like#name', 'class#=#class', 'create_time#between#create_time'
+            'id#=#id', 'module#like#name', 'class#=#class', 'type#=#type', 'create_time#between#create_time'
         ];
     }
 
@@ -125,7 +135,8 @@ class Sitemap extends BaseAdmin
     {
 
         foreach ($data['data'] as &$vo) {
-            $vo['class'] = $this->class_name[$vo['class']];
+            $vo['class'] = $this->class_name[$vo['class']] ?? '未知数据';
+            $vo['type'] = $this->type_name[$vo['type']] ?? '未知类型';
             if ($vo['module'] == 'all') {
                 $vo['module'] = '全部模块';
             } else {

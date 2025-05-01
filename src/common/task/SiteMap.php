@@ -49,5 +49,6 @@ class SiteMap extends Task
                 Log::error($e->getMessage());
             }
         }
+        Console::call('sitemap:index');
     }
 }

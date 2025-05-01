@@ -6,6 +6,7 @@ use app\command\system\indexnow\IndexNowClean;
 use app\command\system\indexnow\IndexNowPush;
 use app\command\system\sitemap\SitemapBuild;
 use app\command\system\sitemap\SitemapColumn;
+use app\command\system\sitemap\SitemapIndex;
 use app\command\system\xuns\XunsAdd;
 use app\command\system\xuns\XunsClean;
 use think\Service;
@@ -30,6 +31,7 @@ class CommonService extends Service
         $this->commands([
             SitemapColumn::class,
             SitemapBuild::class,
+            SitemapIndex::class,
             IndexNowPush::class,
             IndexNowClean::class,
             XunsAdd::class,
