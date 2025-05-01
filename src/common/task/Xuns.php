@@ -26,6 +26,7 @@ class Xuns extends Task
      */
     public function handle(): void
     {
+        
         $modules = (new SystemModule())->where(['status' => 1])->column('title', 'dir');
         foreach ($modules as $dir => $title) {
             try {

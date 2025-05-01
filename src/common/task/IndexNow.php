@@ -2,6 +2,7 @@
 
 namespace app\common\task;
 
+use mowzs\lib\extend\RuntimeExtend;
 use mowzs\lib\task\Task;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
@@ -28,6 +29,10 @@ class IndexNow extends Task
      */
     public function handle(): void
     {
+        if (!RuntimeExtend::checkRoute()) {
+            Log::error('当前任务【indexnow】可执行条件不足');
+            return;
+        }
         try {
             if (!empty(sys_config('p_index_now.is_open'))) {
                 $models = explode(',', sys_config('p_index_now.open_module'));

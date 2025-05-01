@@ -2,6 +2,7 @@
 
 namespace app\command\system\indexnow;
 
+use mowzs\lib\extend\RuntimeExtend;
 use think\console\Command;
 use think\console\Input;
 use think\console\input\Argument;
@@ -10,6 +11,7 @@ use think\console\Output;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
+use think\facade\Log;
 
 class IndexNowPush extends Command
 {
@@ -51,6 +53,11 @@ class IndexNowPush extends Command
      */
     protected function execute(Input $input, Output $output): void
     {
+        if (!RuntimeExtend::checkRoute()) {
+            Log::error('当前命令【indexnow:push】可执行条件不足-Route');
+            $output->error("当前命令【indexnow:push】可执行条件不足-Route");
+            return;
+        }
         //参数处理
         $module = $input->getArgument('module');
         if (empty($module)) {

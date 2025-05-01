@@ -3,6 +3,7 @@
 namespace app\common\task;
 
 use app\model\system\SystemModule;
+use mowzs\lib\extend\RuntimeExtend;
 use mowzs\lib\task\Task;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
@@ -27,6 +28,10 @@ class SiteMap extends Task
      */
     public function handle(): void
     {
+        if (!RuntimeExtend::checkRoute()) {
+            Log::error('当前任务【sitemap】可执行条件不足');
+            return;
+        }
         Console::call('sitemap:column', ['xml']);
         Console::call('sitemap:column', ['txt']);
         $modules = (new SystemModule())->where(['status' => 1])->column('title', 'dir');

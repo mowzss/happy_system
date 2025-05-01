@@ -3,6 +3,7 @@
 namespace app\command\system\sitemap;
 
 use app\model\system\SystemSitemap;
+use mowzs\lib\extend\RuntimeExtend;
 use mowzs\lib\extend\SiteMapExtend;
 use think\Collection;
 use think\console\Command;
@@ -14,6 +15,7 @@ use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
 use think\Exception;
+use think\facade\Log;
 
 class SitemapBuild extends Command
 {
@@ -66,6 +68,11 @@ class SitemapBuild extends Command
      */
     protected function execute(Input $input, Output $output): void
     {
+        if (!RuntimeExtend::checkRoute()) {
+            Log::error('当前命令【sitemap:build】可执行条件不足-Route');
+            $output->error('当前命令【sitemap:build】可执行条件不足-Route');
+            return;
+        }
         $type = $input->getArgument('type');
         //参数处理
         $module = $input->getOption('module');

@@ -3,6 +3,7 @@
 namespace app\command\system\xuns;
 
 use app\logic\search\XunSearchLogic;
+use mowzs\lib\extend\RuntimeExtend;
 use think\console\Command;
 use think\console\Input;
 use think\console\input\Argument;
@@ -10,6 +11,7 @@ use think\console\Output;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
+use think\facade\Log;
 
 class XunsAdd extends Command
 {
@@ -49,7 +51,11 @@ class XunsAdd extends Command
         $output->info('开始处理XunSearch数据');
         $module = $input->getArgument('module');
         $model_table = $module . '_model';
-
+        if (!RuntimeExtend::checkRoute()) {
+            Log::error('当前命令【xuns:add】可执行条件不足-Route');
+            $output->info('当前命令【xuns:add】可执行条件不足-Route');
+            return;
+        }
         $output->info('开始处理模块：' . $module);
         $modles = $this->app->db->name($model_table)->where('id', '>', 0)->select()->toArray();
         foreach ($modles as $model) {
