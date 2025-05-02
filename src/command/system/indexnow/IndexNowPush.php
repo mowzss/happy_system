@@ -117,7 +117,7 @@ class IndexNowPush extends Command
     protected function updateContent($data, string $content_table): void
     {
         foreach ($data as $key => $value) {
-            $up_data['extend'][$this->upJsonField] = 1;
+            $up_data[$this->jsonField] = 1;
             $this->app->db->name($content_table)
                 ->json(['extend'])
                 ->where('id', $value['id'])

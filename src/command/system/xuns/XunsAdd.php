@@ -80,7 +80,7 @@ class XunsAdd extends Command
                     'status' => 1,
                     'url' => hurl($module . '/content/index', ['id' => $data['id']]),
                 ]);
-                $up_data['extend'][$this->upJsonField] = 1;
+                $up_data[$this->jsonField] = 1;
                 $this->app->db->name($content_table)->json(['extend'])->where('id', $data['id'])->update($up_data);
                 $output->info("[{$count}/{$k}]模块:{$module} 模型:{$model['title']} 模型id:{$model['id']} 内容id {$data['id']} 添加成功");
                 $k++;
