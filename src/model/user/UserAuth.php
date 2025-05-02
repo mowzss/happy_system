@@ -7,8 +7,15 @@ use mowzs\lib\Model;
 
 class UserAuth extends Model
 {
-    // 设置json类型字段
-    protected $json = ['nodes'];
     // 设置JSON数据返回数组
-    protected $jsonAssoc = true;
+    protected function getOptions(): array
+    {
+        return [
+            'type' => [
+                // 设置JSON字段的类型
+                'nodes' => 'json'
+            ],
+            'jsonAssoc' => true,  // 设置JSON数据返回数组
+        ];
+    }
 }
