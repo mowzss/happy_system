@@ -63,7 +63,7 @@ class XunsAdd extends Command
             $content_table = $module . '_content_' . $model['id'];
             $content_data = $this->app->db->name($content_table)->json(['extend'])->where($this->where)->where(function ($query) {
                 $query->where($this->jsonField, 0)->whereOr($this->jsonField, null);
-            })->field('id,title,images,create_time')->cursor();
+            })->field('id,title,images,create_time,extend')->cursor();
             $k = 0;
             $count = $this->app->db->name($content_table)->json(['extend'])->where($this->where)->where(function ($query) {
                 $query->where($this->jsonField, 0)->whereOr($this->jsonField, null);
@@ -80,7 +80,11 @@ class XunsAdd extends Command
                     'status' => 1,
                     'url' => hurl($module . '/content/index', ['id' => $data['id']]),
                 ]);
-                $up_data[$this->jsonField] = 1;
+                if (empty($value['extend'])) {
+                    $up_data['extend'][$this->upJsonField] = 1;
+                } else {
+                    $up_data[$this->jsonField] = 1;
+                }
                 $this->app->db->name($content_table)->json(['extend'])->where('id', $data['id'])->update($up_data);
                 $output->info("[{$count}/{$k}]模块:{$module} 模型:{$model['title']} 模型id:{$model['id']} 内容id {$data['id']} 添加成功");
                 $k++;

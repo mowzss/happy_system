@@ -93,7 +93,7 @@ class IndexNowPush extends Command
             $content_table = $module . '_content_' . $mid;
             $this->app->db->name($content_table)->json(['extend'])->where($this->where)->where(function ($query) {
                 $query->where($this->jsonField, 0)->whereOr($this->jsonField, null);
-            })->field('id')->chunk($num, function ($data) use ($module, $push, $content_table) {
+            })->field('id,extend')->chunk($num, function ($data) use ($module, $push, $content_table) {
                 $urls = $this->createContentUrl($module, $data);
                 $ret = $push->pushUrls($urls);
                 if ($ret['code'] == 1) {
@@ -118,6 +118,12 @@ class IndexNowPush extends Command
     {
         foreach ($data as $key => $value) {
             $up_data[$this->jsonField] = 1;
+
+            if (empty($value['extend'])) {
+                $up_data['extend'][$this->upJsonField] = 1;
+            } else {
+                $up_data[$this->jsonField] = 1;
+            }
             $this->app->db->name($content_table)
                 ->json(['extend'])
                 ->where('id', $value['id'])
