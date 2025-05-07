@@ -97,7 +97,7 @@ class ContentSync extends Command
     private function queryAndClear(int|string $id, string $table, string|array $tables): void
     {
         $contents = Db::name($table)->findOrEmpty($id);
-        if ($contents->isEmpty()) {
+        if (empty($contents)) {
             if (is_array($tables)) {
                 foreach ($tables as $table) {
                     Db::name($table)->where('id', $id)->delete();
