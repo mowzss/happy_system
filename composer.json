@@ -36,6 +36,7 @@
         "app/common/upgrade/system": "src/common/upgrade/system",
         "app/common/util": "src/common/util",
         "app/command/system": "src/command/system",
+        "app/command/module": "src/command/module",
         "app/common/task": "src/common/task",
         "app/common/fun/system": "src/common/fun/system",
         "app/logic/system": "src/logic/system",
