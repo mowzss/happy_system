@@ -2,6 +2,7 @@
 
 namespace app\common;
 
+use app\command\module\ContentSync;
 use app\command\system\indexnow\IndexNowClean;
 use app\command\system\indexnow\IndexNowPush;
 use app\command\system\sitemap\SitemapBuild;
@@ -36,6 +37,7 @@ class CommonService extends Service
             IndexNowClean::class,
             XunsAdd::class,
             XunsClean::class,
+            ContentSync::class,
         ]);
     }
 }
