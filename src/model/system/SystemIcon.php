@@ -7,5 +7,4 @@ use mowzs\lib\Model;
 
 class SystemIcon extends Model
 {
-
 }
