@@ -257,12 +257,7 @@ class Nav extends BaseAdmin
 
         // 定义搜索条件
         $this->search = [
-            'id#=#id',
-            'title#like#title',
-            'dir#=#dir',
-            'url#like#url',
-            'node#=#node',
-            'status#=#status',
+            'id#=#id', 'title#like#title', 'url#like#url', 'node#=#node', 'dir#=#dir', 'status#=#status',
         ];
     }
 
