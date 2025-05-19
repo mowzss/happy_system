@@ -38,11 +38,12 @@ if (!function_exists('fun')) {
     /**
      * 动态调用app\common\fun下的类及方法
      *
+     * @param string $module
      * @param string $className 类名
      * @param string $method 方法名
      * @param mixed ...$params 参数列表
      * @return mixed
-     * @throws \Exception
+     * @throws ReflectionException
      */
     function fun(string $module, string $className, string $method, ...$params): mixed
     {
