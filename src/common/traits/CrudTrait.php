@@ -497,6 +497,9 @@ trait CrudTrait
                     if (in_array($searchField['type'], ['radio', 'checkbox'])) {
                         $searchField['type'] = 'select';
                     }
+                    if (in_array($searchField['type'], ['hidden']) && is_array($searchField['options'])) {
+                        $searchField['type'] = 'select';
+                    }
                     unset($searchField['required']);
                     if (in_array($searchField['type'], ['datetime', 'date'])) {
                         $searchField['type'] = 'daterange';
