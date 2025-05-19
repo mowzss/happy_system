@@ -104,6 +104,10 @@ class Icon extends BaseAdmin
                     'edit' => 'text',
                     'sort' => true,
                 ], [
+                    'field' => 'is_show',
+                    'title' => '是否引用',
+                    'templet' => 'switch'
+                ], [
                     'field' => 'status',
                     'title' => '状态',
                     'templet' => 'switch'
@@ -147,6 +151,15 @@ class Icon extends BaseAdmin
                     'type' => 'text',
                     'name' => 'url',
                     'label' => '前端地址',
+                    'required' => true
+                ], [
+                    'type' => 'radio',
+                    'name' => 'is_show',
+                    'label' => '是否引用',
+                    'options' => [
+                        '1' => '显示', '0' => '隐藏'
+                    ],
+                    'help' => '如layui本就在后台页面中使用，则无需选择显示，如在其他应用端使用为便于后台显示图标效果，则建议选择显示',
                     'required' => true
                 ]
             ]
