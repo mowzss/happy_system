@@ -11,6 +11,16 @@ use app\logic\system\NavLogic;
 if (is_file(__DIR__ . 'function.php')) {
     include_once __DIR__ . 'function.php';
 }
+if (!function_exists('url_with')) {
+    function url_with($url = '', $params = []): string
+    {
+        // 获取当前请求的所有 GET 参数
+        $currentParams = request()->param();
+        // 合并参数，新参数覆盖旧参数
+        $newParams = array_merge($currentParams, $params);
+        return urls($url, $newParams);
+    }
+}
 
 if (!function_exists('static_version')) {
     function static_version()
