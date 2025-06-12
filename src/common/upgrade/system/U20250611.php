@@ -19,7 +19,7 @@ class U20250611
             if (empty(SystemConfig::where(['group_id' => $group_id, 'name' => 'editor_default'])->value('id'))) {
                 SystemConfig::create([
                     'name' => 'editor_default',
-                    'type' => 'text',
+                    'type' => 'select',
                     'title' => '默认富文本编辑器',
                     'group_id' => $group_id,
                     'options' => 'tinymce|tinymce编辑器' . PHP_EOL . 'wangeditor|WangEditor' . PHP_EOL . 'ueditor|百度Ueditor',
