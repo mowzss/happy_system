@@ -12,6 +12,7 @@ use app\command\system\spider\ClearLogs;
 use app\command\system\spider\DailyReport;
 use app\command\system\xuns\XunsAdd;
 use app\command\system\xuns\XunsClean;
+use app\common\middleware\system\SpiderDetectMiddleware;
 use think\Service;
 
 class CommonService extends Service
@@ -22,6 +23,8 @@ class CommonService extends Service
 
     public function boot(): void
     {
+        // 注册蜘蛛信息中间件
+        $this->app->middleware->add(SpiderDetectMiddleware::class);
         // 注册命令行
         $this->registerCommand();
     }
