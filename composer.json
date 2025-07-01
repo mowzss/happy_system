@@ -38,6 +38,7 @@
         "app/command/system": "src/command/system",
         "app/command/module": "src/command/module",
         "app/common/task": "src/common/task",
+        "app/common/middleware/system": "src/common/middleware/system",
         "app/common/fun/system": "src/common/fun/system",
         "app/logic/system": "src/logic/system",
         "app/logic/user": "src/logic/user",

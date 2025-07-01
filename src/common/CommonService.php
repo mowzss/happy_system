@@ -8,6 +8,8 @@ use app\command\system\indexnow\IndexNowPush;
 use app\command\system\sitemap\SitemapBuild;
 use app\command\system\sitemap\SitemapColumn;
 use app\command\system\sitemap\SitemapIndex;
+use app\command\system\spider\ClearLogs;
+use app\command\system\spider\DailyReport;
 use app\command\system\xuns\XunsAdd;
 use app\command\system\xuns\XunsClean;
 use think\Service;
@@ -38,6 +40,8 @@ class CommonService extends Service
             XunsAdd::class,
             XunsClean::class,
             ContentSync::class,
+            ClearLogs::class,
+            DailyReport::class
         ]);
     }
 }
