@@ -25,12 +25,12 @@ class ClearLogs extends Command
     protected function execute(Input $input, Output $output): bool|int|null
     {
         // 计算一周前的时间点
-        $oneWeekAgo = date('Y-m-d H:i:s', strtotime('-7 days'));
+        $oneWeekAgo = date('Y-m-d', strtotime('-7 days'));
 
         try {
             // 删除一周前的数据
-            $rowsDeleted = (new \app\model\system\SystemSpiderLog())
-                ->where('create_time', '<', $oneWeekAgo)
+            $rowsDeleted = (new \app\model\system\SystemSpiderLogs())
+                ->whereTime('create_time', '<', $oneWeekAgo)
                 ->delete();
 
             if ($rowsDeleted > 0) {

@@ -31,18 +31,18 @@ class DailyReport extends Command
         $yesterday = date('Y-m-d', strtotime('-1 day'));
 
         // 查询昨日所有蜘蛛访问记录
-        $rawData = (new \app\model\system\SystemSpiderLog())->whereBetweenTime('create_time', $yesterday . ' 00:00:00', $yesterday . ' 23:59:59')
+        $rawData = (new \app\model\system\SystemSpiderLogs())->whereBetweenTime('create_time', $yesterday . ' 00:00:00', $yesterday . ' 23:59:59')
             ->field([
-                'spider_name',
+                'name',
                 'url',
                 'COUNT(*) AS visit_count',
                 'MIN(create_time) AS first_visit',
                 'MAX(create_time) AS last_visit'
             ])
-            ->group('spider_name, url')
+            ->group('name, url')
             ->select();
 
-        if (!$rawData->isEmpty()) {
+        if ($rawData->isEmpty()) {
             $output->writeln("[$yesterday] 没有蜘蛛访问日志可供汇总");
             return;
         }
