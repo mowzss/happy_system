@@ -2,7 +2,7 @@
 
 namespace app\common\middleware\system;
 
-use app\common\job\RecordSpiderLog;
+use app\job\system\RecordSpiderLog;
 use think\facade\Config;
 use think\facade\Queue;
 

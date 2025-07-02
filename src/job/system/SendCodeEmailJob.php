@@ -1,6 +1,6 @@
 <?php
 
-namespace app\common\job;
+namespace app\job\system;
 
 
 use app\common\util\SendMailUtil;

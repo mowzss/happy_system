@@ -614,7 +614,7 @@ if (!function_exists('send_email')) {
      */
     function send_email(array|string $to, string $subject, string $body, bool $isHtml = false, array $attachments = []): void
     {
-        queue(\app\common\job\SendEmailJob::class, ['to' => $to, 'subject' => $subject, 'body' => $body, 'isHtml' => $isHtml, 'attachments' => $attachments]);
+        queue(\app\job\system\SendEmailJob::class, ['to' => $to, 'subject' => $subject, 'body' => $body, 'isHtml' => $isHtml, 'attachments' => $attachments]);
     }
 }
 if (!function_exists('send_code_email')) {
@@ -628,7 +628,7 @@ if (!function_exists('send_code_email')) {
      */
     function send_code_email(string $email, string $code, string $subject = '注意查收！您申请的验证码'): void
     {
-        queue(\app\common\job\SendCodeEmailJob::class, ['email' => $email, 'code' => $code, 'subject' => $subject]);
+        queue(\app\job\system\SendCodeEmailJob::class, ['email' => $email, 'code' => $code, 'subject' => $subject]);
     }
 }
 if (!function_exists('table_exists')) {
