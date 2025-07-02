@@ -63,10 +63,10 @@ class HourlyReport extends Command
             return;
         }
 
-        // 添加 stat_date 和 stat_hour 字段
+        // 添加 date 和 hour 字段
         foreach ($stats as &$item) {
-            $item['stat_date'] = $statDate;
-            $item['stat_hour'] = $statHour;
+            $item['date'] = $statDate;
+            $item['hour'] = $statHour;
         }
 
         try {
@@ -75,8 +75,8 @@ class HourlyReport extends Command
             foreach ($stats as $item) {
                 $exists = $modelStats
                     ->where('name', $item['name'])
-                    ->where('stat_date', $item['stat_date'])
-                    ->where('stat_hour', $item['stat_hour'])
+                    ->where('date', $item['date'])
+                    ->where('hour', $item['hour'])
                     ->find();
 
                 if ($exists) {

@@ -38,7 +38,7 @@ class DailyReport extends Command
 
         // 查询该天所有小时记录，并按 name 聚合
         $hourlyStats = (new \app\model\system\SystemSpiderHourly())
-            ->where('stat_date', $yesterday)
+            ->where('date', $yesterday)
             ->field([
                 'name',
                 'SUM(total_visits)' => 'total_visits',

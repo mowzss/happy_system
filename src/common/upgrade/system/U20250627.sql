@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主机： localhost
--- 生成日期： 2025-07-01 09:25:46
+-- 生成日期： 2025-07-02 10:40:12
 -- 服务器版本： 5.7.44-log
 -- PHP 版本： 8.2.28
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- 数据库： `xz_com`
+-- 数据库： `ha_com`
 --
 
 -- --------------------------------------------------------
@@ -36,6 +36,23 @@ CREATE TABLE `ha_system_spider_date`
     `unique_urls`  int(11)                      DEFAULT '0' COMMENT '访问的不同 URL 数量'
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `ha_system_spider_hourly`
+--
+
+CREATE TABLE `ha_system_spider_hourly`
+(
+    `id`           bigint(20) UNSIGNED NOT NULL,
+    `name`         varchar(50)         NOT NULL COMMENT '蜘蛛名称（如 Google、百度）',
+    `date`         date                NOT NULL COMMENT '统计日期',
+    `hour`         tinyint(3) UNSIGNED NOT NULL COMMENT '统计小时（0~23）',
+    `total_visits` int(10) UNSIGNED    NOT NULL DEFAULT '0' COMMENT '总访问次数',
+    `unique_urls`  int(10) UNSIGNED    NOT NULL DEFAULT '0' COMMENT '访问的不同URL数量'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='每小时蜘蛛抓取数据统计';
 
 -- --------------------------------------------------------
 
@@ -66,6 +83,15 @@ ALTER TABLE `ha_system_spider_date`
     ADD UNIQUE KEY `date_spider` (`date`, `name`);
 
 --
+-- 表的索引 `ha_system_spider_hourly`
+--
+ALTER TABLE `ha_system_spider_hourly`
+    ADD PRIMARY KEY (`id`),
+    ADD KEY `idx_stat_date_spider` (`date`, `name`),
+    ADD KEY `idx_spider_name` (`name`),
+    ADD KEY `ha_system_spider_hourly_hour_index` (`hour`);
+
+--
 -- 表的索引 `ha_system_spider_logs`
 --
 ALTER TABLE `ha_system_spider_logs`
@@ -80,6 +106,12 @@ ALTER TABLE `ha_system_spider_logs`
 -- 使用表AUTO_INCREMENT `ha_system_spider_date`
 --
 ALTER TABLE `ha_system_spider_date`
+    MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- 使用表AUTO_INCREMENT `ha_system_spider_hourly`
+--
+ALTER TABLE `ha_system_spider_hourly`
     MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
