@@ -53,7 +53,7 @@ class HourlyReport extends Command
                 'COUNT(*)' => 'total_visits',
                 'COUNT(DISTINCT url)' => 'unique_urls'
             ])
-            ->whereBetween('create_time', [$startTime, $endTime])
+            ->whereBetweenTime('create_time', $startTime, $endTime)
             ->group('name')
             ->select()
             ->toArray();
