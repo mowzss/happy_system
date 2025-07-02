@@ -28,6 +28,7 @@
         "app/home/install": "src/home/install",
         "app/model/system": "src/model/system",
         "app/model/user": "src/model/user",
+        "app/lang": "src/lang",
         "app/common/controllers": "src/common/controllers",
         "app/common/extra": "src/common/extra",
         "app/common/install/system": "src/common/install/system",
