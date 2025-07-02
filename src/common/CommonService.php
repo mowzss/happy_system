@@ -10,6 +10,7 @@ use app\command\system\sitemap\SitemapColumn;
 use app\command\system\sitemap\SitemapIndex;
 use app\command\system\spider\ClearLogs;
 use app\command\system\spider\DailyReport;
+use app\command\system\spider\HourlyReport;
 use app\command\system\xuns\XunsAdd;
 use app\command\system\xuns\XunsClean;
 use app\common\middleware\system\SpiderDetectMiddleware;
@@ -44,7 +45,8 @@ class CommonService extends Service
             XunsClean::class,
             ContentSync::class,
             ClearLogs::class,
-            DailyReport::class
+            DailyReport::class,
+            HourlyReport::class
         ]);
     }
 }
