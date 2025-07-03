@@ -4,6 +4,7 @@ namespace app\logic\system;
 
 use app\model\system\SystemSpiderDate;
 use app\model\system\SystemSpiderHourly;
+use app\model\system\SystemSpiderLogs;
 use mowzs\lib\BaseLogic;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
@@ -12,27 +13,33 @@ use think\db\exception\ModelNotFoundException;
 class SpiderLogic extends BaseLogic
 {
     /**
-     * 获取今日蜘蛛爬取数据占比饼图的数据
-     *
-     * @return array
+     * 获取今日蜘蛛爬取数据占比饼图的数据（基于 xz_system_spider_logs 表）
+     * @return array|void
      */
-    public function getTodaySpiderPieChartData(): array
+    public function getTodaySpiderPieChartData()
     {
-        $today = date('Y-m-d');
-
-        // 使用模型查询
-        $data = SystemSpiderDate::where('date', $today)
-            ->field(['name', 'SUM(total_visits) as total'])
-            ->group('name')
-            ->select()
-            ->toArray();
-
-        return array_map(function ($item) {
-            return [
-                'name' => $item['name'],
-                'value' => (int)$item['total']
-            ];
-        }, $data);
+        $cacheKey = 'today_spider_pie_chart_data';
+        try {
+            $this->app->cache->remember($cacheKey, function () {
+                // 查询今日蜘蛛日志，按 name 分组统计数量
+                $result = SystemSpiderLogs::whereDay('create_time')
+                    ->field(['name', 'COUNT(*) as total'])
+                    ->group('name')
+                    ->select()
+                    ->toArray();
+                // 处理数据格式为 ECharts 所需的格式
+                $data = array_map(function ($item) {
+                    return [
+                        'name' => $item['name'],
+                        'value' => (int)$item['total']
+                    ];
+                }, $result);
+                return $data;
+            }, 60);
+        } catch (\Throwable $e) {
+            $this->app->log->error($e->getMessage());
+            return [];
+        }
     }
 
     /**
