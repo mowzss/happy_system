@@ -34,7 +34,6 @@ class Spider extends BaseAdmin
         $chartData = [
             'today_pie_chart' => $this->spiderLogic->getTodaySpiderPieChartData(),
             'yesterday_today_compare' => $this->spiderLogic->getYesterdayAndTodayCompare(),
-            'total_visits_compare' => $this->spiderLogic->getTotalVisitsCompare(),
             'current_hour_vs_last_hour' => $this->spiderLogic->getCurrentHourVsLastHourCompare(),
             'seven_days_trend' => $this->spiderLogic->getRecentSevenDaysTrend(),
         ];

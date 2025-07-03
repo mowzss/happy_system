@@ -81,24 +81,6 @@ class SpiderLogic extends BaseLogic
         return $compare;
     }
 
-    /**
-     * 获取今日与昨日蜘蛛总数对比
-     *
-     * @return array
-     */
-    public function getTotalVisitsCompare(): array
-    {
-        $today = date('Y-m-d');
-        $yesterday = date('Y-m-d', strtotime('-1 day'));
-
-        $todayTotal = SystemSpiderDate::where('date', $today)->sum('total_visits');
-        $yesterdayTotal = SystemSpiderDate::where('date', $yesterday)->sum('total_visits');
-
-        return [
-            'today' => (int)$todayTotal,
-            'yesterday' => (int)$yesterdayTotal
-        ];
-    }
 
     /**
      * 获取当前小时与昨日同时段的对比数据
@@ -126,7 +108,7 @@ class SpiderLogic extends BaseLogic
     }
 
     /**
-     * 获取各个蜘蛛最近七天的趋势
+     * 获取各个蜘蛛最近七天的趋势（今日数据为实时日志，其余使用历史汇总）
      *
      * @return array
      * @throws DataNotFoundException
@@ -137,38 +119,56 @@ class SpiderLogic extends BaseLogic
     {
         $days = 7;
         $dateRange = [];
+
+        // 构建日期范围：包含今天在内的过去 7 天
         for ($i = $days - 1; $i >= 0; $i--) {
             $dateRange[] = date('Y-m-d', strtotime("-$i days"));
         }
 
-        // 查询这些天的每日统计数据（按 spider name 分组）
-        $dailyStats = SystemSpiderDate::where('date', 'in', $dateRange)
+        // 查询今日实时数据（来自 Spider Logs）
+        $todayData = $this->getTodaySpiderPieChartData();
+
+        // 查询过去 6 天的历史数据（来自 SystemSpiderDate）
+        $historyDates = array_slice($dateRange, 0, $days - 1); // 去掉最后一个（今天）
+
+        $historyData = SystemSpiderDate::where('date', 'in', $historyDates)
             ->order('date', 'asc')
             ->select()
             ->toArray();
 
-        // 初始化每个蜘蛛每天的数据容器
-        $spiderData = [];
+        // 合并数据结构
+        $spiderTrend = [];
 
-        foreach ($dailyStats as $row) {
-            $date = $row['date'];
-            $spiderName = $row['name'];
-            $totalVisits = (int)$row['total_visits'];
-
-            if (!isset($spiderData[$spiderName])) {
-                $spiderData[$spiderName] = array_fill(0, $days, 0);
+        // 处理今日数据
+        foreach ($todayData as $item) {
+            $name = $item['name'];
+            if (!isset($spiderTrend[$name])) {
+                $spiderTrend[$name] = array_fill(0, $days, 0);
             }
-
-            $index = array_search($date, $dateRange);
-            if ($index !== false) {
-                $spiderData[$spiderName][$index] += $totalVisits;
-            }
+            $spiderTrend[$name][$days - 1] = $item['value']; // 最后一个是今天
         }
 
-        // 返回构造好的数据结构
+        // 处理历史数据
+        foreach ($historyData as $item) {
+            $name = $item['name'];
+            $date = $item['date'];
+
+            // 找到对应的 index
+            $index = array_search($date, $historyDates);
+
+            if ($index === false) continue;
+
+            if (!isset($spiderTrend[$name])) {
+                $spiderTrend[$name] = array_fill(0, $days, 0);
+            }
+
+            $spiderTrend[$name][$index] += (int)$item['total_visits'];
+        }
+
+        // 返回最终结构
         return [
             'dates' => $dateRange,
-            'data' => $spiderData
+            'data' => $spiderTrend
         ];
     }
 }
