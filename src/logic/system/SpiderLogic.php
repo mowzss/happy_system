@@ -4,7 +4,6 @@ namespace app\logic\system;
 
 use app\model\system\SystemSpiderDate;
 use app\model\system\SystemSpiderHourly;
-use app\model\system\SystemSpiderLogs;
 use mowzs\lib\BaseLogic;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
@@ -22,19 +21,18 @@ class SpiderLogic extends BaseLogic
         try {
             $this->app->cache->remember($cacheKey, function () {
                 // 查询今日蜘蛛日志，按 name 分组统计数量
-                $result = SystemSpiderLogs::whereDay('create_time')
+                $result = (new \app\model\system\SystemSpiderLogs)->whereDay('create_time')
                     ->field(['name', 'COUNT(*) as total'])
                     ->group('name')
                     ->select()
                     ->toArray();
                 // 处理数据格式为 ECharts 所需的格式
-                $data = array_map(function ($item) {
+                return array_map(function ($item) {
                     return [
-                        'name' => $item['name'],
+                        'name' => lang('spider.' . $item['name']),
                         'value' => (int)$item['total']
                     ];
                 }, $result);
-                return $data;
             }, 60);
         } catch (\Throwable $e) {
             $this->app->log->error($e->getMessage());
