@@ -13,13 +13,13 @@ class SpiderLogic extends BaseLogic
 {
     /**
      * 获取今日蜘蛛爬取数据占比饼图的数据（基于 xz_system_spider_logs 表）
-     * @return array|void
+     * @return array|mixed
      */
-    public function getTodaySpiderPieChartData()
+    public function getTodaySpiderPieChartData(): mixed
     {
         $cacheKey = 'today_spider_pie_chart_data';
         try {
-            $this->app->cache->remember($cacheKey, function () {
+            return $this->app->cache->remember($cacheKey, function () {
                 // 查询今日蜘蛛日志，按 name 分组统计数量
                 $result = (new \app\model\system\SystemSpiderLogs)->whereDay('create_time')
                     ->field(['name', 'COUNT(*) as total'])
@@ -29,7 +29,7 @@ class SpiderLogic extends BaseLogic
                 // 处理数据格式为 ECharts 所需的格式
                 return array_map(function ($item) {
                     return [
-                        'name' => lang('spider.' . $item['name']),
+                        'name' => $item['name'],
                         'value' => (int)$item['total']
                     ];
                 }, $result);
@@ -41,29 +41,39 @@ class SpiderLogic extends BaseLogic
     }
 
     /**
-     * 获取昨日与今日各蜘蛛爬取对比数据
+     * 获取昨日与今日各蜘蛛爬取对比数据（以蜘蛛为组，今日为实时数据）
      *
      * @return array
      */
     public function getYesterdayAndTodayCompare(): array
     {
-        $today = date('Y-m-d');
         $yesterday = date('Y-m-d', strtotime('-1 day'));
 
-        // 查询今日和昨日的数据
-        $todayData = SystemSpiderDate::where('date', $today)
-            ->column('total_visits', 'name');
+        // 查询今日实时数据（来自 logs 表）
+        $todayData = $this->getTodaySpiderPieChartData();
 
+        // 查询昨日统计数据（来自 SystemSpiderDate）
         $yesterdayData = SystemSpiderDate::where('date', $yesterday)
             ->column('total_visits', 'name');
 
-        $spiderNames = array_unique(array_merge(array_keys($todayData), array_keys($yesterdayData)));
+        // 构建今日数据 map
+        $todayMap = [];
+        foreach ($todayData as $item) {
+            $todayMap[$item['name']] = $item['value'];
+        }
 
+        // 合并所有蜘蛛名称
+        $allSpiders = array_unique(array_merge(
+            array_keys($todayMap),
+            array_keys($yesterdayData)
+        ));
+
+        // 构造返回结果
         $compare = [];
-        foreach ($spiderNames as $name) {
+        foreach ($allSpiders as $name) {
             $compare[] = [
                 'name' => $name,
-                'today' => $todayData[$name] ?? 0,
+                'today' => $todayMap[$name] ?? 0,
                 'yesterday' => $yesterdayData[$name] ?? 0
             ];
         }
