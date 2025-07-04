@@ -83,60 +83,101 @@ class SpiderLogic extends BaseLogic
 
 
     /**
-     * 获取今日每小时蜘蛛爬取数据，并补零至24小时；昨日同时间段完整数据
+     * 获取今日与昨日每小时蜘蛛爬取趋势，并按蜘蛛名称分组汇总（带缓存）
      *
      * @return array
      * @throws DataNotFoundException
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public function getHourlyTrendTodayVsYesterday(): array
+    public function getHourlyTrendTodayVsYesterdayBySpider(): array
     {
+        $cacheKey = 'hourly_trend_today_vs_yesterday_by_spider';
+        $cacheTTL = 1200; // 缓存时间：20分钟
+
+        // 尝试从缓存读取数据
+        $cachedData = $this->app->cache->get($cacheKey);
+        if ($cachedData !== null) {
+            return $cachedData;
+        }
+
+        // 如果没有缓存，则执行查询逻辑
         $today = date('Y-m-d');
         $yesterday = date('Y-m-d', strtotime('-1 day'));
 
-        // 获取今天每小时汇总数据（来自 hourly 表）
-        $todayData = SystemSpiderHourly::where('date', $today)
-            ->field(['hour', 'total_visits'])
-            ->order('hour', 'asc')
-            ->select()
-            ->toArray();
+        // 获取今日和昨日的所有蜘蛛名称集合
+        $allNames = SystemSpiderHourly::whereIn('date', [$today, $yesterday])
+            ->distinct(true)
+            ->column('name');
 
-        // 获取昨天每小时汇总数据
-        $yesterdayData = SystemSpiderHourly::where('date', $yesterday)
-            ->field(['hour', 'total_visits'])
-            ->order('hour', 'asc')
-            ->select()
-            ->toArray();
+        if (empty($allNames)) {
+            $result = [
+                'hours' => array_map(fn($h) => sprintf('%02d:00', $h), range(0, 23)),
+                'spiderData' => []
+            ];
 
-        // 构建默认24小时数组，初始化为0
+            // 写入缓存
+            $this->app->cache->set($cacheKey, $result, $cacheTTL);
+
+            return $result;
+        }
+
+        $hours = range(0, 23);
         $defaultData = array_fill(0, 24, 0);
 
-        // 处理今日数据（填充已有的，未到的时间保持0）
-        $todayMap = $defaultData;
-        foreach ($todayData as $item) {
-            $hour = (int)$item['hour'];
-            $todayMap[$hour] = (int)$item['total_visits'];
+        $spiderData = [];
+
+        foreach ($allNames as $name) {
+            // 查询今日该蜘蛛的每小时数据
+            $todayData = SystemSpiderHourly::where('date', $today)
+                ->where('name', $name)
+                ->field(['hour', 'total_visits'])
+                ->order('hour', 'asc')
+                ->select()
+                ->toArray();
+
+            // 查询昨日该蜘蛛的每小时数据
+            $yesterdayData = SystemSpiderHourly::where('date', $yesterday)
+                ->where('name', $name)
+                ->field(['hour', 'total_visits'])
+                ->order('hour', 'asc')
+                ->select()
+                ->toArray();
+
+            // 初始化默认值
+            $todayMap = $defaultData;
+            foreach ($todayData as $item) {
+                $hour = (int)$item['hour'];
+                $todayMap[$hour] = (int)$item['total_visits'];
+            }
+
+            $yesterdayMap = $defaultData;
+            foreach ($yesterdayData as $item) {
+                $hour = (int)$item['hour'];
+                $yesterdayMap[$hour] = (int)$item['total_visits'];
+            }
+
+            $spiderData[] = [
+                'name' => $name,
+                'today' => $todayMap,
+                'yesterday' => $yesterdayMap
+            ];
         }
 
-        // 处理昨日数据
-        $yesterdayMap = $defaultData;
-        foreach ($yesterdayData as $item) {
-            $hour = (int)$item['hour'];
-            $yesterdayMap[$hour] = (int)$item['total_visits'];
-        }
+        // 返回小时标签
+        $hourLabels = array_map(function ($h) {
+            return sprintf('%02d:00', $h);
+        }, range(0, 23));
 
-        // 构造小时标签
-        $hours = [];
-        for ($i = 0; $i < 24; $i++) {
-            $hours[] = sprintf('%02d:00', $i);
-        }
-
-        return [
-            'hours' => $hours,
-            'today' => $todayMap,
-            'yesterday' => $yesterdayMap
+        $result = [
+            'hours' => $hourLabels,
+            'spiderData' => $spiderData
         ];
+
+        // 写入缓存
+        $this->app->cache->set($cacheKey, $result, $cacheTTL);
+
+        return $result;
     }
 
     /**
