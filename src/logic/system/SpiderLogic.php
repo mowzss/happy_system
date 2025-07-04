@@ -83,27 +83,59 @@ class SpiderLogic extends BaseLogic
 
 
     /**
-     * 获取当前小时与昨日同时段的对比数据
+     * 获取今日每小时蜘蛛爬取数据，并补零至24小时；昨日同时间段完整数据
      *
      * @return array
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
      */
-    public function getCurrentHourVsLastHourCompare(): array
+    public function getHourlyTrendTodayVsYesterday(): array
     {
-        $currentHour = date('H');
         $today = date('Y-m-d');
         $yesterday = date('Y-m-d', strtotime('-1 day'));
 
-        $todayCurrentHourVisits = SystemSpiderHourly::where('date', $today)
-            ->where('hour', $currentHour)
-            ->sum('total_visits');
+        // 获取今天每小时汇总数据（来自 hourly 表）
+        $todayData = SystemSpiderHourly::where('date', $today)
+            ->field(['hour', 'total_visits'])
+            ->order('hour', 'asc')
+            ->select()
+            ->toArray();
 
-        $yesterdayCurrentHourVisits = SystemSpiderHourly::where('date', $yesterday)
-            ->where('hour', $currentHour)
-            ->sum('total_visits');
+        // 获取昨天每小时汇总数据
+        $yesterdayData = SystemSpiderHourly::where('date', $yesterday)
+            ->field(['hour', 'total_visits'])
+            ->order('hour', 'asc')
+            ->select()
+            ->toArray();
+
+        // 构建默认24小时数组，初始化为0
+        $defaultData = array_fill(0, 24, 0);
+
+        // 处理今日数据（填充已有的，未到的时间保持0）
+        $todayMap = $defaultData;
+        foreach ($todayData as $item) {
+            $hour = (int)$item['hour'];
+            $todayMap[$hour] = (int)$item['total_visits'];
+        }
+
+        // 处理昨日数据
+        $yesterdayMap = $defaultData;
+        foreach ($yesterdayData as $item) {
+            $hour = (int)$item['hour'];
+            $yesterdayMap[$hour] = (int)$item['total_visits'];
+        }
+
+        // 构造小时标签
+        $hours = [];
+        for ($i = 0; $i < 24; $i++) {
+            $hours[] = sprintf('%02d:00', $i);
+        }
 
         return [
-            'today' => (int)$todayCurrentHourVisits,
-            'yesterday' => (int)$yesterdayCurrentHourVisits
+            'hours' => $hours,
+            'today' => $todayMap,
+            'yesterday' => $yesterdayMap
         ];
     }
 
