@@ -12,6 +12,25 @@ use think\db\exception\ModelNotFoundException;
 class SpiderLogic extends BaseLogic
 {
     /**
+     * @param int $rows
+     * @return array
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
+     */
+    public function getNewLogs(int $rows = 10): array
+    {
+        return (new \app\model\system\SystemSpiderLogs)->limit($rows)->order('id', 'desc')->select()->each(function ($rs) {
+            try {
+                $rs['isp'] = (new \Ip2Region())->simple($rs['ip']);
+            } catch (\Exception $e) {
+                $rs['isp'] = '未知';
+            }
+            return $rs;
+        })->toArray();
+    }
+
+    /**
      * 获取今日蜘蛛爬取数据占比饼图的数据（基于 xz_system_spider_logs 表）
      * @return array|mixed
      */
@@ -183,14 +202,14 @@ class SpiderLogic extends BaseLogic
     /**
      * 获取各个蜘蛛最近七天的趋势（今日数据为实时日志，其余使用历史汇总）
      *
+     * @param int $days
      * @return array
      * @throws DataNotFoundException
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public function getRecentSevenDaysTrend(): array
+    public function getRecentSevenDaysTrend($days = 7): array
     {
-        $days = 7;
         $dateRange = [];
 
         // 构建日期范围：包含今天在内的过去 7 天

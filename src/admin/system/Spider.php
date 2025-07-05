@@ -42,6 +42,7 @@ class Spider extends BaseAdmin
             'chartData' => json_encode($chartData, JSON_UNESCAPED_UNICODE),
         ]);
 
+        $this->assign(['logs_list' => $this->spiderLogic->getNewLogs()]);
         return $this->fetch();
     }
 
