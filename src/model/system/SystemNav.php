@@ -30,6 +30,6 @@ class SystemNav extends Model
      */
     public static function getMenuForm(array $where = ['status' => 1]): array
     {
-        return ['0' => '[顶级菜单]'] + DataHelper::instance()->transformArray(DataHelper::instance()->arrToTable(self::where($where)->column('title,pid,id', 'id')));
+        return ['0' => '[顶级菜单]'] + DataHelper::instance()->transformArray(DataHelper::instance()->arrToTable(self::where($where)->order('list', 'desc')->column('title,pid,id', 'id')));
     }
 }
