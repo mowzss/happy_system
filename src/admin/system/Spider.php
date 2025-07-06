@@ -46,25 +46,6 @@ class Spider extends BaseAdmin
         return $this->fetch();
     }
 
-    public function date()
-    {
-
-    }
-
-    /**
-     * 蜘蛛日志
-     * @return void
-     */
-    public function list()
-    {
-
-    }
-
-    public function hourly()
-    {
-
-    }
-
     public function add()
     {
         $this->error('不支持此功能');
