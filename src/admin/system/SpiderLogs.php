@@ -11,6 +11,7 @@ class SpiderLogs extends BaseAdmin
 {
     use CrudTrait;
 
+
     public function __construct(SystemSpiderLogs $model, App $app)
     {
         parent::__construct($app);
