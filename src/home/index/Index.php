@@ -14,7 +14,6 @@ class Index extends BaseHome
      */
     public function index(): string
     {
-        dump(url('article/content/index', ['id' => 588888])->build());
         return $this->fetch();
     }
 
