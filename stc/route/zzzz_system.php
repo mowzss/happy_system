@@ -1,4 +1,1 @@
 <?php
-
-
-app()->route->auto();
