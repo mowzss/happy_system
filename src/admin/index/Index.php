@@ -52,6 +52,8 @@ class Index extends BaseAdmin
             'php_sapi' => php_sapi_name(),
             //运行环境
             'php_os' => PHP_OS,
+            //thinkphp版本
+            'think_version' => $this->app->version(),
         ];
         // PHP 扩展支持状态
         $php_ext = [
