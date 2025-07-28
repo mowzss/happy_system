@@ -15,7 +15,7 @@ class UtilBase
     protected App $app;
 
     // 静态存储类的实例
-    protected static $instances = [];
+    protected static array $instances = [];
 
     // 构造函数用于依赖注入
     public function __construct(App $app = null)
@@ -37,7 +37,7 @@ class UtilBase
      * 获取当前时间戳
      * @return int
      */
-    public function getCurrentTimestamp()
+    public function getCurrentTimestamp(): int
     {
         return time();
     }
@@ -45,10 +45,10 @@ class UtilBase
     /**
      * 格式化日期时间
      * @param $timestamp
-     * @param $format
+     * @param string $format
      * @return false|string
      */
-    public function formatDateTime($timestamp = null, $format = 'Y-m-d H:i:s')
+    public function formatDateTime($timestamp = null, string $format = 'Y-m-d H:i:s'): bool|string
     {
         $timestamp = $timestamp ?? $this->getCurrentTimestamp();
         return date($format, $timestamp);
