@@ -23,5 +23,6 @@ class BaseHome extends Base
         } catch (DataNotFoundException|ModelNotFoundException|DbException $e) {
             $this->app->log->error('is_open_site 获取失败:' . $e->getMessage());
         }
+      
     }
 }
