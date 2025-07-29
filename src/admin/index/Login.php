@@ -54,7 +54,7 @@ class Login extends BaseAdmin
                 $save_data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
             }
             $user->inc('login_num')->save($save_data);
-            $this->success('登陆成功', [], urls('index/index'));
+            $this->success('登陆成功', [], aurl('index/index/index'));
         }
         return $this->fetch();
     }
