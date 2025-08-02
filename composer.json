@@ -44,16 +44,15 @@
         "app/common/fun/system": "src/common/fun/system",
         "app/logic/system": "src/logic/system",
         "app/logic/user": "src/logic/user",
-        "route/zzzz_system.php": "stc/route/zzzz_system.php",
         "app/common.php": "src/common.php",
         "public/admin.php": "stc/public/admin.php",
         "public/index.php": "stc/public/index.php",
         ".env.admin": "stc/.env.admin",
         ".env.home": "stc/.env.home",
-        "app/common/CommonService.php": "src/common/CommonService.php"
+        "app/common/CommonService.php": "src/common/CommonService.php",
+        "route/system.php": "stc/route/system.php"
       },
       "copy": {
-        "route/system.php": "stc/route/system.php",
         "app/provider.php": "src/provider.php",
         "public/robots.txt": "stc/public/robots.txt",
         "public/router.php": "stc/public/router.php"
