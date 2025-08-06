@@ -66,6 +66,7 @@ CREATE TABLE `ha_system_spider_logs`
     `name`        varchar(128)        NOT NULL COMMENT '蜘蛛名称，如 Googlebot',
     `url`         varchar(512)        NOT NULL COMMENT '访问的 URL',
     `ip`          varchar(45)         NOT NULL COMMENT 'IP 地址',
+    `module`      varchar(64)         NOT NULL COMMENT '模块',
     `user_agent`  text                NOT NULL COMMENT 'User-Agent 字符串',
     `create_time` int(11) DEFAULT '0'
 ) ENGINE = InnoDB
@@ -96,7 +97,8 @@ ALTER TABLE `ha_system_spider_hourly`
 --
 ALTER TABLE `ha_system_spider_logs`
     ADD PRIMARY KEY (`id`),
-    ADD KEY `ha_system_spider_logs_name_index` (`name`);
+    ADD KEY `ha_system_spider_logs_name_index` (`name`),
+    ADD KEY `ha_system_spider_logs_module_index` (`module`);
 
 --
 -- 在导出的表使用AUTO_INCREMENT
