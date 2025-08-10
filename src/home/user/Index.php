@@ -7,6 +7,9 @@ use app\common\controllers\BaseUser;
 use app\model\user\UserInfo;
 use app\model\user\UserLoginLog;
 use mowzs\lib\Forms;
+use think\db\exception\DataNotFoundException;
+use think\db\exception\DbException;
+use think\db\exception\ModelNotFoundException;
 use think\Exception;
 
 class Index extends BaseUser
@@ -23,6 +26,9 @@ class Index extends BaseUser
     /**
      * 默认页
      * @return string
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
      */
     public function main(): string
     {
