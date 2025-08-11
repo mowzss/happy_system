@@ -16,7 +16,7 @@ class SendEmailJob
      * @param array $data 传递的数据
      * @return void
      */
-    public function fire(Job $job, $data): void
+    public function fire(Job $job, array $data): void
     {
         try {
             // 初始化邮件工具类
