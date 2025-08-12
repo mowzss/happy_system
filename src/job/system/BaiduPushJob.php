@@ -44,7 +44,7 @@ class BaiduPushJob
                 } else {
                     // 超过最大重试次数，记录日志并删除任务
                     $job->delete();
-                    Log::channel('push')->error('百度推送最终失败，已达到最大重试次数: ' . $result['msg']);
+                    Log::channel('push')->error('百度推送最终失败，已达到最大重试次数: ' . json_encode($result));
                 }
             }
         } catch (\Exception $e) {
