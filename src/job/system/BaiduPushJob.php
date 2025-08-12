@@ -40,7 +40,6 @@ class BaiduPushJob
                     // 可选择延迟重试，比如指数退避
                     $delaySeconds = pow(2, $attempts); // 2, 4, 8 秒
                     $job->release($delaySeconds);
-                    Log::channel('push')->error("百度推送第 {$attempts} 次失败，准备重试: " . $result['msg']);
                 } else {
                     // 超过最大重试次数，记录日志并删除任务
                     $job->delete();
