@@ -31,6 +31,7 @@ class SpiderDetectMiddleware
                     'name' => $spiderCode,
                     'url' => $url,
                     'ip' => $ip,
+                    'module' => $request->layer(),
                     'user_agent' => $userAgent,
                     'create_time' => time()
                 ];
