@@ -10,9 +10,11 @@ class BaseUser extends Base
     protected function initialize(): void
     {
         parent::initialize();
+        $this->app->event->trigger('UserControllerInit');
         if (!AuthHelper::instance()->isLogin()) {
             $this->error('请先登录账号', '', urls('index/login/index'));
         }
+
     }
 
     /**

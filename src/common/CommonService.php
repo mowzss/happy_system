@@ -13,7 +13,8 @@ use app\command\system\spider\DailyReport;
 use app\command\system\spider\HourlyReport;
 use app\command\system\xuns\XunsAdd;
 use app\command\system\xuns\XunsClean;
-use app\common\middleware\system\SpiderDetectMiddleware;
+use app\job\system\RecordSpiderLog;
+use think\facade\Queue;
 use think\Service;
 
 class CommonService extends Service
@@ -25,9 +26,41 @@ class CommonService extends Service
     public function boot(): void
     {
         // 注册蜘蛛信息中间件
-        $this->app->middleware->add(SpiderDetectMiddleware::class);
+//        $this->app->middleware->add(SpiderDetectMiddleware::class);
         // 注册命令行
         $this->registerCommand();
+        // 注册事件
+        $this->registerEvent();
+    }
+
+    /**
+     * @return void
+     */
+    private function registerEvent(): void
+    {
+        $this->app->event->listen('HomeControllerInit', function () {
+            $spiders = $this->app->config->get('spiders.list', []);
+            $userAgent = $this->app->request->server('HTTP_USER_AGENT', '');
+            $ip = $this->app->request->ip();
+            foreach (array_keys($spiders) as $pattern) {
+                if (stripos($userAgent, $pattern) !== false) {
+                    // 匹配到蜘蛛，记录日志
+                    $spiderCode = $spiders[$pattern];
+                    $url = $this->app->request->url();
+
+                    $data = [
+                        'name' => $spiderCode,
+                        'url' => $url,
+                        'ip' => $ip,
+                        'module' => $this->app->request->layer(),
+                        'user_agent' => $userAgent,
+                        'create_time' => time()
+                    ];
+                    Queue::push(RecordSpiderLog::class, $data);
+                    break;
+                }
+            }
+        });
     }
 
     /**
