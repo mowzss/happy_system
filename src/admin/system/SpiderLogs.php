@@ -36,21 +36,21 @@ class SpiderLogs extends BaseAdmin
                     'field' => 'name',
                     'title' => '蜘蛛名称',
                     'align' => 'content',
-                    'width' => 180,
+                    'width' => 120,
                 ], [
                     'field' => 'url',
                     'title' => '抓取页面',
-                    'width' => 180,
                 ], [
                     'field' => 'ip',
                     'title' => 'IP地址',
+                    'width' => 140,
                 ], [
                     'field' => 'isp',
                     'title' => 'ip归属地',
+                    'width' => 180,
                 ], [
                     'field' => 'user_agent',
                     'title' => 'UA',
-                    'width' => 180,
 
                 ], [
                     'field' => 'create_time',
