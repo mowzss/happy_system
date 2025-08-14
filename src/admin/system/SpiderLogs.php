@@ -68,8 +68,30 @@ class SpiderLogs extends BaseAdmin
             ]
 
         ];
-
-        $this->forms = [];
+        $spiders = $this->app->config->get('spiders.list', []);
+        $spiders = array_unique(array_values($spiders));
+        $spiders = array_combine($spiders, $spiders);
+        $this->forms = ['fields' => [
+            [
+                'type' => 'select',
+                'name' => 'name',
+                'label' => '蜘蛛名称',
+                'options' => $spiders,
+                'required' => true
+            ], [
+                'type' => 'text',
+                'name' => 'url',
+                'label' => '链接地址',
+            ], [
+                'type' => 'text',
+                'name' => 'ip',
+                'label' => 'IP地址',
+            ], [
+                'type' => 'text',
+                'name' => 'user_agent',
+                'label' => 'user_agent',
+            ]
+        ]];
         $this->search = [
             'id#=#id', 'name#like#name', 'url#like#url', 'ip#=#ip', 'user_agent#like#user_agent', 'create_time#between#create_time'
         ];
