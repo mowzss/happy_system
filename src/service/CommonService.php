@@ -1,6 +1,6 @@
 <?php
 
-namespace app\common;
+namespace app\service;
 
 use app\command\module\ContentSync;
 use app\command\system\indexnow\IndexNowClean;
@@ -15,9 +15,8 @@ use app\command\system\xuns\XunsAdd;
 use app\command\system\xuns\XunsClean;
 use app\job\system\RecordSpiderLog;
 use think\facade\Queue;
-use think\Service;
 
-class CommonService extends Service
+class CommonService extends \think\Service
 {
     public function register()
     {

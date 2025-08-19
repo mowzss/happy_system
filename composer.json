@@ -15,7 +15,7 @@
   "extra": {
     "think": {
       "services": [
-        "\\app\\common\\CommonService"
+        "\\app\\service\\CommonService"
       ]
     },
     "module": {
@@ -49,7 +49,7 @@
         "public/index.php": "stc/public/index.php",
         ".env.admin": "stc/.env.admin",
         ".env.home": "stc/.env.home",
-        "app/common/CommonService.php": "src/common/CommonService.php",
+        "app/service/CommonService.php": "src/service/CommonService.php",
         "route/system.php": "stc/route/system.php"
       },
       "copy": {
