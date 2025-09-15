@@ -11,8 +11,28 @@ use app\logic\system\NavLogic;
 if (is_file(__DIR__ . 'function.php')) {
     include_once __DIR__ . 'function.php';
 }
+if (!function_exists('filter_urls')) {
+    /**
+     * @param int $mid
+     * @param string $module
+     * @return array
+     * @throws \think\Exception
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    function filter_urls(int $mid, string $module = ''): array
+    {
+        return \mowzs\lib\module\logic\FieldBaseLogic::instance([$module])->buildFieldsUrls($mid);
+    }
+}
 if (!function_exists('url_with')) {
-    function url_with($url = '', $params = []): string
+    /**
+     * @param string $url
+     * @param array $params
+     * @return string
+     */
+    function url_with(string $url = '', array $params = []): string
     {
         // 获取当前请求的所有 GET 参数
         $currentParams = request()->param();
