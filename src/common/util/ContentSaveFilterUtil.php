@@ -6,6 +6,7 @@ use app\logic\system\ConfigLogic;
 use HTMLPurifier;
 use HTMLPurifier_Config;
 use mowzs\lib\baidu\AipNlp;
+use mowzs\lib\module\logic\FieldBaseLogic;
 use mowzs\lib\module\logic\TagBaseLogic;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
@@ -149,6 +150,7 @@ class ContentSaveFilterUtil extends UtilBase
     public function setProcessingData($info): array
     {
         $info = $this->setTag($info);
+        $info = $this->setCheckboxData($info);
         $update = [];
         //检测功能是否开启
         if ($this->cheek()) {
@@ -193,6 +195,19 @@ class ContentSaveFilterUtil extends UtilBase
                 }
             }
             return array_merge($info, $update);
+        }
+        return $info;
+    }
+
+    protected function setCheckboxData($info)
+    {
+        if (!empty($info['mid'])) {
+            $fields = FieldBaseLogic::instance()->getFieldsInfoByType((int)$info['mid'], 'checkbox');
+            if (!empty($fields)) {
+                foreach ($fields as $field) {
+                    $info[$field['name']] = arr2str($info[$field['name']]);
+                }
+            }
         }
         return $info;
     }
