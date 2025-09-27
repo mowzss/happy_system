@@ -11,6 +11,39 @@ use app\logic\system\NavLogic;
 if (is_file(__DIR__ . 'function.php')) {
     include_once __DIR__ . 'function.php';
 }
+if (!function_exists('sort_urls')) {
+    /**
+     * @param array $vars
+     * @param string $url
+     * @return array
+     */
+    function sort_urls(array $vars = ['view' => '浏览', 'list' => '时间'], string $url = ''): array
+    {
+        $by_array = ['desc' => '升序', 'asc' => '降序'];
+        // 获取当前请求的所有 GET 参数
+        $currentParams = request()->rule()->getVars();
+        $data = [];
+        foreach ($vars as $key => $value) {
+            $request_param = request()->param('sort', 'desc');
+            $data['sort']['urls'][] = [
+                'title' => $value,
+                'url' => urls($url, array_merge($currentParams, ['sort' => $key])),
+                'active' => $request_param == $key
+            ];
+        }
+        foreach ($by_array as $key => $value) {
+            $request_param = request()->param('by', 'desc');
+            $data['by']['urls'][] = [
+                'title' => $value,
+                'url' => urls($url, array_merge($currentParams, ['by' => $key])),
+                'active' => $request_param == $key
+            ];
+        }
+        $data['sort']['title'] = '排序方式';
+        $data['by']['title'] = '排序顺序';
+        return $data;
+    }
+}
 if (!function_exists('filter_urls')) {
     /**
      * @param int $mid
