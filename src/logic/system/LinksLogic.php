@@ -27,6 +27,19 @@ class LinksLogic extends BaseLogic
     public function getLinksByCid(int|string $cid = 1): array
     {
         $where = ['cid' => $cid, 'status' => 1];
-        return SystemLinks::where($where)->order('list', 'desc')->cache(true, 3600, 'system_lisk')->select()->toArray();
+        return SystemLinks::where($where)
+            ->where(function ($query) {
+                // 长期有效（is_long = 1）
+                $query->where('is_long', 1)
+                    // 或者在有效时间范围内
+                    ->orWhere(function ($q) {
+                        $q->where('start_time', '<=', time())
+                            ->where('end_time', '>', time());
+                    });
+            })
+            ->order('list', 'desc')
+            ->cache('systemLinksByCid_' . $cid, 3600, 'system_link_all')
+            ->select()
+            ->toArray();
     }
 }

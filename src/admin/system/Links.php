@@ -57,6 +57,10 @@ class Links extends BaseAdmin
                 'title' => '排序',
                 'edit' => 'text'
             ], [
+                'field' => 'is_long',
+                'title' => '长期有效',
+                'templet' => 'switch'
+            ], [
                 'field' => 'status',
                 'title' => '状态',
                 'templet' => 'switch'
@@ -82,12 +86,16 @@ class Links extends BaseAdmin
                 'type' => 'datetime',
                 'name' => 'end_time',
                 'label' => '合作结束日期',
+            ], [
+                'type' => 'datetime',
+                'name' => 'end_time',
+                'label' => '合作结束日期',
             ],
             [
-                'type' => 'select',
-                'name' => 'cid',
-                'label' => '友链位置',
-                'options' => $this->app->config->get('links.column'),
+                'type' => 'radio',
+                'name' => 'is_long',
+                'label' => '是否长期有效',
+                'options' => ['0' => '否', '1' => '是'],
             ], [
                 'type' => 'select',
                 'name' => 'type',
@@ -100,7 +108,7 @@ class Links extends BaseAdmin
             ],
         ];
         $this->search = [
-            'id#=#id', 'title#like#title', 'url#like#url', 'type#=#type', 'cid#=#cid', 'status#=#status', 'start_time#between#start_time', 'end_time#between#end_time', 'create_time#between#create_time', 'update_time#between#update_time'
+            'id#=#id', 'title#like#title', 'url#like#url', 'type#=#type', 'cid#=#cid', 'is_long#=#is_long', 'status#=#status', 'start_time#between#start_time', 'end_time#between#end_time', 'create_time#between#create_time', 'update_time#between#update_time'
         ];
     }
 
@@ -158,6 +166,6 @@ class Links extends BaseAdmin
      */
     protected function _save_result(): void
     {
-        $this->app->cache->tag('system_link')->clear();
+        $this->app->cache->tag('system_link_all')->clear();
     }
 }

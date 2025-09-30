@@ -194,10 +194,10 @@ if (!function_exists('event_listen')) {
 if (!function_exists('get_links')) {
     /**
      * @param int|string $cid
-     * @return mixed
+     * @return array
      * @throws Throwable
      */
-    function get_links(int|string $cid = 1): mixed
+    function get_links(int|string $cid = 1): array
     {
         return LinksLogic::instance()->getLinksByCid($cid);
     }
