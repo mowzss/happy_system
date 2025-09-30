@@ -38,7 +38,7 @@ class LinksLogic extends BaseLogic
                     });
             })
             ->order('list', 'desc')
-            ->cache('systemLinksByCid_' . $cid, 3600, 'system_link_all')
+            ->cache('systemLinksByCid_' . $cid, 3600, 'system_links_all_site')
             ->select()
             ->toArray();
     }

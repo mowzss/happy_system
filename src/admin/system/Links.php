@@ -86,16 +86,17 @@ class Links extends BaseAdmin
                 'type' => 'datetime',
                 'name' => 'end_time',
                 'label' => '合作结束日期',
-            ], [
-                'type' => 'datetime',
-                'name' => 'end_time',
-                'label' => '合作结束日期',
             ],
             [
                 'type' => 'radio',
                 'name' => 'is_long',
                 'label' => '是否长期有效',
                 'options' => ['0' => '否', '1' => '是'],
+            ], [
+                'type' => 'select',
+                'name' => 'cid',
+                'label' => '友链位置',
+                'options' => $this->app->config->get('links.column'),
             ], [
                 'type' => 'select',
                 'name' => 'type',
@@ -166,6 +167,6 @@ class Links extends BaseAdmin
      */
     protected function _save_result(): void
     {
-        $this->app->cache->tag('system_link_all')->clear();
+        $this->app->cache->tag('system_links_all_site')->clear();
     }
 }
