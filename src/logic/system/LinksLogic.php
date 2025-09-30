@@ -32,7 +32,7 @@ class LinksLogic extends BaseLogic
                 // 长期有效（is_long = 1）
                 $query->where('is_long', 1)
                     // 或者在有效时间范围内
-                    ->orWhere(function ($q) {
+                    ->whereOr(function ($q) {
                         $q->where('start_time', '<=', time())
                             ->where('end_time', '>', time());
                     });
