@@ -11,6 +11,7 @@ use think\db\exception\ModelNotFoundException;
 use think\db\Query;
 use think\Exception;
 use think\Model;
+use think\model\contract\Modelable;
 use think\template\exception\TemplateNotFoundException;
 
 trait CrudTrait
@@ -354,17 +355,22 @@ trait CrudTrait
      * 列表编辑
      * @auth true
      * @param $id
-     * @return void
+     * @return false|Modelable|void
      */
-    public function quickEdit($id): void
+    public function quickEdit($id)
     {
         if (empty($id)) {
             $this->error('id不能为空');
         }
         $field = $this->request->post('field');
         $value = $this->request->post('value');
-
-        $this->model->update(['id' => $id, $field => $value]);
+        if (false === $this->callback('_quick_edit_filter', $field, $value)) {
+            return false;
+        }
+        $result = $this->model->update(['id' => $id, $field => $value]);
+        if (false === $this->callback('_quick_edit_result', $result, $id)) {
+            return $result;
+        }
         $this->success('更新成功');
     }
 

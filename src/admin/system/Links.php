@@ -169,4 +169,13 @@ class Links extends BaseAdmin
     {
         $this->app->cache->tag('system_links_all_site')->clear();
     }
+
+    /**
+     * 快速编辑后数据处理
+     * @return void
+     */
+    protected function _quick_edit_result(): void
+    {
+        $this->app->cache->tag('system_links_all_site')->clear();
+    }
 }
