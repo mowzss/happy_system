@@ -8,6 +8,7 @@ use mowzs\lib\BaseLogic;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
+use think\db\Query;
 
 class LinksLogic extends BaseLogic
 {
@@ -30,11 +31,11 @@ class LinksLogic extends BaseLogic
         return SystemLinks::where($where)
             ->where(function ($query) {
                 // 长期有效（is_long = 1）
-                $query->where('is_long', 1)
+                $query->whereOr('is_long', 1)
                     // 或者在有效时间范围内
-                    ->whereOr(function ($q) {
-                        $q->where('start_time', '<=', time())
-                            ->where('end_time', '>', time());
+                    ->whereOr(function (Query $q) {
+                        $q->whereTime('start_time', '<=', time())
+                            ->whereTime('end_time', '>', time());
                     });
             })
             ->order('list', 'desc')
