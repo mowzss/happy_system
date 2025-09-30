@@ -59,7 +59,11 @@ class Links extends BaseAdmin
             ], [
                 'field' => 'is_long',
                 'title' => '长期有效',
-                'templet' => 'switch'
+                'templet' => 'switch',
+                'switch' => [
+                    'name' => '是|否',
+                    'value' => '1|0'
+                ],
             ], [
                 'field' => 'status',
                 'title' => '状态',
@@ -92,10 +96,6 @@ class Links extends BaseAdmin
                 'name' => 'is_long',
                 'label' => '是否长期有效',
                 'options' => ['0' => '否', '1' => '是'],
-                'switch' => [
-                    'name' => '是|否',
-                    'value' => '1|0'
-                ]
             ], [
                 'type' => 'select',
                 'name' => 'cid',
