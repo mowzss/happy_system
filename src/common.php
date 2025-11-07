@@ -623,11 +623,11 @@ if (!function_exists('arr2str')) {
 }
 if (!function_exists('dumps')) {
     /**
-     * 浏览器友好的变量输出（支持 VarDumper 优先）
+     * 强化版浏览器友好的变量输出（支持 VarDumper 优先）
      * @param mixed ...$vars 要输出的变量
-     * @return string|null
+     * @return null
      */
-    function dumps(...$vars): ?string
+    function dumps(...$vars)
     {
         // 检查是否存在 VarDumper 类
         if (class_exists('Symfony\Component\VarDumper\VarDumper', false)) {
@@ -652,27 +652,43 @@ if (!function_exists('dumps')) {
 
             return null;
 
-            // VarDumper 模式下不返回字符串，因为输出已直接渲染
         }
 
-        // 回退到原始实现
+        // 回退到原始实现（深度优化版）
         ob_start();
         var_dump(...$vars);
-
         $output = ob_get_clean();
-        $output = preg_replace('/\]\=\>\n(\s+)/m', '] => ', $output);
 
-        if (PHP_SAPI == 'cli') {
+        // 标准化换行符
+        $output = preg_replace("/\r\n|\r/", "\n", $output);
+
+        // 美化数组箭头格式：将 "]=>\n    " 替换为 "] => "
+        $output = preg_replace('/\]\s*=\>\s*\n(\s+)/m', '] => ', $output);
+
+        // 进一步美化：处理对象属性的换行问题
+        $output = preg_replace('/\s*=>\s*\n(\s+)/m', ' => ', $output);
+
+        // 清理每行末尾多余空格
+        $output = preg_replace('/[ \t]+$/m', '', $output);
+
+        // 去掉开头结尾的空白行
+        $output = trim($output);
+
+        if (PHP_SAPI === 'cli') {
             $output = PHP_EOL . $output . PHP_EOL;
         } else {
             if (!extension_loaded('xdebug')) {
-                $output = htmlspecialchars($output, ENT_SUBSTITUTE);
+                $output = htmlspecialchars($output, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
             }
-            $output = '<pre>' . $output . '</pre>';
-        }
 
-        echo $output; // 在非 VarDumper 模式下输出内容
-        return $output;
+            // Web 页面中更美观的样式
+            $output = '<div style="margin: 10px 0; padding: 12px; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; font-family: monospace; font-size: 14px; line-height: 1.4; overflow-x: auto;">' .
+                '<pre style="margin: 0; padding: 0; white-space: pre-wrap; word-break: break-word;">' .
+                $output .
+                '</pre></div>';
+        }
+        echo $output;
+        return null;
     }
 }
 
@@ -683,9 +699,9 @@ if (!function_exists('p')) {
      * @param mixed $data 输出的数据
      * @param boolean $new 强制替换文件
      * @param ?string $file 保存文件名称
-     * @return false|int
+     * @return bool|int
      */
-    function p(mixed $data, bool $new = false, ?string $file = null)
+    function p(mixed $data, bool $new = false, ?string $file = null): bool|int
     {
         ob_start();
         var_dump($data);
