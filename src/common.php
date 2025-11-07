@@ -621,6 +621,62 @@ if (!function_exists('arr2str')) {
         return $separ . join($separ, $data) . $separ;
     }
 }
+if (!function_exists('dumps')) {
+    /**
+     * 浏览器友好的变量输出（支持 VarDumper 优先）
+     * @param mixed ...$vars 要输出的变量
+     * @return string|null
+     */
+    function dumps(...$vars): ?string
+    {
+        // 检查是否存在 VarDumper 类
+        if (class_exists('Symfony\Component\VarDumper\VarDumper', false)) {
+            if (!$vars) {
+                $scalarStubClass = class_exists('Symfony\Component\VarDumper\Caster\ScalarStub') ? 'Symfony\Component\VarDumper\Caster\ScalarStub' : null;
+                if ($scalarStubClass) {
+                    \Symfony\Component\VarDumper\VarDumper::dump(new $scalarStubClass('🐛'));
+                } else {
+                    \Symfony\Component\VarDumper\VarDumper::dump('🐛');
+                }
+                return null;
+            }
+
+            if (array_key_exists(0, $vars) && 1 === count($vars)) {
+                \Symfony\Component\VarDumper\VarDumper::dump($vars[0]);
+                $k = 0;
+            } else {
+                foreach ($vars as $k => $v) {
+                    \Symfony\Component\VarDumper\VarDumper::dump($v, is_int($k) ? 1 + $k : $k);
+                }
+            }
+
+            return null;
+
+            // VarDumper 模式下不返回字符串，因为输出已直接渲染
+        }
+
+        // 回退到原始实现
+        ob_start();
+        var_dump(...$vars);
+
+        $output = ob_get_clean();
+        $output = preg_replace('/\]\=\>\n(\s+)/m', '] => ', $output);
+
+        if (PHP_SAPI == 'cli') {
+            $output = PHP_EOL . $output . PHP_EOL;
+        } else {
+            if (!extension_loaded('xdebug')) {
+                $output = htmlspecialchars($output, ENT_SUBSTITUTE);
+            }
+            $output = '<pre>' . $output . '</pre>';
+        }
+
+        echo $output; // 在非 VarDumper 模式下输出内容
+        return $output;
+    }
+}
+
+
 if (!function_exists('p')) {
     /**
      * 打印输出数据到文件
