@@ -29,7 +29,7 @@ class SpiderLogs extends BaseAdmin
                 [
                     'field' => 'id',
                     'title' => 'ID',
-                    'width' => 80,
+                    'width' => 120,
                     'sort' => true,
                 ],
                 [
