@@ -169,8 +169,6 @@ class SitemapBuild extends Command
      * @param string $module
      * @param int $total
      * @return void
-     * @throws DbException
-     * @throws Exception
      */
     private function extracted(SiteMapExtend $sitemap, string $type, string $table, int $count, string $module, int $total): void
     {
