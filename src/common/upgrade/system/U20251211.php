@@ -7,12 +7,19 @@ use app\model\system\SystemConfigGroup;
 
 class U20251211
 {
-    public function run()
+    /**
+     * @return void
+     */
+    public function run(): void
     {
-
+        installConfigInfo();
     }
 
-    private function installConfigInfo()
+    /**
+     * 配置信息
+     * @return void
+     */
+    private function installConfigInfo(): void
     {
         $group_id = SystemConfigGroup::where(['title' => '前端资源', 'module' => 'system'])->value('id');
         if (empty($group_id)) {
