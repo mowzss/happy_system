@@ -38,7 +38,7 @@ class U20251211
                     'title' => '前端静态文件存储位置',
                     'group_id' => $group_id,
                     'options' => 'local|本地' . PHP_EOL . 'oss|阿里云oss' . PHP_EOL . 'qiniu|七牛云',
-                    'help' => '前端静态文件存储位置，如存储至阿里云oss则需要在系统设置-存储配置中配置oss信息。 配置后可执行php think oss:upload-static 初始化上传静态文件数据',
+                    'help' => '前端静态文件存储位置，如存储至阿里云oss则需要在系统设置-存储配置中配置oss信息。 配置后可执行php think cloud:upload-static 初始化上传静态文件数据,也可以通过定时任务执行。',
                     'value' => 'local',
                     'extend' => NULL,
                     'list' => '0',
