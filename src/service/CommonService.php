@@ -3,6 +3,7 @@
 namespace app\service;
 
 use app\command\module\ContentSync;
+use app\command\system\cloud\UploadStaticToCloud;
 use app\command\system\indexnow\IndexNowClean;
 use app\command\system\indexnow\IndexNowPush;
 use app\command\system\sitemap\SitemapBuild;
@@ -11,7 +12,6 @@ use app\command\system\sitemap\SitemapIndex;
 use app\command\system\spider\ClearLogs;
 use app\command\system\spider\DailyReport;
 use app\command\system\spider\HourlyReport;
-use app\command\system\static\UploadStaticToCloud;
 use app\command\system\xuns\XunsAdd;
 use app\command\system\xuns\XunsClean;
 use app\job\system\RecordSpiderLog;

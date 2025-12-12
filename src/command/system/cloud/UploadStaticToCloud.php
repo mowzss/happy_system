@@ -1,6 +1,6 @@
 <?php
 
-namespace app\command\system\static;
+namespace app\command\system\cloud;
 
 
 use RecursiveDirectoryIterator;
@@ -13,7 +13,10 @@ use think\facade\Filesystem;
 
 class UploadStaticToCloud extends Command
 {
-    protected function configure()
+    /**
+     * @return void
+     */
+    protected function configure(): void
     {
         $this->setName('cloud:upload-static')
             ->setDescription('使用 think-filesystem 上传静态文件到云存储（OSS/COS/本地等）');
