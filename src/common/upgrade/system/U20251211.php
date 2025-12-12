@@ -12,7 +12,7 @@ class U20251211
      */
     public function run(): void
     {
-        installConfigInfo();
+        $this->installConfigInfo();
     }
 
     /**
