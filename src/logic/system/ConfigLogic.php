@@ -90,7 +90,7 @@ class ConfigLogic extends BaseLogic
      */
     public function getListByGroup($gid): array
     {
-        return SystemConfig::where('group_id', $gid)->where(['status' => 1])->order('list', 'desc')->select()->each(function ($item) {
+        return SystemConfig::where('group_id', $gid)->where(['status' => 1])->order(['list' => 'desc', 'id' => 'desc'])->select()->each(function ($item) {
             $item['label'] = $item['title'];
         })->toArray();
     }
