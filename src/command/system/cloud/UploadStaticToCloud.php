@@ -75,13 +75,12 @@ class UploadStaticToCloud extends Command
                 $fail++;
             }
         }
-        $systemConfig = new SystemConfig();
-        if ($systemConfig->where('name', 'static_version')->update(['value' => date('mdHiss')])) {
-            $output->info("✅ 更新静态资源版本成功！");
-        }
         $output->newLine();
         $output->info("✅ 上传完成！成功: {$success} | 失败: {$fail}");
-
+        $systemConfig = new SystemConfig();
+        if ($systemConfig->where('name', 'static_version')->update(['value' => date('y-md-Hss')])) {
+            $output->info("✅ 更新静态资源版本成功！");
+        }
         return $fail > 0 ? 1 : 0;
     }
 
