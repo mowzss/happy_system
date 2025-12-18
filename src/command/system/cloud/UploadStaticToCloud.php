@@ -78,7 +78,7 @@ class UploadStaticToCloud extends Command
         $output->newLine();
         $output->info("✅ 上传完成！成功: {$success} | 失败: {$fail}");
         $systemConfig = new SystemConfig();
-        if ($systemConfig->where('name', 'static_version')->update(['value' => date('y-md-Hss')])) {
+        if ($systemConfig->where('name', 'static_version')->update(['value' => date('y.md.Hss')])) {
             $output->info("✅ 更新静态资源版本成功！");
         }
         return $fail > 0 ? 1 : 0;
