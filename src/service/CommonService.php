@@ -44,6 +44,7 @@ class CommonService extends \think\Service
             $ip = $this->app->request->ip();
             foreach (array_keys($spiders) as $pattern) {
                 if (stripos($userAgent, $pattern) !== false) {
+                    $isSpider = true;
                     // 匹配到蜘蛛，记录日志
                     $spiderCode = $spiders[$pattern];
                     $url = $this->app->request->url();
@@ -58,6 +59,13 @@ class CommonService extends \think\Service
                     ];
                     Queue::push(RecordSpiderLog::class, $data);
                     break;
+                }
+            }
+            //针对出搜索蜘蛛外不支持 cookies的访问，进行延时
+            if (!isset($isSpider)) {
+                $this->app->cookie->set('__erds_id', md5($this->app->request->ip() . $userAgent));
+                if ($this->app->cookie->get('__erds_id', 0) != md5($this->app->request->ip() . $userAgent)) {
+                    sleep(10);
                 }
             }
         });
