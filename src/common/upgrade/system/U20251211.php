@@ -69,6 +69,19 @@ class U20251211
                     'module' => 'system',
                     'status' => '1',
                 ],
+                [
+                    'name' => 'static_version',
+                    'type' => 'text',
+                    'title' => '前端资源版本号',
+                    'group_id' => $group_id,
+                    'options' => '',
+                    'help' => '适应前端资源缓存，默认上传云存储资源后自动设置版本号',
+                    'value' => '',
+                    'extend' => NULL,
+                    'list' => '0',
+                    'module' => 'system',
+                    'status' => '1',
+                ]
             ]);
 
         }
