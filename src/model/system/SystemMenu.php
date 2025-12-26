@@ -48,7 +48,7 @@ class SystemMenu extends Model
      */
     public static function getMenuTree(array $where = ['status' => 1]): array
     {
-        $menu = self::where($where)->order('list', 'desc')->select()->each(function ($model) {
+        $menu = self::where($where)->order(['list' => 'desc', 'id' => 'asc'])->select()->each(function ($model) {
             if (empty($model['node']) || $model['node'] == '#') {
                 $model['type'] = 0;
                 return $model;
