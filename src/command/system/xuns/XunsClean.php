@@ -41,7 +41,7 @@ class XunsClean extends Command
      */
     protected function execute(Input $input, Output $output): void
     {
-        $this->xs = new XunSearchLogic();
+        $this->xs = XunSearchLogic::instance();
         $output->info('开始清理数据索引');
         $this->xs->clearAll();
         $modules = $this->app->db->name('system_module')->where('status', 1)->select()->toArray();

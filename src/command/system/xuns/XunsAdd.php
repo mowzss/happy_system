@@ -47,7 +47,7 @@ class XunsAdd extends Command
      */
     protected function execute(Input $input, Output $output): void
     {
-        $this->xs = new XunSearchLogic();
+        $this->xs = XunSearchLogic::instance();
         $output->info('开始处理XunSearch数据');
         $module = $input->getArgument('module');
         $model_table = $module . '_model';
