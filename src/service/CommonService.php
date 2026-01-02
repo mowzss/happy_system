@@ -62,12 +62,12 @@ class CommonService extends \think\Service
                 }
             }
             //针对出搜索蜘蛛外不支持 cookies的访问，进行延时
-            if (!isset($isSpider)) {
-                $this->app->cookie->set('__erds_id', md5($this->app->request->ip() . $userAgent));
-                if ($this->app->cookie->get('__erds_id', 0) != md5($this->app->request->ip() . $userAgent)) {
-                    sleep(10);
-                }
-            }
+//            if (!isset($isSpider)) {
+//                $this->app->cookie->set('__erds_id', md5($this->app->request->ip() . $userAgent));
+//                if ($this->app->cookie->get('__erds_id', 0) != md5($this->app->request->ip() . $userAgent)) {
+//                    sleep(61);
+//                }
+//            }
         });
     }
 
