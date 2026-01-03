@@ -32,8 +32,13 @@ trait ViewTheme
      */
     protected function getPath(): string
     {
-        // 根据控制器层和设备类型获取模板风格
-        $theme = $this->getTheme();
+        if (!$this->app->config->get('happy.installed', false)) {
+            $theme = 'default';
+        } else {
+            // 根据控制器层和设备类型获取模板风格
+            $theme = $this->getTheme();
+        }
+
 
         // 构建完整的模板路径
         return 'view' . DIRECTORY_SEPARATOR . $this->getStylePath() . DIRECTORY_SEPARATOR . $theme;
