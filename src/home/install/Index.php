@@ -86,7 +86,6 @@ class Index extends Controller
         if (!$this->writeHappyConfigFile($data)) {
             return json(['status' => 'error', 'msg' => 'Happy.php配置文件设置失败！']);
         }
-        $this->app->console->call('admin:init');
         return json(['status' => 'success', 'msg' => '安装成功']);
     }
 
