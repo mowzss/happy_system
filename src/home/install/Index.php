@@ -71,11 +71,6 @@ class Index extends Controller
             return json(['status' => 'error', 'msg' => '数据库连接失败']);
         }
 
-        // 写入配置文件
-        if (!$this->writeConfigFile($data)) {
-            return json(['status' => 'error', 'msg' => '写入配置文件失败']);
-        }
-
         // 执行SQL文件
         $sqlExecutor = new SqlExecutor();
         try {
@@ -91,7 +86,7 @@ class Index extends Controller
         if (!$this->writeHappyConfigFile($data)) {
             return json(['status' => 'error', 'msg' => 'Happy.php配置文件设置失败！']);
         }
-        $this->app->console->call('admin:init')->fetch();
+        $this->app->console->call('admin:init');
         return json(['status' => 'success', 'msg' => '安装成功']);
     }
 
@@ -158,6 +153,7 @@ class Index extends Controller
 
         // 检测数据库连接
         if ($this->testDbConnection($data)) {
+            $this->writeConfigFile($data);
             return json(['status' => 'success', 'msg' => '数据库连接成功']);
         } else {
             return json(['status' => 'error', 'msg' => '数据库连接失败']);
