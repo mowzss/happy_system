@@ -47,8 +47,10 @@
         "app/common.php": "src/common.php",
         "public/admin.php": "stc/public/admin.php",
         "public/index.php": "stc/public/index.php",
+        "public/api.php": "stc/public/api.php",
         ".env.admin": "stc/.env.admin",
         ".env.home": "stc/.env.home",
+        ".env.api": "stc/.env.api",
         "app/service/CommonService.php": "src/service/CommonService.php",
         "route/system.php": "stc/route/system.php"
       },
