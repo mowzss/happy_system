@@ -1,9 +1,3 @@
--- MySQL dump 10.13  Distrib 5.7.44, for Linux (x86_64)
---
--- Host: localhost    Database: md_cn
--- ------------------------------------------------------
--- Server version	5.7.44-log
-
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT = @@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS = @@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION = @@COLLATION_CONNECTION */;
@@ -878,6 +872,11 @@ LOCK TABLES `ha_system_upgrade_log` WRITE;
 /*!40000 ALTER TABLE `ha_system_upgrade_log`
     ENABLE KEYS */;
 UNLOCK TABLES;
+
+
+ALTER TABLE `ha_system_links`
+    ADD `is_long` INT(1) NOT NULL DEFAULT '0' AFTER `end_time`,
+    ADD INDEX `is_long` (`is_long`);
 
 --
 -- Dumping events for database 'md_cn'
