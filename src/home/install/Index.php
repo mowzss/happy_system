@@ -45,10 +45,43 @@ class Index extends Controller
     }
 
     /**
-     *  安装
+     * 数据库设置
+     * @return string
+     */
+    public function data(): string
+    {
+        if ($this->isInstalled()) {
+            $this->error('您已安装过系统!');
+        }
+        if (!$this->app->session->get('install_index', false)) {
+            $this->error('请先进行环境检测', '', urls('index'));
+        }
+        return $this->fetch();
+    }
+
+    /**
+     * 管理设置
+     * @return string
+     */
+    public function set(): string
+    {
+        if ($this->isInstalled()) {
+            $this->error('您已安装过系统!');
+        }
+        if (!$this->app->session->get('install_index', false)) {
+            $this->error('请先进行环境检测', '', urls('index'));
+        }
+        if (!$this->app->session->get('install_data', false)) {
+            $this->error('请先配置数据库信息', '', urls('data'));
+        }
+        return $this->fetch();
+    }
+
+    /**
+     * 数据安装
      * @return Json
      */
-    public function install(): Json
+    public function install_data()
     {
         // 检查是否已经安装
         if ($this->isInstalled()) {
@@ -71,6 +104,33 @@ class Index extends Controller
             return json(['status' => 'error', 'msg' => '数据库连接失败']);
         }
 
+        // 写入配置文件
+        if (!$this->writeConfigFile($data)) {
+            return json(['status' => 'error', 'msg' => '写入配置文件失败']);
+        }
+        $this->app->session->set('install_data', true);
+        return json(['status' => 'success', 'msg' => '数据库配置成功', 'url' => urls('set')]);
+    }
+
+    /**
+     *  安装
+     * @return Json
+     */
+    public function install(): Json
+    {
+        // 检查是否已经安装
+        if ($this->isInstalled()) {
+            return json(['status' => 'error', 'msg' => '系统已安装，请勿重复安装！']);
+        }
+
+        // 获取并验证表单数据
+        $data = Request::post();
+
+        // 检查运行环境
+        if (!$this->checkEnvironment()) {
+            return json(['status' => 'error', 'msg' => '运行环境不符合要求']);
+        }
+
         // 执行SQL文件
         $sqlExecutor = new SqlExecutor();
         try {
@@ -86,7 +146,8 @@ class Index extends Controller
         if (!$this->writeHappyConfigFile($data)) {
             return json(['status' => 'error', 'msg' => 'Happy.php配置文件设置失败！']);
         }
-        return json(['status' => 'success', 'msg' => '安装成功']);
+        $this->app->console->call('admin:upgrade')->fetch();
+        return json(['status' => 'success', 'msg' => '安装成功', 'url' => aurl('index/index/index')]);
     }
 
     /**
@@ -130,12 +191,22 @@ class Index extends Controller
             'pdo扩展' => extension_loaded('pdo'),
         ];
 
+        // 判断是否全部满足
+        $passed = !in_array(false, $requirements, true);
+
+        // 转换为中文状态
         foreach ($requirements as &$requirement) {
             $requirement = $requirement ? '支持' : '不支持';
         }
 
-
-        return json(['status' => 'success', 'requirements' => $requirements]);
+        if ($passed) {
+            $this->app->session->set('install_index', true);
+        }
+        return json([
+            'status' => 'success',
+            'passed' => $passed,
+            'requirements' => $requirements
+        ]);
     }
 
     /**
@@ -152,7 +223,6 @@ class Index extends Controller
 
         // 检测数据库连接
         if ($this->testDbConnection($data)) {
-            $this->writeConfigFile($data);
             return json(['status' => 'success', 'msg' => '数据库连接成功']);
         } else {
             return json(['status' => 'error', 'msg' => '数据库连接失败']);
@@ -261,11 +331,13 @@ class Index extends Controller
     /**
      * 创建管理员账户
      * @param $data
-     * @return int|string
+     * @return int|string|Json
      */
     protected function createAdmin($data)
     {
-
+        if (empty($data['admin_username']) || empty($data['admin_password']) || empty($data['admin_email'])) {
+            return json(['status' => 'error', 'msg' => '请填写完整的管理员信息']);
+        }
         $hashedPassword = password_hash(md5($data['admin_password']), PASSWORD_BCRYPT);
 
         return Db::name('UserInfo')->insert([
