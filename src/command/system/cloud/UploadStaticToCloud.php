@@ -26,7 +26,7 @@ class UploadStaticToCloud extends Command
     protected function execute(Input $input, Output $output)
     {
         $localPath = public_path() . sys_config('static_local_path');
-        $disk = sys_config('static_upload');
+        $disk = sys_config('static_upload', 'local');
         $prefix = sys_config('static_prefix');
 
         if (!is_dir($localPath)) {
