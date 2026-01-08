@@ -2,8 +2,8 @@
 
 namespace think\oauth\driver;
 
-use think\OAuth\contract\DriverInterface;
-use think\OAuth\Http;
+use think\oauth\contract\DriverInterface;
+use think\oauth\Http;
 
 abstract class WechatMini implements DriverInterface
 {
