@@ -24,7 +24,9 @@
         "app/admin/system": "src/admin/system",
         "app/admin/user": "src/admin/user",
         "app/home/index": "src/home/index",
+        "app/api/index": "src/api/index",
         "app/home/user": "src/home/user",
+        "app/api/user": "src/api/user",
         "app/home/install": "src/home/install",
         "app/model/system": "src/model/system",
         "app/model/user": "src/model/user",
@@ -52,7 +54,8 @@
         ".env.home": "stc/.env.home",
         ".env.api": "stc/.env.api",
         "app/service/CommonService.php": "src/service/CommonService.php",
-        "route/system.php": "stc/route/system.php"
+        "route/system.php": "stc/route/system.php",
+        "extend/think/oauth": "stc/extend/think/oauth"
       },
       "copy": {
         "app/provider.php": "src/provider.php",
