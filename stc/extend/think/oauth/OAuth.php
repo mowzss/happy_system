@@ -1,6 +1,6 @@
 <?php
 
-namespace think\OAuth;
+namespace think\oauth;
 
 use InvalidArgumentException;
 use think\OAuth\contract\DriverInterface;

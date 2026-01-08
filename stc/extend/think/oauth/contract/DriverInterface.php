@@ -1,6 +1,6 @@
 <?php
 
-namespace think\OAuth\contract;
+namespace think\oauth\contract;
 
 interface DriverInterface
 {

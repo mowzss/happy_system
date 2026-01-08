@@ -1,6 +1,6 @@
 <?php
 
-namespace think\OAuth\driver;
+namespace think\oauth\driver;
 
 use think\OAuth\contract\DriverInterface;
 use think\OAuth\Http;
