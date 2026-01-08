@@ -5,7 +5,7 @@ namespace think\oauth\driver;
 use think\oauth\contract\DriverInterface;
 use think\oauth\Http;
 
-abstract class QqWeb implements DriverInterface
+class QqWeb implements DriverInterface
 {
     protected array $config;
 
