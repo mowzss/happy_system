@@ -3,9 +3,9 @@
 namespace think\oauth;
 
 use InvalidArgumentException;
-use think\OAuth\contract\DriverInterface;
-use think\OAuth\driver\QqWeb;
-use think\OAuth\driver\WechatMini;
+use think\oauth\contract\DriverInterface;
+use think\oauth\driver\QqWeb;
+use think\oauth\driver\WechatMini;
 
 class OAuth
 {
