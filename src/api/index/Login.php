@@ -21,12 +21,65 @@ class Login extends Controller
     }
 
     /**
+     * 账号密码登录
+     * @return void
+     */
+    public function index()
+    {
+//        if (request()->isPost()) {
+        $data = $this->request->post();
+        try {
+            $this->validate($data, [
+                'username' => 'require',
+                'password' => 'require',
+            ], [
+                'username.require' => '用户名不能为空',
+                'password.require' => '密码不能为空',
+            ]);
+        } catch (\Exception $e) {
+            $this->json([], 500, $e->getMessage());
+        }
+        $user = UserInfo::where('username', $data['username'])->findOrEmpty();
+        if ($user->isEmpty()) {
+            $this->json([], 500, '账号或密码错误');
+        }
+        if (!password_verify($data['password'], $user->password)) {
+            $this->json([], 500, '账号或密码错误');
+        }
+        $save_data = [
+            'id' => $user['id'],
+            'last_time' => time(),
+            'last_ip' => $this->request->ip()
+        ];
+        if (password_needs_rehash($user['password'], PASSWORD_DEFAULT)) {
+            // 如果是这样，则创建新散列，替换旧散列
+            $save_data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+        }
+        $user->inc('login_num')->save($save_data);
+        try {
+            $token = $this->jwt->getToken('default', $user->toArray());
+            $data = [
+                'token' => $token->toString(),
+                'expires_in' => $this->jwt->getTTL($token->toString()),
+            ];
+            $this->json($data);
+        } catch (InvalidArgumentException $e) {
+            $this->json(['msg' => $e->getMessage()], 500);
+        }
+//        }
+    }
+
+    /**
+     * 微信小程序登录
      * @return void
      * @throws \Exception
      */
     public function wxxcx(): void
     {
         $code = $this->request->post('code');
+        if (empty($code)) {
+            $this->json([], 500, 'code 不能为空');
+        }
         $wx_user_info = (new OAuth('wechat_mini', [
             'appid' => 'wx1fd453d076ddbbff',
             'secret' => 'f774038dceaf4f57720e1a15b8392418']))
@@ -35,6 +88,7 @@ class Login extends Controller
         $uid = $user_oauth->where(['type' => 'wxxcx', 'openid' => $wx_user_info['openid']])->value('uid');
         if (!empty($uid)) {  //包含uid 则说明已创建用户
             $user = (new \app\model\user\UserInfo)->findOrEmpty($uid);
+            $user->inc('login_num')->save();
         } else {//不包含则自动新建用户
             $user = new UserInfo();
             $user->username = 'wxxcx' . CodeHelper::randomString(4) . CodeHelper::randomString(4);
