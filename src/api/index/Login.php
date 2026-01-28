@@ -56,16 +56,7 @@ class Login extends Controller
             $save_data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
         }
         $user->inc('login_num')->save($save_data);
-        try {
-            $token = $this->jwt->getToken('default', $user->toArray());
-            $data = [
-                'token' => $token->toString(),
-                'expires_in' => $this->jwt->getTTL($token->toString()),
-            ];
-            $this->json($data);
-        } catch (InvalidArgumentException $e) {
-            $this->json(['msg' => $e->getMessage()], 500);
-        }
+        $this->resToken($user);
 //        }
     }
 
@@ -88,7 +79,7 @@ class Login extends Controller
         $uid = $user_oauth->where(['type' => 'wxxcx', 'openid' => $wx_user_info['openid']])->value('uid');
         if (!empty($uid)) {  //包含uid 则说明已创建用户
             $user = (new \app\model\user\UserInfo)->findOrEmpty($uid);
-            $user->inc('login_num')->save();
+            $user->inc('login_num')->save(['last_time' => time(), 'last_ip' => $this->request->ip()]);
         } else {//不包含则自动新建用户
             $user = new UserInfo();
             $user->username = 'wxxcx' . CodeHelper::randomString(4) . CodeHelper::randomString(4);
@@ -101,11 +92,21 @@ class Login extends Controller
             $user->save();
             UserOauth::create(['uid' => $user->id, 'type' => 'wxxcx', 'openid' => $wx_user_info['openid'], 'unionid' => $wx_user_info['unionid']]);
         }
+        $this->resToken($user);
+    }
+
+    /**
+     * @param UserInfo $user
+     * @return void
+     */
+    private function resToken(UserInfo $user): void
+    {
         try {
             $token = $this->jwt->getToken('default', $user->toArray());
             $data = [
                 'token' => $token->toString(),
                 'expires_in' => $this->jwt->getTTL($token->toString()),
+                'user' => $user->hidden(['password'])->toArray()
             ];
             $this->json($data);
         } catch (InvalidArgumentException $e) {
