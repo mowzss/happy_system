@@ -71,9 +71,11 @@ class Login extends Controller
         if (empty($code)) {
             $this->json([], 500, 'code 不能为空');
         }
+        $appid = sys_config('oauth_wxxcx_appid');
+        $secret = sys_config('oauth_wxxcx_appsecret');
         $wx_user_info = (new OAuth('wechat_mini', [
-            'appid' => 'wx1fd453d076ddbbff',
-            'secret' => 'f774038dceaf4f57720e1a15b8392418']))
+            'appid' => $appid,
+            'secret' => $secret]))
             ->getUserInfo($code);
         $user_oauth = new UserOauth();
         $uid = $user_oauth->where(['type' => 'wxxcx', 'openid' => $wx_user_info['openid']])->value('uid');
