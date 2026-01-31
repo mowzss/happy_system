@@ -64,7 +64,7 @@ class Upload extends BaseApi
             // 插入数据到附件表
             SystemAttachment::create($data);
             // 返回JSON格式的成功响应
-            $this->json(['code' => 0, 'msg' => '上传成功', 'data' => $data]);
+            $this->json($data);
         } else {
             $this->json([], 400, '上传失败');
         }
