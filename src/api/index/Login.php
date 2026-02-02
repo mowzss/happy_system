@@ -56,6 +56,7 @@ class Login extends Controller
             $save_data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
         }
         $user->inc('login_num')->save($save_data);
+        $this->app->event->trigger('userLogin', $user);
         $this->resToken($user);
 //        }
     }
@@ -82,20 +83,14 @@ class Login extends Controller
         if (!empty($uid)) {  //包含uid 则说明已创建用户
             $user = (new \app\model\user\UserInfo)->findOrEmpty($uid);
             $user->inc('login_num')->save(['last_time' => time(), 'last_ip' => $this->request->ip()]);
+            $this->app->event->trigger('userLogin', $user);
         } else {//不包含则自动新建用户
-            $user = new UserInfo();
-            $user->username = 'wxxcx' . CodeHelper::randomString(4) . CodeHelper::randomString(4);
-            $user->password = password_hash(md5(CodeHelper::randomString(8)), PASSWORD_DEFAULT);
-            $user->nickname = $wx_user_info['nickname'] ?: '微信用户' . CodeHelper::randomString(6);
-            $user->avatar = '';
-            $user->last_ip = $this->request->ip();
-            $user->last_time = time();
-            $user->mobile = null;
-            $user->save();
-            UserOauth::create(['uid' => $user->id, 'type' => 'wxxcx', 'openid' => $wx_user_info['openid'], 'unionid' => $wx_user_info['unionid']]);
+            $user = $this->wxxcx_reg($wx_user_info);
+            $this->app->event->trigger('UserRegister', $user);
         }
         $this->resToken($user);
     }
+
 
     /**
      * @param UserInfo $user
@@ -114,5 +109,26 @@ class Login extends Controller
         } catch (InvalidArgumentException $e) {
             $this->json(['msg' => $e->getMessage()], 500);
         }
+    }
+
+    /**
+     * @param array $wx_user_info
+     * @return UserInfo
+     * @throws \Random\RandomException
+     * @throws \mowzs\lib\Exception\RandomGenerationException
+     */
+    private function wxxcx_reg(array $wx_user_info): UserInfo
+    {
+        $user = new UserInfo();
+        $user->username = 'wxxcx' . CodeHelper::randomString(4) . CodeHelper::randomString(4);
+        $user->password = password_hash(md5(CodeHelper::randomString(8)), PASSWORD_DEFAULT);
+        $user->nickname = $wx_user_info['nickname'] ?: '微信用户' . CodeHelper::randomString(6);
+        $user->avatar = '';
+        $user->last_ip = $this->request->ip();
+        $user->last_time = time();
+        $user->mobile = null;
+        $user->save();
+        UserOauth::create(['uid' => $user->id, 'type' => 'wxxcx', 'openid' => $wx_user_info['openid'], 'unionid' => $wx_user_info['unionid']]);
+        return $user;
     }
 }
