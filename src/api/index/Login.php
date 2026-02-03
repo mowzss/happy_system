@@ -57,7 +57,8 @@ class Login extends Controller
             $save_data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
         }
         $user->inc('login_num')->save($save_data);
-        EventHelper::instance()->listen('userLogin', $user);
+        $user_data = $user->hidden(['password'])->toArray();
+        EventHelper::instance()->listen('UserLogin', $user_data);
         $this->resToken($user);
 //        }
     }
@@ -84,10 +85,12 @@ class Login extends Controller
         if (!empty($uid)) {  //包含uid 则说明已创建用户
             $user = (new \app\model\user\UserInfo)->findOrEmpty($uid);
             $user->inc('login_num')->save(['last_time' => time(), 'last_ip' => $this->request->ip()]);
-            EventHelper::instance()->listen('userLogin', $user);
+            $user_data = $user->hidden(['password'])->toArray();
+            EventHelper::instance()->listen('UserLogin', $user_data);
         } else {//不包含则自动新建用户
             $user = $this->wxxcx_reg($wx_user_info);
-            EventHelper::instance()->listen('UserRegister', $user);
+            $user_data = $user->hidden(['password'])->toArray();
+            EventHelper::instance()->listen('UserRegister', $user_data);
         }
         $this->resToken($user);
     }
