@@ -6,6 +6,7 @@ use app\model\user\UserInfo;
 use app\model\user\UserOauth;
 use mowzs\lib\Controller;
 use mowzs\lib\helper\CodeHelper;
+use mowzs\lib\helper\EventHelper;
 use Psr\SimpleCache\InvalidArgumentException;
 use think\oauth\OAuth;
 use yzh52521\Jwt\JWT;
@@ -56,7 +57,7 @@ class Login extends Controller
             $save_data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
         }
         $user->inc('login_num')->save($save_data);
-        $this->app->event->trigger('userLogin', $user);
+        EventHelper::instance()->listen('userLogin', $user);
         $this->resToken($user);
 //        }
     }
@@ -83,10 +84,10 @@ class Login extends Controller
         if (!empty($uid)) {  //包含uid 则说明已创建用户
             $user = (new \app\model\user\UserInfo)->findOrEmpty($uid);
             $user->inc('login_num')->save(['last_time' => time(), 'last_ip' => $this->request->ip()]);
-            $this->app->event->trigger('userLogin', $user);
+            EventHelper::instance()->listen('userLogin', $user);
         } else {//不包含则自动新建用户
             $user = $this->wxxcx_reg($wx_user_info);
-            $this->app->event->trigger('UserRegister', $user);
+            EventHelper::instance()->listen('UserRegister', $user);
         }
         $this->resToken($user);
     }
