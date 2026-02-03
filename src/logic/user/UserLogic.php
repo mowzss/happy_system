@@ -24,6 +24,20 @@ class UserLogic extends BaseLogic
     }
 
     /**
+     * @param $uid
+     * @param false $field
+     * @param array $hide_field
+     * @return array|mixed
+     */
+    public function getUserField($uid, false $field = false, array $hide_field = []): mixed
+    {
+        if (empty($field)) {
+            return $this->getUserInfoById($uid, $hide_field);
+        }
+        return $this->getUserInfoById($uid, $hide_field)[$field];
+    }
+
+    /**
      * 隐藏字段
      * @param array $data
      * @param mixed $hide_field
