@@ -9,4 +9,8 @@ use app\common\traits\UploadTraits;
 class Upload extends BaseHome
 {
     use UploadTraits;
+
+    protected function initialize(): void
+    {
+    }
 }
