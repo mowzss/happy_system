@@ -50,7 +50,7 @@ class Upload extends BaseApi
                 'size' => $file->getSize(),
                 'md5' => md5_file($file->getPathname()),
                 'sha1' => sha1_file($file->getPathname()),
-                'driver' => 'local', // 默认本地驱动
+                'driver' => $this->storage_driver, // 默认本地驱动
                 'create_time' => time(),
                 'update_time' => time(),
             ];
