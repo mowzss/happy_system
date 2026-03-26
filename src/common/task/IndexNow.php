@@ -6,7 +6,6 @@ use mowzs\lib\extend\RuntimeExtend;
 use mowzs\lib\task\Task;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
-use think\db\exception\ModelNotFoundException;
 use think\facade\Console;
 use think\facade\Log;
 
@@ -23,9 +22,6 @@ class IndexNow extends Task
     /**
      *
      * @return void
-     * @throws DataNotFoundException
-     * @throws DbException
-     * @throws ModelNotFoundException
      */
     public function handle(): void
     {
