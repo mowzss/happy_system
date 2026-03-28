@@ -8,6 +8,7 @@ use app\common\traits\CrudTrait;
 use app\model\system\SystemConfig;
 use app\model\system\SystemConfigGroup;
 use app\model\system\SystemModule;
+use mowzs\lib\forms\FormFieldConfig;
 use think\App;
 
 /**
@@ -99,7 +100,7 @@ class Config extends BaseAdmin
                     'type' => 'select',
                     'name' => 'type',
                     'label' => '字段类型',
-                    'options' => $this->app->config->get('form'),
+                    'options' => FormFieldConfig::get(),
                     'required' => true,
                 ], [
                     'type' => 'select',
@@ -165,7 +166,7 @@ class Config extends BaseAdmin
      */
     protected function _index_list_filter(&$data): void
     {
-        $forms = $this->app->config->get('form');
+        $forms = FormFieldConfig::get();
         foreach ($data['data'] as &$item) {
 
             $item['group_name'] = $this->getConfigGroupInfo($item['group_id']);
