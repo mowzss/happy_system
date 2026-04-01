@@ -56,7 +56,7 @@ class SystemMenu extends Model
             $model['type'] = 1;
 //            $model['openType'] = '_component';
             $model['href'] = $model['class'] == 1
-                ? url($model['node'], $model['params'] ?: [])->build()
+                ? urls($model['node'], $model['params'] ?: [])
                 : $model['node'];
             return $model;
         })->toArray();
