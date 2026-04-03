@@ -4,7 +4,7 @@ namespace app\command\system\spider;
 
 use think\console\Command;
 use think\console\Input;
-use think\console\InputArgument;
+use think\console\input\Argument;
 use think\console\Output;
 
 class ClearLogs extends Command
@@ -16,7 +16,7 @@ class ClearLogs extends Command
     {
         $this->setName('spider:clear-logs')
             ->setDescription('清理 spider_log 表中超过指定天数的数据')
-            ->addArgument('days', InputArgument::OPTIONAL, '保留数据的天数，默认为7天', 7);
+            ->addArgument('days', Argument::OPTIONAL, '保留数据的天数，默认为7天', 7);
     }
 
     /**
