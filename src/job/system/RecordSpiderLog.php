@@ -23,7 +23,7 @@ class RecordSpiderLog
     private function getPrefixedKey(): string
     {
         // 获取当前配置的缓存前缀
-        $prefix = \think\facade\Config::get('cache.prefix', ''); // 默认为空字符串
+        $prefix = Cache::getStoreConfig('redis', 'prefix', ''); // 默认为空字符串
         // 拼接前缀和原始键名
         return $prefix . self::TEMP_LOG_KEY_RAW;
     }
@@ -41,10 +41,10 @@ class RecordSpiderLog
             // --- 修正：使用Redis原生命令LPUSH/RPUSH ---
             // 将数据序列化后添加到Redis List的尾部
             $serialized_data = json_encode($data, JSON_UNESCAPED_UNICODE);
-            Cache::handler()->rPush($prefixed_key, $serialized_data); // rPush 添加到列表末尾
+            Cache::store('redis')->handler()->rPush($prefixed_key, $serialized_data); // rPush 添加到列表末尾
 
             // 获取列表当前长度
-            $list_length_after_push = Cache::handler()->lLen($prefixed_key);
+            $list_length_after_push = Cache::store('redis')->handler()->lLen($prefixed_key);
 
             // 检查是否达到了批量处理的阈值
             if ($list_length_after_push >= self::BATCH_SIZE_TRIGGER) {
@@ -77,7 +77,7 @@ class RecordSpiderLog
             redis.call('DEL', KEYS[1]) -- 原子性地清除整个列表
             return logs
         ";
-        $logsToInsertJsonArray = Cache::handler()->eval($get_and_clear_script, 1, $prefixed_key);
+        $logsToInsertJsonArray = Cache::store('redis')->handler()->eval($get_and_clear_script, 1, $prefixed_key);
 
         if (empty($logsToInsertJsonArray)) {
             return; // 如果没有数据，直接返回
@@ -108,7 +108,7 @@ class RecordSpiderLog
             // 将失败的数据重新放回缓存，等待后续重试
             // 注意：如果失败是永久性的（如数据格式错误），会导致无限重试
             foreach ($logsToInsertJsonArray as $log_json) {
-                Cache::handler()->rPush($prefixed_key, $log_json); // 重新放入列表
+                Cache::store('redis')->handler()->rPush($prefixed_key, $log_json); // 重新放入列表
             }
         }
     }
