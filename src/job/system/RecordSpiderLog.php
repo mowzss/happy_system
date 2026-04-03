@@ -14,7 +14,7 @@ use think\queue\Job;
 class RecordSpiderLog
 {
     private const TEMP_LOG_KEY_RAW = 'spider_logs_temp_batch'; // Redis List的原始键名
-    private const BATCH_SIZE_TRIGGER = 50; // 当缓存达到此数量时，触发批量插入
+    private const BATCH_SIZE_TRIGGER = 100; // 当缓存达到此数量时，触发批量插入
 
     /**
      * 获取带前缀的Redis键名
@@ -77,7 +77,7 @@ class RecordSpiderLog
             redis.call('DEL', KEYS[1]) -- 原子性地清除整个列表
             return logs
         ";
-        $logsToInsertJsonArray = Cache::store('redis')->handler()->eval($get_and_clear_script, 1, $prefixed_key);
+        $logsToInsertJsonArray = Cache::store('redis')->handler()->eval($get_and_clear_script, [$prefixed_key], 1);
 
         if (empty($logsToInsertJsonArray)) {
             return; // 如果没有数据，直接返回
