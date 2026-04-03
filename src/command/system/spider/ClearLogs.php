@@ -31,7 +31,7 @@ class ClearLogs extends Command
 
         // 验证输入的天数是否有效
         if ($days <= 0) {
-            $output->writeln("❌ 错误：天数必须大于0");
+            $output->writeln("错误：天数必须大于0");
             return false;
         }
 
@@ -45,14 +45,13 @@ class ClearLogs extends Command
                 ->delete();
 
             if ($rowsDeleted > 0) {
-                $output->writeln("✅ 已成功清理了 {$rowsDeleted} 条超过 {$days} 天的蜘蛛日志（保留最近 {$days} 天的数据）");
+                $output->writeln("已成功清理了 {$rowsDeleted} 条超过 {$days} 天的蜘蛛日志（保留最近 {$days} 天的数据）");
             } else {
-                $output->writeln("✅ 没有超过 {$days} 天的蜘蛛日志需要清理（保留最近 {$days} 天的数据）");
+                $output->writeln("没有超过 {$days} 天的蜘蛛日志需要清理（保留最近 {$days} 天的数据）");
             }
-
             return true;
         } catch (\Exception $e) {
-            $output->writeln("❌ 清理失败：" . $e->getMessage());
+            $output->writeln("清理失败：" . $e->getMessage());
             return false;
         }
     }
