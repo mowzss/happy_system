@@ -22,7 +22,7 @@ class ClearLogs extends Command
     /**
      * @param Input $input
      * @param Output $output
-     * @return int|null
+     * @return bool|int|null
      */
     protected function execute(Input $input, Output $output): bool|int|null
     {
