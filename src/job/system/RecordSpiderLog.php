@@ -13,24 +13,38 @@ use think\queue\Job;
  */
 class RecordSpiderLog
 {
-    private const TEMP_LOG_KEY = 'spider_logs_temp_batch'; // Redis List的键名
-    private const BATCH_SIZE_TRIGGER = 500; // 当缓存达到此数量时，触发批量插入
+    private const TEMP_LOG_KEY_RAW = 'spider_logs_temp_batch'; // Redis List的原始键名
+    private const BATCH_SIZE_TRIGGER = 50; // 当缓存达到此数量时，触发批量插入
+
+    /**
+     * 获取带前缀的Redis键名
+     * @return string
+     */
+    private function getPrefixedKey(): string
+    {
+        // 获取当前配置的缓存前缀
+        $prefix = \think\facade\Config::get('cache.prefix', ''); // 默认为空字符串
+        // 拼接前缀和原始键名
+        return $prefix . self::TEMP_LOG_KEY_RAW;
+    }
 
     /**
      * @param Job $job
      * @param array $data
      * @return void
      */
-    public function fire(Job $job, $data): void
+    public function fire(Job $job, array $data): void
     {
+        $prefixed_key = $this->getPrefixedKey();
+
         try {
             // --- 修正：使用Redis原生命令LPUSH/RPUSH ---
             // 将数据序列化后添加到Redis List的尾部
             $serialized_data = json_encode($data, JSON_UNESCAPED_UNICODE);
-            Cache::handler()->rPush(self::TEMP_LOG_KEY, $serialized_data); // rPush 添加到列表末尾
+            Cache::handler()->rPush($prefixed_key, $serialized_data); // rPush 添加到列表末尾
 
             // 获取列表当前长度
-            $list_length_after_push = Cache::handler()->lLen(self::TEMP_LOG_KEY);
+            $list_length_after_push = Cache::handler()->lLen($prefixed_key);
 
             // 检查是否达到了批量处理的阈值
             if ($list_length_after_push >= self::BATCH_SIZE_TRIGGER) {
@@ -55,13 +69,15 @@ class RecordSpiderLog
      */
     private function processBatchLogs(): void
     {
+        $prefixed_key = $this->getPrefixedKey();
+
         // 获取所有暂存在Redis中的日志数据，并原子性地清除它们
         $get_and_clear_script = "
             local logs = redis.call('LRANGE', KEYS[1], 0, -1)
             redis.call('DEL', KEYS[1]) -- 原子性地清除整个列表
             return logs
         ";
-        $logsToInsertJsonArray = Cache::handler()->eval($get_and_clear_script, 1, self::TEMP_LOG_KEY);
+        $logsToInsertJsonArray = Cache::handler()->eval($get_and_clear_script, 1, $prefixed_key);
 
         if (empty($logsToInsertJsonArray)) {
             return; // 如果没有数据，直接返回
@@ -92,7 +108,7 @@ class RecordSpiderLog
             // 将失败的数据重新放回缓存，等待后续重试
             // 注意：如果失败是永久性的（如数据格式错误），会导致无限重试
             foreach ($logsToInsertJsonArray as $log_json) {
-                Cache::handler()->rPush(self::TEMP_LOG_KEY, $log_json); // 重新放入列表
+                Cache::handler()->rPush($prefixed_key, $log_json); // 重新放入列表
             }
         }
     }
