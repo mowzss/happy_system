@@ -22,17 +22,12 @@ class Base extends Controller
      * @var mixed
      */
     protected mixed $web_config;
-    /**
-     * @var array|mixed
-     */
-    protected mixed $input;
 
     protected function initialize(): void
     {
 
         $this->setView();
         $this->user = UserHelper::instance()->getUserInfo();
-        $this->input = $this->request->param();
         if ($this->app->config->get('happy.installed', false)) {
             $this->web_config = ConfigLogic::instance()->getConfigValue();
         } else {
