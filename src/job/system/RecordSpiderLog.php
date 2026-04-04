@@ -38,7 +38,6 @@ class RecordSpiderLog
         $prefixed_key = $this->getPrefixedKey();
 
         try {
-            // --- 修正：使用Redis原生命令LPUSH/RPUSH ---
             // 将数据序列化后添加到Redis List的尾部
             $serialized_data = json_encode($data, JSON_UNESCAPED_UNICODE);
             Cache::store('redis')->handler()->rPush($prefixed_key, $serialized_data); // rPush 添加到列表末尾
@@ -93,14 +92,9 @@ class RecordSpiderLog
                 $log['url'] = strlen($log['url']) > 500 ? substr($log['url'], 0, 500) : $log['url'];
                 return $log;
             }, $logsToInsertJsonArray);
-
             // 批量插入数据
             $model->insertAll($logsToInsert);
-
             $model->commit(); // 提交事务
-
-            trace("成功批量插入 " . count($logsToInsert) . " 条蜘蛛日志。", 'info');
-
         } catch (\Exception $e) {
             $model->rollback(); // 回滚事务
 
