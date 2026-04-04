@@ -44,9 +44,9 @@ trait CrudTrait
     protected array $forms;
     /**
      * 开启分页
-     * @var
+     * @var bool
      */
-    protected $is_page = true;
+    protected bool $is_page = true;
 
 
     /**
@@ -194,7 +194,7 @@ trait CrudTrait
      * @return bool|string
      * @throws Exception
      */
-    public function add()
+    public function add(): bool|string
     {
         if ($this->request->isPost()) {
             $data = $this->request->post();

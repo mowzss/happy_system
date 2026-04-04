@@ -8,7 +8,9 @@ use app\common\traits\CrudTrait;
 use app\model\user\UserAuth;
 use app\model\user\UserGroup;
 use app\model\user\UserInfo;
+use mowzs\lib\Exception\LibsException;
 use mowzs\lib\Forms;
+use mowzs\lib\helper\CodeHelper;
 use think\App;
 use think\Exception;
 
@@ -98,16 +100,19 @@ class Info extends BaseAdmin
                     'type' => 'text',
                     'name' => 'username',
                     'label' => '用户名',
+                    'required' => true
                 ],
                 [
                     'type' => 'text',
                     'name' => 'mobile',
                     'label' => '手机号',
+                    'required' => true
                 ],
                 [
                     'type' => 'text',
                     'name' => 'nickname',
                     'label' => '昵称',
+                    'required' => true
                 ],
                 [
                     'type' => 'select',
@@ -185,7 +190,7 @@ class Info extends BaseAdmin
      * 重置密码
      * @auth true
      * @return string
-     * @throws Exception
+     * @throws Exception|\mowzs\lib\Exception\FormsException
      */
     public function password(): string
     {
@@ -245,5 +250,27 @@ class Info extends BaseAdmin
                 'value' => $id
             ]
         ]);
+    }
+
+    /**
+     * @param $data
+     * @return void
+     */
+    protected function _save_filter(&$data): void
+    {
+        if (empty($data['username'])) {
+            try {
+                $data['username'] = 'A_' . date('ymd') . CodeHelper::randomString(4);
+            } catch (LibsException) {
+                $this->error('用户名不能为空');
+            }
+        }
+        if (empty($data['mobile'])) {
+            $this->error('手机号不能为空');
+        }
+        if (empty($data['nickname'])) {
+            $this->error('昵称不能为空');
+        }
+
     }
 }
