@@ -14,6 +14,7 @@ use think\queue\Job;
 class RecordSpiderLog
 {
     private const TEMP_LOG_KEY_RAW = 'spider_logs_temp_batch'; // Redis List的原始键名
+    private const TEMP_LOG_KEY_RAW_ERROR_NUM = 'spider_logs_temp_batch_error_num'; // Redis List的原始键名
     private const BATCH_SIZE_TRIGGER = 20; // 当缓存达到此数量时，触发批量插入
 
     /**
@@ -94,18 +95,22 @@ class RecordSpiderLog
             }, $logsToInsertJsonArray);
             // 批量插入数据
             $model->insertAll($logsToInsert);
+            Cache::delete(self::TEMP_LOG_KEY_RAW_ERROR_NUM);
             $model->commit(); // 提交事务
         } catch (\Exception $e) {
             $model->rollback(); // 回滚事务
-
+            Cache::inc(self::TEMP_LOG_KEY_RAW_ERROR_NUM);
+            if (Cache::get(self::TEMP_LOG_KEY_RAW_ERROR_NUM) < 5) {
+                // 注意：如果失败是永久性的（如数据格式错误），会导致无限重试
+                foreach ($logsToInsertJsonArray as $log_json) {
+                    Cache::store('redis')->handler()->rPush($prefixed_key, $log_json); // 重新放入列表
+                }
+            } else {
+                Cache::delete(self::TEMP_LOG_KEY_RAW_ERROR_NUM);
+                trace("批量插入蜘蛛日志失败次数超过5次，已放弃重试：" . $e->getMessage(), 'error');
+            }
             trace("批量插入蜘蛛日志失败：" . $e->getMessage(), 'error');
 
-            // --- 失败后处理 ---
-            // 将失败的数据重新放回缓存，等待后续重试
-            // 注意：如果失败是永久性的（如数据格式错误），会导致无限重试
-            foreach ($logsToInsertJsonArray as $log_json) {
-                Cache::store('redis')->handler()->rPush($prefixed_key, $log_json); // 重新放入列表
-            }
         }
     }
 }
