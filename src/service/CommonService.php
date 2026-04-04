@@ -49,7 +49,8 @@ class CommonService extends \think\Service
 
                     $data = [
                         'name' => $spiderCode,
-                        'url' => $url,
+                        //截取url长度 不超500
+                        'url' => strlen($url) > 500 ? substr($url, 0, 500) : $url,
                         'ip' => $ip,
                         'module' => $this->app->request->layer(),
                         'user_agent' => $userAgent,
