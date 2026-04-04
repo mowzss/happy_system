@@ -89,6 +89,8 @@ class RecordSpiderLog
             $logsToInsert = array_map(static function ($json_str) {
                 $log = json_decode($json_str, true, 512, JSON_THROW_ON_ERROR);
                 unset($log['id']);  // 移除 id 字段，让数据库使用自增ID
+                //限制  $log['url'] 字符串长度不超过500
+                $log['url'] = strlen($log['url']) > 500 ? substr($log['url'], 0, 500) : $log['url'];
                 return $log;
             }, $logsToInsertJsonArray);
 
