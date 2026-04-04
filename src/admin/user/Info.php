@@ -66,6 +66,9 @@ class Info extends BaseAdmin
                 [
                     'field' => 'last_ip',
                     'title' => '最近登录IP',
+                ], [
+                    'field' => 'ip_isp',
+                    'title' => 'IP归属地',
                 ],
                 [
                     'field' => 'status',
@@ -160,6 +163,13 @@ class Info extends BaseAdmin
                     $v['group_name'] = $groupNames[$v['group_id']];
                 } else {
                     $v['group_name'] = '未知用户组';
+                }
+                if (!empty($v['last_ip'])) {
+                    try {
+                        $v['ip_isp'] = (new \Ip2Region)->simple($v['last_ip']);
+                    } catch (\Exception $e) {
+                        $v['ip_isp'] = '未知';
+                    }
                 }
             }
             unset($v); // 解除引用
