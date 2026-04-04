@@ -84,12 +84,12 @@ class RecordSpiderLog
         }
         $model = new SystemSpiderLogs();
         try {
-
             $model->startTrans(); // 开启事务
-
-            // 将JSON字符串数组转换回关联数组
-            $logsToInsert = array_map(function ($json_str) {
-                return json_decode($json_str, true);
+            // 将JSON字符串数组转换回关联数组，并同时移除 id 字段
+            $logsToInsert = array_map(static function ($json_str) {
+                $log = json_decode($json_str, true, 512, JSON_THROW_ON_ERROR);
+                unset($log['id']);  // 移除 id 字段，让数据库使用自增ID
+                return $log;
             }, $logsToInsertJsonArray);
 
             // 批量插入数据
