@@ -14,7 +14,7 @@ use think\queue\Job;
 class RecordSpiderLog
 {
     private const TEMP_LOG_KEY_RAW = 'spider_logs_temp_batch'; // Redis List的原始键名
-    private const TEMP_LOG_KEY_RAW_ERROR_NUM = 'spider_logs_temp_batch_error_num'; // Redis List的原始键名
+    private const TEMP_LOG_KEY_RAW_ERROR_NUM = 'spider_logs_temp_batch_error_num'; // 失败计数器
     private const BATCH_SIZE_TRIGGER = 20; // 当缓存达到此数量时，触发批量插入
 
     /**
