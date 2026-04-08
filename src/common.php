@@ -770,7 +770,7 @@ if (!function_exists('table_exists')) {
             $db = \think\facade\Db::connect($connection);
 
             $config = $db->getConfig();
-            $prefix = isset($config['prefix']) ? $config['prefix'] : '';
+            $prefix = $config['prefix'] ?? '';
             $fullTableName = $prefix . $tableName;
             $result = $db->query("SHOW TABLES LIKE ?", [$fullTableName]);
             // 如果结果不为空，则表示表存在
