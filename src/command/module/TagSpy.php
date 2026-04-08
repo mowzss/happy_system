@@ -57,10 +57,21 @@ class TagSpy extends Command
             return 1;
         }
 
-        $table_name = 'module_' . $module;
+        return $this->setUpdate($module, $output, $force);
+    }
+
+    /**
+     * @param mixed $module
+     * @param Output $output
+     * @param mixed $force
+     * @return int
+     */
+    private function setUpdate(mixed $module, Output $output, mixed $force): int
+    {
+        $table_name = $module . '_tag';
 
         // 检查表是否存在
-        if (!table_exists($table_name)) {
+        if (table_exists($table_name)) {
             $output->error($module . '模块表不存在');
             return 1;
         }
@@ -70,9 +81,9 @@ class TagSpy extends Command
 
             // 先统计需要更新的记录数
             $countQuery = clone $db;
-            $countQuery->field('id, title');
+            $countQuery->field('id');
             if (!$force) {
-                $countQuery->whereOr('tag_spy', '')->whereOr('tag_spy', null);
+                $countQuery->whereOr('spy', '')->whereOr('spy', null);
             }
             $totalCount = $countQuery->count();
 
@@ -84,43 +95,25 @@ class TagSpy extends Command
             $output->info("总共找到 {$totalCount} 条需要更新的记录");
 
             // 构建查询条件
-            $query = $db->field('id, title');
+            $query = $db->field('id,title,spy');
             if (!$force) {
-                $query->whereOr('tag_spy', '')->whereOr('tag_spy', null);
+                $query->whereOr('spy', '')->whereOr('spy', null);
             }
-
-            $processedCount = 0;
             $updatedCount = 0;
-
             // 使用游标遍历，避免内存溢出
-            $query->chunk($batchSize, function ($records) use ($db, &$processedCount, &$updatedCount, $output, $totalCount) {
-                $batchUpdates = [];
-
-                foreach ($records as $item) {
+            foreach ($query->cursor() as $item) {
+                $this->app->db->transaction(function () use ($output, &$updatedCount, $totalCount, $table_name, $item) {
                     $firstChar = mb_substr($item['title'], 0, 1, 'UTF-8');
                     $spy = Pinyin::abbr($firstChar);
+                    $this->app->db->name($table_name)->update([
+                        'id' => $item['id'], 'spy' => (string)$spy, 'title' => $item['title']
+                    ]);
+                    $updatedCount++;
+                    $progress = round(($updatedCount / $totalCount) * 100, 2);
+                    $output->info("已处理: {$updatedCount}/{$totalCount} ({$progress}%)");
+                });
 
-                    $batchUpdates[] = [
-                        'id' => $item['id'],
-                        'tag_spy' => $spy
-                    ];
-                }
-
-                // 批量更新
-                if (!empty($batchUpdates)) {
-                    $db->transaction(function () use ($db, $batchUpdates) {
-                        foreach ($batchUpdates as $update) {
-                            $db->where('id', $update['id'])->update(['tag_spy' => $update['tag_spy']]);
-                        }
-                    });
-
-                    $updatedCount += count($batchUpdates);
-                }
-
-                $processedCount += count($records);
-                $progress = round(($processedCount / $totalCount) * 100, 2);
-                $output->info("已处理: {$processedCount}/{$totalCount} ({$progress}%)");
-            });
+            }
 
             $output->info("模块 {$module} 的 tag_spy 更新完成，共更新 {$updatedCount} 条记录");
             return 0;
