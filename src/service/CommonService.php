@@ -3,6 +3,7 @@
 namespace app\service;
 
 use app\command\module\ContentSync;
+use app\command\module\TagSpy;
 use app\command\system\cloud\UploadStaticToCloud;
 use app\command\system\indexnow\IndexNowClean;
 use app\command\system\indexnow\IndexNowPush;
@@ -19,10 +20,6 @@ use think\facade\Queue;
 
 class CommonService extends \think\Service
 {
-    public function register()
-    {
-    }
-
     public function boot(): void
     {
         // 注册命令行
@@ -81,6 +78,7 @@ class CommonService extends \think\Service
             DailyReport::class,
             HourlyReport::class,
             UploadStaticToCloud::class,
+            TagSpy::class,
         ]);
     }
 }
