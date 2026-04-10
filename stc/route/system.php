@@ -1,5 +1,7 @@
 <?php
 
-\think\facade\Route::group('user', function () {
-    \think\facade\Route::rule('', 'index/index');
+use think\facade\Route;
+
+Route::group('user', static function () {
+    Route::rule('', 'user/index/index');
 });
