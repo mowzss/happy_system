@@ -4,6 +4,7 @@ namespace app\admin\system;
 
 use app\common\controllers\BaseAdmin;
 use app\common\traits\CrudTrait;
+use app\logic\system\ModuleLogic;
 use app\model\system\SystemSpiderLogs;
 use think\App;
 
@@ -41,7 +42,7 @@ class SpiderLogs extends BaseAdmin
                     'field' => 'module',
                     'title' => '模块',
                     'align' => 'content',
-                    'width' => 80,
+                    'width' => 110,
                 ], [
                     'field' => 'url',
                     'title' => '抓取页面',
@@ -86,6 +87,12 @@ class SpiderLogs extends BaseAdmin
                 'options' => $spiders,
                 'required' => true
             ], [
+                'type' => 'select',
+                'name' => 'module',
+                'label' => '模块',
+                'options' => ModuleLogic::instance()->getModuleAll(),
+                'required' => true
+            ], [
                 'type' => 'text',
                 'name' => 'url',
                 'label' => '链接地址',
@@ -100,7 +107,7 @@ class SpiderLogs extends BaseAdmin
             ]
         ]];
         $this->search = [
-            'id#=#id', 'name#like#name', 'url#like#url', 'ip#=#ip', 'user_agent#like#user_agent', 'create_time#between#create_time'
+            'id#=#id', 'name#like#name', 'module#=#module', 'url#like#url', 'ip#=#ip', 'user_agent#like#user_agent', 'create_time#between#create_time'
         ];
     }
 
@@ -118,6 +125,7 @@ class SpiderLogs extends BaseAdmin
             } catch (\Exception $e) {
                 $vo['isp'] = '未知';
             }
+            $vo['module'] = ModuleLogic::instance()->getModuleNameByDir($vo['module']);
         }
     }
 
