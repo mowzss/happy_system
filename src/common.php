@@ -434,10 +434,8 @@ if (!function_exists('download_file')) {
      */
     function download_file(string $url, ?string $savePath = null): array
     {
-        // 创建 RemoteFileService 实例
-        $service = new \app\common\util\RemoteFileUtil();
         // 调用服务类的方法进行文件下载和保存
-        return $service->downloadAndSave($url, $savePath);
+        return (new \app\common\util\RemoteFileUtil())->downloadAndSave($url, $savePath);
     }
 }
 if (!function_exists('aurl')) {
