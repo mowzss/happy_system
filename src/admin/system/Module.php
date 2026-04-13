@@ -3,11 +3,11 @@ declare (strict_types=1);
 
 namespace app\admin\system;
 
-use app\common\controllers\BaseAdmin;
+use think\App;
 use app\common\traits\CrudTrait;
 use app\logic\system\ModuleLogic;
 use app\model\system\SystemModule;
-use think\App;
+use app\common\controllers\BaseAdmin;
 
 /**
  * 系统模块管理
@@ -51,7 +51,7 @@ class Module extends BaseAdmin
                 ], [
                     'field' => 'status',
                     'title' => '状态',
-                    'templet' => 'switch'
+                    'templet' => 'switch',
                 ], [
                     'field' => 'create_time',
                     'title' => '创建时间',
@@ -61,10 +61,10 @@ class Module extends BaseAdmin
             'top_button' => [
                 [
                     'event' => 'add',
-                    'name' => '添加本地模块'
+                    'name' => '添加本地模块',
                 ],
-                ['event' => 'del']
-            ]
+                ['event' => 'del'],
+            ],
         ];
         $this->forms = ['fields' => [
             [
@@ -81,13 +81,17 @@ class Module extends BaseAdmin
                 'title' => '类型',
                 'options' => [
                     1 => '模块',
-                    2 => '插件'
-                ]
+                    2 => '插件',
+                ],
             ],
         ]];
         $this->search = ['id#=#id', 'title#=#title', 'dir#=#module', 'status#=#status', 'create_time#between#create_time', 'update_time#between#update_time'];
     }
 
+    /**
+     * 添加本地模块
+     * @return string
+     */
     public function add(): string
     {
         $this->modules = ModuleLogic::instance()->notInstalledModules();

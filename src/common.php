@@ -4,9 +4,9 @@
  * 私有助手函数引入
  */
 
-use app\logic\system\ConfigLogic;
-use app\logic\system\LinksLogic;
 use app\logic\system\NavLogic;
+use app\logic\system\LinksLogic;
+use app\logic\system\ConfigLogic;
 
 if (is_file(__DIR__ . 'function.php')) {
     include_once __DIR__ . 'function.php';
@@ -28,7 +28,7 @@ if (!function_exists('sort_urls')) {
             $data['sort']['urls'][] = [
                 'title' => $value,
                 'url' => urls($url, array_merge($currentParams, ['sort' => $key])),
-                'active' => $request_param == $key
+                'active' => $request_param == $key,
             ];
         }
         foreach ($by_array as $key => $value) {
@@ -36,7 +36,7 @@ if (!function_exists('sort_urls')) {
             $data['by']['urls'][] = [
                 'title' => $value,
                 'url' => urls($url, array_merge($currentParams, ['by' => $key])),
-                'active' => $request_param == $key
+                'active' => $request_param == $key,
             ];
         }
         $data['sort']['title'] = '排序方式';
@@ -276,10 +276,10 @@ if (!function_exists('del_html')) {
             $content = strip_tags($content, $allowedTagsString);
         }
         // 3. 转换 HTML 实体为对应的字符
-        $content = html_entity_decode($content, ENT_QUOTES, 'UTF-8');  // 解码 HTML 实体
+        $content = html_entity_decode($content, ENT_QUOTES, 'UTF-8');                 // 解码 HTML 实体
         // 4. 处理空白字符
-        $content = str_replace(["\r", "\n", '　'], ' ', $content);  // 替换回车、换行和全角空格为半角空格
-        $content = preg_replace('/\s+/', ' ', $content);            // 将多个连续的空白字符替换为一个空格
+        $content = str_replace(["\r", "\n", '　'], ' ', $content);                     // 替换回车、换行和全角空格为半角空格
+        $content = preg_replace('/\s+/', ' ', $content);                              // 将多个连续的空白字符替换为一个空格
         return trim($content);
     }
 }
@@ -367,7 +367,7 @@ if (!function_exists('format_time')) {
                 'day' => 3600 * 24,
                 'hour' => 3600,
                 'minute' => 60,
-                'second' => 1
+                'second' => 1,
             ];
 
             // 遍历时间间隔单位，找到合适的时间描述
@@ -404,9 +404,6 @@ if (!function_exists('sys_config')) {
      * @param string|null $name 配置名称
      * @param mixed|null $default
      * @return mixed
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
     function sys_config(?string $name = null, mixed $default = null): mixed
     {
@@ -525,9 +522,9 @@ if (!function_exists('urls')) {
         $action = '';
         // 判断是否指定了模块
         if (count($pathInfo) >= 3) {
-            list($module, $controller, $action) = $pathInfo;
+            [$module, $controller, $action] = $pathInfo;
         } elseif (count($pathInfo) === 2) {
-            list($controller, $action) = $pathInfo;
+            [$controller, $action] = $pathInfo;
         } elseif (count($pathInfo) === 1) {
             $action = $pathInfo[0];
         }

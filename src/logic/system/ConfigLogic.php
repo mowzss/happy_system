@@ -3,13 +3,13 @@
 namespace app\logic\system;
 
 
-use app\model\system\SystemConfig;
-use mowzs\lib\BaseLogic;
-use think\db\exception\DataNotFoundException;
-use think\db\exception\DbException;
-use think\db\exception\ModelNotFoundException;
-use think\Exception;
 use think\facade\Cache;
+use mowzs\lib\BaseLogic;
+use app\model\system\SystemConfig;
+use think\db\exception\DbException;
+use mowzs\lib\Exception\LogicException;
+use think\db\exception\DataNotFoundException;
+use think\db\exception\ModelNotFoundException;
 
 class ConfigLogic extends BaseLogic
 {
@@ -100,15 +100,13 @@ class ConfigLogic extends BaseLogic
      *
      * @param array $data 提交的数据
      * @return bool
-     * @throws DataNotFoundException
-     * @throws DbException
-     * @throws ModelNotFoundException
+     * @throws LogicException
      */
     public function saveConfig(array $data): bool
     {
         try {
             // 使用 \think\db::transaction() 包裹事务逻辑
-            return self::transaction(function () use ($data) {
+            return $this->transaction(function () use ($data) {
                 // 清理重复的配置项
                 $this->clearDuplicates();
 
@@ -125,12 +123,12 @@ class ConfigLogic extends BaseLogic
                         $config->save(['value' => $value]);
                     }
                 }
-                $this->clearConfigCache();//清理缓存
+                $this->clearConfigCache();     //清理缓存
                 $this->loadAllConfigsToCache();//加载缓存
                 return true;
             });
         } catch (\Exception $e) {
-            throw new Exception('保存配置失败: ' . $e->getMessage());
+            throw new LogicException('保存配置失败: ' . $e->getMessage());
         }
     }
 
@@ -141,9 +139,6 @@ class ConfigLogic extends BaseLogic
      * @param string|null $name 配置名称或 "module.name" 或 null
      * @param mixed|null $default 默认值
      * @return mixed 返回配置值或默认值，或所有配置数据
-     * @throws DataNotFoundException
-     * @throws DbException
-     * @throws ModelNotFoundException
      */
     public function getConfigValue(?string $name = null, mixed $default = null): mixed
     {
@@ -169,20 +164,16 @@ class ConfigLogic extends BaseLogic
             $name = $parts[0];
         } else {
             // 如果提供了模块.名称的形式
-            list($module, $name) = $parts;
+            [$module, $name] = $parts;
         }
 
         // 尝试从缓存中获取特定模块和名称的配置值
-        $value = isset($allConfigs[$module][$name]) ? $allConfigs[$module][$name] : $default;
-        return $value;
+        return $allConfigs[$module][$name] ?? $default;
     }
 
     /**
      * 将所有配置项加载到缓存中
      * @return void
-     * @throws DataNotFoundException
-     * @throws DbException
-     * @throws ModelNotFoundException
      */
     public function loadAllConfigsToCache(): void
     {
@@ -191,9 +182,13 @@ class ConfigLogic extends BaseLogic
 
         // 如果缓存中没有，则从数据库加载并设置缓存
         if (!Cache::has($cacheKey)) {
-            $configs = SystemConfig::field('name, module, value')
-                ->select()
-                ->toArray();
+            try {
+                $configs = SystemConfig::field('name, module, value')
+                    ->select()
+                    ->toArray();
+            } catch (DataNotFoundException|ModelNotFoundException|DbException $e) {
+                $configs = [];
+            }
 
             // 转换为所需的结构
             $formattedConfigs = [];
