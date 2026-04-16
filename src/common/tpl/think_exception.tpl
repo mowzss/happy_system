@@ -394,6 +394,7 @@ if (!function_exists('echo_value')) {
     <?php } ?>
 
     <div class="copyright">
+        <a href="javascript:history.back(-1);">返回来源页</a>
         <a href="/">返回网站首页</a>
         <span>报时: <?php echo date('Y-m-d H:i:s'); ?></span>
     </div>
