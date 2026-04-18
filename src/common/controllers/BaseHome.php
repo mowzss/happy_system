@@ -4,8 +4,8 @@ declare (strict_types=1);
 namespace app\common\controllers;
 
 use think\App;
-use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
+use think\db\exception\DataNotFoundException;
 use think\db\exception\ModelNotFoundException;
 
 class BaseHome extends Base
@@ -27,7 +27,7 @@ class BaseHome extends Base
 
         try {
 
-            if ($this->app->config->get('happy.installed', false) && sys_config('is_open_site') != 1) {
+            if ($this->app->config->get('happy.installed', false) && sys_config('is_open_site') !== 1) {
                 $this->closeSite('网站暂未开启!敬请期待');
             }
         } catch (DataNotFoundException|ModelNotFoundException|DbException $e) {
