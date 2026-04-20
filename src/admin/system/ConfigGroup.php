@@ -3,11 +3,11 @@ declare (strict_types=1);
 
 namespace app\admin\system;
 
-use app\common\controllers\BaseAdmin;
-use app\common\traits\CrudTrait;
-use app\model\system\SystemConfigGroup;
-use app\model\system\SystemModule;
 use think\App;
+use app\common\traits\CrudTrait;
+use app\model\system\SystemModule;
+use app\common\controllers\BaseAdmin;
+use app\model\system\SystemConfigGroup;
 
 /**
  * 设置组管理
@@ -59,13 +59,13 @@ class ConfigGroup extends BaseAdmin
                     'width' => 120,
                     'templet' => 'switch',
                     'switch' => [
-                        'name' => '显示|隐藏'
-                    ]
+                        'name' => '显示|隐藏',
+                    ],
                 ],
                 [
                     'field' => 'status',
                     'title' => '状态',
-                    'templet' => 'switch'
+                    'templet' => 'switch',
                 ],
             ],
             //表格 表头按钮
@@ -77,7 +77,7 @@ class ConfigGroup extends BaseAdmin
             'right_button' => [
                 [
                     'event' => '',
-                    'type' => 'data-open',
+                    'type' => 'data-menu-open',
                     'url' => urls('system/config/index', ['group_id' => '__id__']),
                     'name' => '管理设置字段',
                     'class' => '',//默认包含 layui-btn layui-btn-xs
@@ -87,7 +87,7 @@ class ConfigGroup extends BaseAdmin
             ],
         ];
         $this->search = [
-            'id#=#id', 'title#=#title', 'module#=#module', 'status#=#status'
+            'id#=#id', 'title#=#title', 'module#=#module', 'status#=#status',
         ];
         $this->forms = [
             'fields' => [
@@ -95,21 +95,21 @@ class ConfigGroup extends BaseAdmin
                     'type' => 'text',
                     'name' => 'title',
                     'label' => '名称',
-                    'required' => true
+                    'required' => true,
                 ], [
                     'type' => 'radio',
                     'name' => 'sys_show',
                     'label' => '系统设置显示',
                     'options' => [0 => '不显示', 1 => '显示'],
-                    'required' => true
+                    'required' => true,
                 ], [
                     'type' => 'select',
                     'name' => 'module',
                     'label' => '归属模块',
                     'options' => SystemModule::where('status', 1)->column('title', 'dir'),
-                    'required' => true
-                ]
-            ]
+                    'required' => true,
+                ],
+            ],
         ];
     }
 }
