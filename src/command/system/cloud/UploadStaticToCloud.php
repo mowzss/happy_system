@@ -30,7 +30,7 @@ class UploadStaticToCloud extends Command
      * @return int
      * @throws \League\Flysystem\FilesystemException
      */
-    protected function execute(Input $input, Output $output)
+    protected function execute(Input $input, Output $output): int
     {
         // 检查是否设置了只更新版本号的选项
         $onlyUpdateVersion = $input->hasOption('only-update-version') && $input->getOption('only-update-version');
