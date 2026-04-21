@@ -10,7 +10,7 @@ use think\console\Command;
 use think\facade\Filesystem;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
-use think\console\input\Argument;
+use think\console\input\Option;
 use app\model\system\SystemConfig;
 
 class UploadStaticToCloud extends Command
@@ -22,7 +22,7 @@ class UploadStaticToCloud extends Command
     {
         $this->setName('cloud:upload-static')
             ->setDescription('使用 think-filesystem 上传静态文件到云存储（OSS/COS/本地等）')
-            ->addArgument('only-update-version', Argument::OPTIONAL, '仅更新静态资源版本号，不执行文件上传');
+            ->addOption('only-update-version', null, Option::VALUE_OPTIONAL, '仅更新静态资源版本号，不执行文件上传');
     }
 
     /**
@@ -34,7 +34,7 @@ class UploadStaticToCloud extends Command
     protected function execute(Input $input, Output $output): int
     {
         // 检查是否设置了只更新版本号的选项
-        $onlyUpdateVersion = $input->hasArgument('only-update-version') && $input->getArgument('only-update-version');
+        $onlyUpdateVersion = $input->hasOption('only-update-version') && $input->getOption('only-update-version');
 
         if ($onlyUpdateVersion) {
             $output->info('🔄 仅执行版本号更新操作...');
