@@ -21,8 +21,8 @@ class UploadStaticToCloud extends Command
     protected function configure(): void
     {
         $this->setName('cloud:upload-static')
-            ->setDescription('使用 think-filesystem 上传静态文件到云存储（OSS/COS/本地等）')
-            ->addOption('only-update-version', null, Option::VALUE_OPTIONAL, '仅更新静态资源版本号，不执行文件上传');
+            ->addOption('only-update-version', null, Option::VALUE_OPTIONAL, '仅更新静态资源版本号，不执行文件上传')
+            ->setDescription('使用 think-filesystem 上传静态文件到云存储（OSS/COS/本地等）');
     }
 
     /**
