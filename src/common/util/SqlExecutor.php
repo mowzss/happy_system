@@ -30,9 +30,9 @@ class SqlExecutor extends UtilBase
      */
     public function execute(string $filePath, string $type = 'install', string $prefix = ''): void
     {
-        if ($type == 'install') {//安装
+        if ($type === 'install') {//安装
             $path = '/common/install/';
-        } else if ($type == 'update' || $type == 'upgrade') {//升级
+        } else if ($type === 'update' || $type === 'upgrade') {//升级
             $path = '/common/upgrade/';
         }
         $this->filePath = $this->app->getBasePath() . $path . $filePath;

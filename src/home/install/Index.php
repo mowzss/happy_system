@@ -3,17 +3,17 @@ declare(strict_types=1);
 
 namespace app\home\install;
 
-use app\common\traits\system\ViewTheme;
-use app\common\util\SqlExecutor;
-use mowzs\lib\Controller;
 use PDO;
-use think\db\exception\DataNotFoundException;
-use think\db\exception\DbException;
-use think\db\exception\ModelNotFoundException;
-use think\facade\Config;
 use think\facade\Db;
-use think\facade\Request;
+use think\facade\Config;
 use think\response\Json;
+use mowzs\lib\Controller;
+use think\facade\Request;
+use app\common\util\SqlExecutor;
+use think\db\exception\DbException;
+use app\common\traits\system\ViewTheme;
+use think\db\exception\DataNotFoundException;
+use think\db\exception\ModelNotFoundException;
 
 class Index extends Controller
 {
@@ -38,8 +38,6 @@ class Index extends Controller
         if ($this->isInstalled()) {
             $this->error('您已安装过系统!');
         }
-
-
         // 显示安装表单
         return $this->fetch();
     }
@@ -53,7 +51,8 @@ class Index extends Controller
         if ($this->isInstalled()) {
             $this->error('您已安装过系统!');
         }
-        if (!$this->app->session->get('install_index', false)) {
+
+        if (!$this->app->cache->get('install_index', false)) {
             $this->error('请先进行环境检测', '', urls('index'));
         }
         return $this->fetch();
@@ -68,10 +67,10 @@ class Index extends Controller
         if ($this->isInstalled()) {
             $this->error('您已安装过系统!');
         }
-        if (!$this->app->session->get('install_index', false)) {
+        if (!$this->app->cache->get('install_index', false)) {
             $this->error('请先进行环境检测', '', urls('index'));
         }
-        if (!$this->app->session->get('install_data', false)) {
+        if (!$this->app->cache->get('install_data', false)) {
             $this->error('请先配置数据库信息', '', urls('data'));
         }
         return $this->fetch();
@@ -81,7 +80,7 @@ class Index extends Controller
      * 数据安装
      * @return Json
      */
-    public function install_data()
+    public function install_data(): Json
     {
         // 检查是否已经安装
         if ($this->isInstalled()) {
@@ -108,7 +107,7 @@ class Index extends Controller
         if (!$this->writeConfigFile($data)) {
             return json(['status' => 'error', 'msg' => '写入配置文件失败']);
         }
-        $this->app->session->set('install_data', true);
+        $this->app->cache->set('install_data', true);
         return json(['status' => 'success', 'msg' => '数据库配置成功', 'url' => urls('set')]);
     }
 
@@ -147,7 +146,7 @@ class Index extends Controller
             return json(['status' => 'error', 'msg' => 'Happy.php配置文件设置失败！']);
         }
         $this->app->console->call('admin:upgrade')->fetch();
-        return json(['status' => 'success', 'msg' => '安装成功', 'url' => aurl('index/index/index')]);
+        return json(['status' => 'success', 'msg' => '安装成功', 'url' => '/' . app()->config->get('happy.admin_entrance', 'admin.php')]);
     }
 
     /**
@@ -200,12 +199,12 @@ class Index extends Controller
         }
 
         if ($passed) {
-            $this->app->session->set('install_index', true);
+            $this->app->cache->set('install_index', 'ok', 3600);
         }
         return json([
             'status' => 'success',
             'passed' => $passed,
-            'requirements' => $requirements
+            'requirements' => $requirements,
         ]);
     }
 

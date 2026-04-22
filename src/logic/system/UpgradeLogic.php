@@ -2,10 +2,11 @@
 
 namespace app\logic\system;
 
-use app\common\util\SqlExecutor;
-use app\model\system\SystemUpgradeLog;
-use mowzs\lib\BaseLogic;
 use think\Exception;
+use mowzs\lib\BaseLogic;
+use app\common\util\SqlExecutor;
+use app\model\system\SystemModule;
+use app\model\system\SystemUpgradeLog;
 
 class UpgradeLogic extends BaseLogic
 {
@@ -71,9 +72,12 @@ class UpgradeLogic extends BaseLogic
                 ];
             }
         }
-
+        $modules = SystemModule::where('status', 1)->column('dir');
         // 按 module 分组
         foreach ($filesToCheck as $info) {
+            if (!in_array($info['module'], $modules, true)) {
+                continue;
+            }
             $allFilesData[$info['module']][] = [
                 'filename' => $info['filename'],
                 'relative_path' => $info['relative_path'],

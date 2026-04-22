@@ -3,9 +3,9 @@ declare (strict_types=1);
 
 namespace app\common\util;
 
-use mowzs\lib\Helper;
 use think\App;
 use think\Container;
+use mowzs\lib\Helper;
 
 class UtilBase
 {
@@ -17,10 +17,12 @@ class UtilBase
     // 静态存储类的实例
     protected static array $instances = [];
 
-    // 构造函数用于依赖注入
-    public function __construct(App $app = null)
+    /**
+     * @param App|null $app
+     */
+    public function __construct(?App $app = null)
     {
-        $this->app = $app ?: app();
+        $this->app = $app ?? app();
         $this->initialize();
     }
 
@@ -28,7 +30,7 @@ class UtilBase
      * 初始化
      * @return void
      */
-    protected function initialize()
+    protected function initialize(): void
     {
 
     }
