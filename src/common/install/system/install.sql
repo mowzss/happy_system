@@ -80,7 +80,7 @@ CREATE TABLE `ha_system_config`
     KEY `system_config_status_index` (`status`),
     KEY `system_config_module_index` (`module`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 43
+  AUTO_INCREMENT = 52
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci COMMENT ='网站配置';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -158,7 +158,29 @@ VALUES (1, 'storage_driver', 'radio', '存储引擎', 4,
        (41, 'user_pc_style', 'select', '会员PC风格', 1, '\\mowzs\\lib\\helper\\TemplateHelper@getTemplateData@user', '',
         'default', NULL, 0, 'system', 1, 1736259818, 1736264408),
        (42, 'user_wap_style', 'select', '会员wap风格', 1, '\\mowzs\\lib\\helper\\TemplateHelper@getTemplateData@user',
-        '', 'default', NULL, 0, 'system', 1, 1736259844, 1736264408);
+        '', 'default', NULL, 0, 'system', 1, 1736259844, 1736264408),
+       (43, 'site_domain', 'text', '网站域名', 1, '',
+        '尽量填写域名，需要带http://或https:// 命令行等模式下部分服务需使用域名', '', NULL, 0, 'system', 1, 1776861707,
+        1776861707),
+       (44, 'is_open', 'radio', '开启推送', 6, '1|开启\n0|关闭', '是否开启IndexNow推送', '', NULL, 1000, 'p_index_now',
+        1, 1776861707, 1776861707),
+       (45, 'open_module', 'checkbox', '开启模块', 6, '\\app\\common\\fun\\system\\SystemModule@getAllModule',
+        '选择开启IndexNow推送模块', '', NULL, 800, 'p_index_now', 1, 1776861707, 1776861707),
+       (46, 'index_key', 'text', '推送秘钥', 6, '', '设置推送秘钥', '5c24c0585ea94a21258dd3d95b05ca51', NULL, 900,
+        'p_index_now', 1, 1776861707, 1776861707),
+       (47, 'editor_default', 'select', '默认富文本编辑器', 1,
+        'tinymce|tinymce编辑器\nwangeditor|WangEditor\nueditor|百度Ueditor',
+        '模型设计中默认的富文本编辑器，如模型设计中指定了编辑器，则此设置无效', '', NULL, 0, 'system', 1, 1776861707,
+        1776861707),
+       (48, 'static_upload', 'radio', '前端静态文件存储位置', 7, 'local|本地\noss|阿里云oss\nqiniu|七牛云',
+        '前端静态文件存储位置，如存储至阿里云oss则需要在系统设置-存储配置中配置oss信息。 配置后可执行php think cloud:upload-static 初始化上传静态文件数据,也可以通过定时任务执行。',
+        'local', NULL, 0, 'system', 1, 1776861707, 1776861707),
+       (49, 'static_prefix', 'text', '云存储路径前缀', 7, '', '上传至远程的文件路径前缀', 'static', NULL, 0, 'system',
+        1, 1776861707, 1776861707),
+       (50, 'static_local_path', 'text', '本地文件路径', 7, '', '静态文件本地位置 无需public', 'static', NULL, 0,
+        'system', 1, 1776861707, 1776861707),
+       (51, 'static_version', 'text', '前端资源版本号', 7, '', '适应前端资源缓存，默认上传云存储资源后自动设置版本号',
+        '26.0423.423208', NULL, 0, 'system', 1, 1776861707, 1776861707);
 /*!40000 ALTER TABLE `ha_system_config`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -179,7 +201,7 @@ CREATE TABLE `ha_system_config_group`
     `status`   int(11)      DEFAULT '1' COMMENT '状态',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 6
+  AUTO_INCREMENT = 8
   DEFAULT CHARSET = utf8mb4 COMMENT ='设置分组';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -195,7 +217,9 @@ VALUES (1, '基础设置', 1, 'system', 1),
        (2, '会员设置', 1, 'system', 1),
        (3, '邮件设置', 1, 'system', 1),
        (4, '存储设置', 1, 'system', 1),
-       (5, '短信设置', 1, 'system', 1);
+       (5, '短信设置', 1, 'system', 1),
+       (6, 'IndexNow推送', 0, 'p_index_now', 1),
+       (7, '前端资源', 1, 'system', 1);
 /*!40000 ALTER TABLE `ha_system_config_group`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -219,7 +243,7 @@ CREATE TABLE `ha_system_event`
     KEY `idx_site_event_name` (`name`),
     KEY `system_event_status_index` (`status`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 8
+  AUTO_INCREMENT = 14
   DEFAULT CHARSET = utf8mb4 COMMENT ='接口(钩子)列表';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -237,7 +261,13 @@ VALUES (1, 'AppInit', '应用初始化标签位', 1, 0, NULL),
        (4, 'LogWrite', '日志write方法标签位', 1, 0, NULL),
        (5, 'RouteLoaded', '路由加载完成', 1, 0, NULL),
        (6, 'LogRecord', '日志记录', 1, 0, NULL),
-       (7, 'HomeIndex', '网站首页', 1, 0, '无');
+       (7, 'HomeIndex', '网站首页', 1, 0, '无'),
+       (8, 'ContentAddBefore', '内容添加前', 1, 0, 'POST数据'),
+       (9, 'ContentAddAfter', '内容添加后', 1, 0, 'POST数据,无数据回传'),
+       (10, 'ContentEditBefore', '内容编辑前', 1, 0, 'POST数据'),
+       (11, 'ContentEditAfter', '内容编辑后', 1, 0, 'POST数据,无数据回传'),
+       (12, 'UserRegister', '用户注册后', 1, 0, '用户模型'),
+       (13, 'UserLogin', '用户登录后', 1, 0, '用户模型');
 /*!40000 ALTER TABLE `ha_system_event`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -335,6 +365,7 @@ CREATE TABLE `ha_system_icon`
     `path`        varchar(255) NOT NULL,
     `url`         varchar(255) NOT NULL,
     `title`       varchar(64)           DEFAULT NULL COMMENT '名称',
+    `is_show`     int(1)       NOT NULL DEFAULT '0' COMMENT '是否后台引用显示',
     `name`        varchar(100) NOT NULL COMMENT '字体名称',
     `prefix`      varchar(50)  NOT NULL,
     `create_time` int(11)      NOT NULL DEFAULT '0',
@@ -355,11 +386,75 @@ LOCK TABLES `ha_system_icon` WRITE;
 /*!40000 ALTER TABLE `ha_system_icon`
     DISABLE KEYS */;
 INSERT INTO `ha_system_icon`
-VALUES (1, 'public/static/libs/layui/css/layui.css', '/static/libs/layui/css/layui.css', 'layui', 'layui-icon',
+VALUES (1, 'public/static/libs/layui/css/layui.css', '/static/libs/layui/css/layui.css', 'layui', 0, 'layui-icon',
         'layui-icon-', 1732974203, 1734425923, 15, 1),
-       (3, 'public/static/admin/css/icon.css', '/static/admin/css/icon.css', '阿里自选', 'iconfont', 'icon-',
+       (3, 'public/static/admin/css/icon.css', '/static/admin/css/icon.css', '阿里自选', 0, 'iconfont', 'icon-',
         1734400900, 1735806355, 17, 1);
 /*!40000 ALTER TABLE `ha_system_icon`
+    ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ha_system_jobs`
+--
+
+DROP TABLE IF EXISTS `ha_system_jobs`;
+/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ha_system_jobs`
+(
+    `id`             int(11) unsigned NOT NULL AUTO_INCREMENT,
+    `queue`          varchar(255)        DEFAULT NULL,
+    `payload`        longtext,
+    `attempts`       tinyint(4) unsigned DEFAULT NULL,
+    `reserve_time`   int(11) unsigned    DEFAULT NULL,
+    `available_time` int(11) unsigned    DEFAULT NULL,
+    `create_time`    int(11) unsigned    DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    KEY `queue` (`queue`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ha_system_jobs`
+--
+
+LOCK TABLES `ha_system_jobs` WRITE;
+/*!40000 ALTER TABLE `ha_system_jobs`
+    DISABLE KEYS */;
+/*!40000 ALTER TABLE `ha_system_jobs`
+    ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ha_system_jobs_failed`
+--
+
+DROP TABLE IF EXISTS `ha_system_jobs_failed`;
+/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ha_system_jobs_failed`
+(
+    `id`         int(11) unsigned NOT NULL AUTO_INCREMENT,
+    `connection` text,
+    `queue`      text,
+    `payload`    longtext,
+    `exception`  longtext,
+    `fail_time`  timestamp        NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ha_system_jobs_failed`
+--
+
+LOCK TABLES `ha_system_jobs_failed` WRITE;
+/*!40000 ALTER TABLE `ha_system_jobs_failed`
+    DISABLE KEYS */;
+/*!40000 ALTER TABLE `ha_system_jobs_failed`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -373,19 +468,21 @@ DROP TABLE IF EXISTS `ha_system_links`;
 CREATE TABLE `ha_system_links`
 (
     `id`          int(11) unsigned NOT NULL AUTO_INCREMENT,
-    `cid`         int(11)          DEFAULT '0' COMMENT '分类id',
-    `type`        int(11)          DEFAULT '0' COMMENT '友链类型',
-    `title`       varchar(255)     DEFAULT NULL COMMENT '网站标题',
-    `url`         varchar(500)     DEFAULT NULL COMMENT '网站链接',
-    `list`        int(11)          DEFAULT '0' COMMENT '排序',
-    `qq`          varchar(255)     DEFAULT NULL COMMENT '联系方式',
-    `status`      int(11)          DEFAULT '1' COMMENT '状态(1正常 0隐藏)',
-    `start_time`  datetime         DEFAULT NULL COMMENT '开始日期',
-    `end_time`    datetime         DEFAULT NULL COMMENT '结束日期',
-    `create_time` int(10) unsigned DEFAULT NULL,
-    `update_time` int(10) unsigned DEFAULT NULL,
+    `cid`         int(11)                   DEFAULT '0' COMMENT '分类id',
+    `type`        int(11)                   DEFAULT '0' COMMENT '友链类型',
+    `title`       varchar(255)              DEFAULT NULL COMMENT '网站标题',
+    `url`         varchar(500)              DEFAULT NULL COMMENT '网站链接',
+    `list`        int(11)                   DEFAULT '0' COMMENT '排序',
+    `qq`          varchar(255)              DEFAULT NULL COMMENT '联系方式',
+    `status`      int(11)                   DEFAULT '1' COMMENT '状态(1正常 0隐藏)',
+    `start_time`  datetime                  DEFAULT NULL COMMENT '开始日期',
+    `end_time`    datetime                  DEFAULT NULL COMMENT '结束日期',
+    `is_long`     int(1)           NOT NULL DEFAULT '0',
+    `create_time` int(10) unsigned          DEFAULT NULL,
+    `update_time` int(10) unsigned          DEFAULT NULL,
     PRIMARY KEY (`id`),
-    KEY `idx_site_link_cid` (`cid`)
+    KEY `idx_site_link_cid` (`cid`),
+    KEY `is_long` (`is_long`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 2
   DEFAULT CHARSET = utf8mb4 COMMENT ='友情链接';
@@ -400,7 +497,7 @@ LOCK TABLES `ha_system_links` WRITE;
     DISABLE KEYS */;
 INSERT INTO `ha_system_links`
 VALUES (1, 1, 1, '星座之家', 'https://www.xingzuohome.com/', 0, '123789', 1, '2025-01-06 11:45:42',
-        '2025-01-06 11:45:42', 1736135142, 1736135142);
+        '2025-01-06 11:45:42', 0, 1736135142, 1736135142);
 /*!40000 ALTER TABLE `ha_system_links`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -428,7 +525,7 @@ CREATE TABLE `ha_system_menu`
     KEY `system_menu_node_index` (`node`),
     KEY `system_menu_status_index` (`status`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 38
+  AUTO_INCREMENT = 42
   DEFAULT CHARSET = utf8mb4 COMMENT ='系统菜单';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -469,7 +566,11 @@ VALUES (1, 0, '系统管理', 'layui-icon layui-icon-set', 'system', '#', '', 1,
        (34, 1, '系统日志', 'layui-icon layui-icon-tips', 'system_log', '#', '', 1, 0, 1),
        (35, 34, '操作日志', '', NULL, 'system/OperationLog/index', '', 1, 0, 1),
        (36, 1, '网站管理', 'layui-icon layui-icon-website', 'system_site', '', '#', 1, 700, 1),
-       (37, 36, '网站菜单', '', NULL, 'system/nav/index', '', 1, 0, 1);
+       (37, 36, '网站菜单', '', NULL, 'system/nav/index', '', 1, 0, 1),
+       (38, 24, '计划任务', 'layui-icon layui-icon-senior', '', 'system/task/index', '', 1, 0, 1),
+       (39, 24, 'SiteMap', 'layui-icon layui-icon-senior', '', 'system/sitemap/index', '', 1, 0, 1),
+       (40, 27, 'IndexNow', '', '', 'system/indexNow/index', '', 1, 100, 1),
+       (41, 34, '蜘蛛日志', '', '', 'system/spider/index', '', 1, 100, 1);
 /*!40000 ALTER TABLE `ha_system_menu`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -596,6 +697,250 @@ LOCK TABLES `ha_system_operation_log` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `ha_system_sitemap`
+--
+
+DROP TABLE IF EXISTS `ha_system_sitemap`;
+/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ha_system_sitemap`
+(
+    `id`          int(11) unsigned NOT NULL AUTO_INCREMENT,
+    `module`      varchar(64)      NOT NULL COMMENT '模块',
+    `class`       varchar(255)     DEFAULT NULL COMMENT '数据类型',
+    `url`         varchar(2555)    NOT NULL COMMENT '生成url',
+    `type`        varchar(255)     NOT NULL COMMENT '地图类型',
+    `domain`      varchar(255)     DEFAULT '',
+    `create_time` int(10) unsigned DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    KEY `idx_site_sitemap_module` (`module`),
+    KEY `idx_site_sitemap_type` (`type`(191))
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ha_system_sitemap`
+--
+
+LOCK TABLES `ha_system_sitemap` WRITE;
+/*!40000 ALTER TABLE `ha_system_sitemap`
+    DISABLE KEYS */;
+/*!40000 ALTER TABLE `ha_system_sitemap`
+    ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ha_system_spider_date`
+--
+
+DROP TABLE IF EXISTS `ha_system_spider_date`;
+/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ha_system_spider_date`
+(
+    `id`           bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+    `date`         date                NOT NULL COMMENT '统计日期',
+    `name`         varchar(255)        NOT NULL COMMENT '蜘蛛名称',
+    `total_visits` int(10) unsigned    NOT NULL DEFAULT '0' COMMENT '访问次数',
+    `unique_urls`  int(11)                      DEFAULT '0' COMMENT '访问的不同 URL 数量',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `date_spider` (`date`, `name`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ha_system_spider_date`
+--
+
+LOCK TABLES `ha_system_spider_date` WRITE;
+/*!40000 ALTER TABLE `ha_system_spider_date`
+    DISABLE KEYS */;
+/*!40000 ALTER TABLE `ha_system_spider_date`
+    ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ha_system_spider_hourly`
+--
+
+DROP TABLE IF EXISTS `ha_system_spider_hourly`;
+/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ha_system_spider_hourly`
+(
+    `id`           bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+    `name`         varchar(50)         NOT NULL COMMENT '蜘蛛名称（如 Google、百度）',
+    `date`         date                NOT NULL COMMENT '统计日期',
+    `hour`         tinyint(3) unsigned NOT NULL COMMENT '统计小时（0~23）',
+    `total_visits` int(10) unsigned    NOT NULL DEFAULT '0' COMMENT '总访问次数',
+    `unique_urls`  int(10) unsigned    NOT NULL DEFAULT '0' COMMENT '访问的不同URL数量',
+    PRIMARY KEY (`id`),
+    KEY `idx_stat_date_spider` (`date`, `name`),
+    KEY `idx_spider_name` (`name`),
+    KEY `ha_system_spider_hourly_hour_index` (`hour`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='每小时蜘蛛抓取数据统计';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ha_system_spider_hourly`
+--
+
+LOCK TABLES `ha_system_spider_hourly` WRITE;
+/*!40000 ALTER TABLE `ha_system_spider_hourly`
+    DISABLE KEYS */;
+/*!40000 ALTER TABLE `ha_system_spider_hourly`
+    ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ha_system_spider_logs`
+--
+
+DROP TABLE IF EXISTS `ha_system_spider_logs`;
+/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ha_system_spider_logs`
+(
+    `id`          bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+    `name`        varchar(128)        NOT NULL COMMENT '蜘蛛名称，如 Googlebot',
+    `url`         varchar(512)        NOT NULL COMMENT '访问的 URL',
+    `ip`          varchar(45)         NOT NULL COMMENT 'IP 地址',
+    `module`      varchar(64) DEFAULT NULL COMMENT '模块',
+    `user_agent`  text                NOT NULL COMMENT 'User-Agent 字符串',
+    `create_time` int(11)     DEFAULT '0',
+    PRIMARY KEY (`id`),
+    KEY `ha_system_spider_logs_name_index` (`name`),
+    KEY `ha_system_spider_logs_module_index` (`module`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ha_system_spider_logs`
+--
+
+LOCK TABLES `ha_system_spider_logs` WRITE;
+/*!40000 ALTER TABLE `ha_system_spider_logs`
+    DISABLE KEYS */;
+/*!40000 ALTER TABLE `ha_system_spider_logs`
+    ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ha_system_tasks`
+--
+
+DROP TABLE IF EXISTS `ha_system_tasks`;
+/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ha_system_tasks`
+(
+    `id`          int(11)   NOT NULL AUTO_INCREMENT,
+    `title`       char(50)           DEFAULT NULL COMMENT '任务名称',
+    `exptime`     char(200) NOT NULL DEFAULT '* * * * *' COMMENT '任务周期',
+    `task`        text COMMENT '任务命令',
+    `data`        longtext COMMENT '附加参数',
+    `list`        int(11)   NOT NULL DEFAULT '0' COMMENT '排序',
+    `count`       int(11)   NOT NULL DEFAULT '0' COMMENT '执行次数',
+    `last_time`   datetime           DEFAULT NULL COMMENT '最后执行时间',
+    `next_time`   datetime           DEFAULT NULL COMMENT '下次执行时间',
+    `status`      int(1)    NOT NULL DEFAULT '1' COMMENT '任务状态',
+    `output_msg`  text,
+    `create_time` int(11)            DEFAULT NULL COMMENT '创建时间',
+    `update_time` int(11)            DEFAULT NULL COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    KEY `ha_system_tasks_list_index` (`list`),
+    KEY `ha_system_tasks_next_time_index` (`next_time`),
+    KEY `ha_system_tasks_status_index` (`status`)
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 2
+  DEFAULT CHARSET = utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ha_system_tasks`
+--
+
+LOCK TABLES `ha_system_tasks` WRITE;
+/*!40000 ALTER TABLE `ha_system_tasks`
+    DISABLE KEYS */;
+INSERT INTO `ha_system_tasks`
+VALUES (1, 'indexNow推送', '46 */4 * * *', '\\app\\common\\task\\IndexNow', NULL, 0, 0, NULL, NULL, 1, NULL, 1776861707,
+        1776861707);
+/*!40000 ALTER TABLE `ha_system_tasks`
+    ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ha_system_tasks_log`
+--
+
+DROP TABLE IF EXISTS `ha_system_tasks_log`;
+/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ha_system_tasks_log`
+(
+    `id`            int(11)      NOT NULL AUTO_INCREMENT,
+    `task_name`     varchar(255) NOT NULL,
+    `task_id`       int(11)               DEFAULT '0',
+    `status`        int(11)      NOT NULL DEFAULT '1',
+    `output`        text,
+    `error_message` text,
+    `create_time`   int(11)               DEFAULT '0',
+    `update_time`   int(11)               DEFAULT '0',
+    PRIMARY KEY (`id`),
+    KEY `ha_system_tasks_log_status_index` (`status`),
+    KEY `ha_system_tasks_log_task_id_index` (`task_id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ha_system_tasks_log`
+--
+
+LOCK TABLES `ha_system_tasks_log` WRITE;
+/*!40000 ALTER TABLE `ha_system_tasks_log`
+    DISABLE KEYS */;
+/*!40000 ALTER TABLE `ha_system_tasks_log`
+    ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ha_system_upgrade_log`
+--
+
+DROP TABLE IF EXISTS `ha_system_upgrade_log`;
+/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ha_system_upgrade_log`
+(
+    `id`          int(11) NOT NULL AUTO_INCREMENT,
+    `module`      varchar(64)  DEFAULT NULL COMMENT '所属模块',
+    `filename`    varchar(128) DEFAULT NULL,
+    `create_time` int(11)      DEFAULT NULL COMMENT '升级日期',
+    PRIMARY KEY (`id`),
+    KEY `ha_system_upgrade_log_filename_index` (`filename`),
+    KEY `ha_system_upgrade_log_module_index` (`module`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='升级日志';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ha_system_upgrade_log`
+--
+
+LOCK TABLES `ha_system_upgrade_log` WRITE;
+/*!40000 ALTER TABLE `ha_system_upgrade_log`
+    DISABLE KEYS */;
+/*!40000 ALTER TABLE `ha_system_upgrade_log`
+    ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `ha_user_auth`
 --
 
@@ -700,8 +1045,6 @@ CREATE TABLE `ha_user_group`
 LOCK TABLES `ha_user_group` WRITE;
 /*!40000 ALTER TABLE `ha_user_group`
     DISABLE KEYS */;
-INSERT INTO `ha_user_group`
-VALUES (1, '初级用户', '初级刚注册的默认用户组', 1, 1735873039, 1735873075, 0, 0);
 /*!40000 ALTER TABLE `ha_user_group`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -779,6 +1122,17 @@ CREATE TABLE `ha_user_info`
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `ha_user_info`
+--
+
+LOCK TABLES `ha_user_info` WRITE;
+/*!40000 ALTER TABLE `ha_user_info`
+    DISABLE KEYS */;
+/*!40000 ALTER TABLE `ha_user_info`
+    ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `ha_user_login_log`
 --
 
@@ -806,6 +1160,39 @@ LOCK TABLES `ha_user_login_log` WRITE;
 /*!40000 ALTER TABLE `ha_user_login_log`
     DISABLE KEYS */;
 /*!40000 ALTER TABLE `ha_user_login_log`
+    ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ha_user_oauth`
+--
+
+DROP TABLE IF EXISTS `ha_user_oauth`;
+/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ha_user_oauth`
+(
+    `id`          int(11)     NOT NULL AUTO_INCREMENT,
+    `uid`         int(11)     NOT NULL COMMENT '用户id',
+    `type`        varchar(64) NOT NULL COMMENT 'oauth类型',
+    `openid`      varchar(64) NOT NULL COMMENT '唯一码',
+    `create_time` int(11)     NOT NULL DEFAULT '0' COMMENT '创建日期',
+    `update_time` int(11)     NOT NULL DEFAULT '0' COMMENT '更新日期',
+    PRIMARY KEY (`id`),
+    KEY `typeanduid` (`type`, `uid`),
+    KEY `type` (`type`, `openid`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='快捷登录';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ha_user_oauth`
+--
+
+LOCK TABLES `ha_user_oauth` WRITE;
+/*!40000 ALTER TABLE `ha_user_oauth`
+    DISABLE KEYS */;
+/*!40000 ALTER TABLE `ha_user_oauth`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -843,47 +1230,11 @@ LOCK TABLES `ha_user_points_log` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ha_system_upgrade_log`
---
-
-DROP TABLE IF EXISTS `ha_system_upgrade_log`;
-/*!40101 SET @saved_cs_client = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ha_system_upgrade_log`
-(
-    `id`          int(11) NOT NULL AUTO_INCREMENT,
-    `module`      varchar(64)  DEFAULT NULL COMMENT '所属模块',
-    `filename`    varchar(128) DEFAULT NULL,
-    `create_time` int(11)      DEFAULT NULL COMMENT '升级日期',
-    PRIMARY KEY (`id`),
-    KEY `ha_system_upgrade_log_filename_index` (`filename`),
-    KEY `ha_system_upgrade_log_module_index` (`module`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4 COMMENT ='升级日志';
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `ha_system_upgrade_log`
---
-
-LOCK TABLES `ha_system_upgrade_log` WRITE;
-/*!40000 ALTER TABLE `ha_system_upgrade_log`
-    DISABLE KEYS */;
-/*!40000 ALTER TABLE `ha_system_upgrade_log`
-    ENABLE KEYS */;
-UNLOCK TABLES;
-
-
-ALTER TABLE `ha_system_links`
-    ADD `is_long` INT(1) NOT NULL DEFAULT '0' AFTER `end_time`,
-    ADD INDEX `is_long` (`is_long`);
-
---
--- Dumping events for database 'md_cn'
+-- Dumping events for database 'yx_com'
 --
 
 --
--- Dumping routines for database 'md_cn'
+-- Dumping routines for database 'yx_com'
 --
 /*!40103 SET TIME_ZONE = @OLD_TIME_ZONE */;
 
@@ -895,4 +1246,4 @@ ALTER TABLE `ha_system_links`
 /*!40101 SET COLLATION_CONNECTION = @OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES = @OLD_SQL_NOTES */;
 
--- Dump completed on 2025-01-10  8:32:50
+-- Dump completed on 2026-04-23  8:49:21
