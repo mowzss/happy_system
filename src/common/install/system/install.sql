@@ -1,4 +1,9 @@
-/*同步更新数据至2026-04-23  */
+# 更新于2026-04-23
+-- MySQL dump 10.13  Distrib 5.7.44, for Linux (x86_64)
+--
+-- Host: localhost    Database: yx_com
+-- ------------------------------------------------------
+-- Server version	5.7.44-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT = @@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS = @@CHARACTER_SET_RESULTS */;
@@ -12,13 +17,13 @@
 /*!40111 SET @OLD_SQL_NOTES = @@SQL_NOTES, SQL_NOTES = 0 */;
 
 --
--- Table structure for table `ha_system_attachment`
+-- Table structure for table `yxd_system_attachment`
 --
 
-DROP TABLE IF EXISTS `ha_system_attachment`;
+DROP TABLE IF EXISTS `yxd_system_attachment`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ha_system_attachment`
+CREATE TABLE `yxd_system_attachment`
 (
     `id`          int(11) unsigned                        NOT NULL AUTO_INCREMENT,
     `uid`         mediumint(8) unsigned                   NOT NULL DEFAULT '0' COMMENT '用户id',
@@ -43,24 +48,24 @@ CREATE TABLE `ha_system_attachment`
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ha_system_attachment`
+-- Dumping data for table `yxd_system_attachment`
 --
 
-LOCK TABLES `ha_system_attachment` WRITE;
-/*!40000 ALTER TABLE `ha_system_attachment`
+LOCK TABLES `yxd_system_attachment` WRITE;
+/*!40000 ALTER TABLE `yxd_system_attachment`
     DISABLE KEYS */;
-/*!40000 ALTER TABLE `ha_system_attachment`
+/*!40000 ALTER TABLE `yxd_system_attachment`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ha_system_config`
+-- Table structure for table `yxd_system_config`
 --
 
-DROP TABLE IF EXISTS `ha_system_config`;
+DROP TABLE IF EXISTS `yxd_system_config`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ha_system_config`
+CREATE TABLE `yxd_system_config`
 (
     `id`          int(11)                                NOT NULL AUTO_INCREMENT,
     `name`        varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '配置名称',
@@ -88,13 +93,13 @@ CREATE TABLE `ha_system_config`
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ha_system_config`
+-- Dumping data for table `yxd_system_config`
 --
 
-LOCK TABLES `ha_system_config` WRITE;
-/*!40000 ALTER TABLE `ha_system_config`
+LOCK TABLES `yxd_system_config` WRITE;
+/*!40000 ALTER TABLE `yxd_system_config`
     DISABLE KEYS */;
-INSERT INTO `ha_system_config`
+INSERT INTO `yxd_system_config`
 VALUES (1, 'storage_driver', 'radio', '存储引擎', 4,
         'local|本地\noss|阿里云oss|oss_accesskeyid,oss_accesskeysecret,oss_bucket,oss_domain,oss_endpoint\nqiniu|七牛云|qiniu_domain,qiniu_secret,qiniu_access,qiniu_bucket',
         '', 'local', NULL, 0, 'system', 1, 1733713725, 1736439933),
@@ -183,18 +188,18 @@ VALUES (1, 'storage_driver', 'radio', '存储引擎', 4,
         'system', 1, 1776861707, 1776861707),
        (51, 'static_version', 'text', '前端资源版本号', 7, '', '适应前端资源缓存，默认上传云存储资源后自动设置版本号',
         '26.0423.423208', NULL, 0, 'system', 1, 1776861707, 1776861707);
-/*!40000 ALTER TABLE `ha_system_config`
+/*!40000 ALTER TABLE `yxd_system_config`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ha_system_config_group`
+-- Table structure for table `yxd_system_config_group`
 --
 
-DROP TABLE IF EXISTS `ha_system_config_group`;
+DROP TABLE IF EXISTS `yxd_system_config_group`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ha_system_config_group`
+CREATE TABLE `yxd_system_config_group`
 (
     `id`       int(11) NOT NULL AUTO_INCREMENT,
     `title`    varchar(256) DEFAULT NULL COMMENT '名称',
@@ -208,13 +213,13 @@ CREATE TABLE `ha_system_config_group`
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ha_system_config_group`
+-- Dumping data for table `yxd_system_config_group`
 --
 
-LOCK TABLES `ha_system_config_group` WRITE;
-/*!40000 ALTER TABLE `ha_system_config_group`
+LOCK TABLES `yxd_system_config_group` WRITE;
+/*!40000 ALTER TABLE `yxd_system_config_group`
     DISABLE KEYS */;
-INSERT INTO `ha_system_config_group`
+INSERT INTO `yxd_system_config_group`
 VALUES (1, '基础设置', 1, 'system', 1),
        (2, '会员设置', 1, 'system', 1),
        (3, '邮件设置', 1, 'system', 1),
@@ -222,18 +227,18 @@ VALUES (1, '基础设置', 1, 'system', 1),
        (5, '短信设置', 1, 'system', 1),
        (6, 'IndexNow推送', 0, 'p_index_now', 1),
        (7, '前端资源', 1, 'system', 1);
-/*!40000 ALTER TABLE `ha_system_config_group`
+/*!40000 ALTER TABLE `yxd_system_config_group`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ha_system_event`
+-- Table structure for table `yxd_system_event`
 --
 
-DROP TABLE IF EXISTS `ha_system_event`;
+DROP TABLE IF EXISTS `yxd_system_event`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ha_system_event`
+CREATE TABLE `yxd_system_event`
 (
     `id`          int(11) unsigned NOT NULL AUTO_INCREMENT,
     `name`        varchar(80)      NOT NULL DEFAULT '' COMMENT '钩子名称',
@@ -250,13 +255,13 @@ CREATE TABLE `ha_system_event`
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ha_system_event`
+-- Dumping data for table `yxd_system_event`
 --
 
-LOCK TABLES `ha_system_event` WRITE;
-/*!40000 ALTER TABLE `ha_system_event`
+LOCK TABLES `yxd_system_event` WRITE;
+/*!40000 ALTER TABLE `yxd_system_event`
     DISABLE KEYS */;
-INSERT INTO `ha_system_event`
+INSERT INTO `yxd_system_event`
 VALUES (1, 'AppInit', '应用初始化标签位', 1, 0, NULL),
        (2, 'HttpRun', '应用开始标签位', 1, 0, NULL),
        (3, 'HttpEnd', '应用结束标签位', 1, 0, NULL),
@@ -270,18 +275,18 @@ VALUES (1, 'AppInit', '应用初始化标签位', 1, 0, NULL),
        (11, 'ContentEditAfter', '内容编辑后', 1, 0, 'POST数据,无数据回传'),
        (12, 'UserRegister', '用户注册后', 1, 0, '用户模型'),
        (13, 'UserLogin', '用户登录后', 1, 0, '用户模型');
-/*!40000 ALTER TABLE `ha_system_event`
+/*!40000 ALTER TABLE `yxd_system_event`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ha_system_event_listen`
+-- Table structure for table `yxd_system_event_listen`
 --
 
-DROP TABLE IF EXISTS `ha_system_event_listen`;
+DROP TABLE IF EXISTS `yxd_system_event_listen`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ha_system_event_listen`
+CREATE TABLE `yxd_system_event_listen`
 (
     `id`          int(11) unsigned NOT NULL AUTO_INCREMENT,
     `event_key`   varchar(50)      NOT NULL COMMENT '所归属的接口关键字',
@@ -303,24 +308,24 @@ CREATE TABLE `ha_system_event_listen`
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ha_system_event_listen`
+-- Dumping data for table `yxd_system_event_listen`
 --
 
-LOCK TABLES `ha_system_event_listen` WRITE;
-/*!40000 ALTER TABLE `ha_system_event_listen`
+LOCK TABLES `yxd_system_event_listen` WRITE;
+/*!40000 ALTER TABLE `yxd_system_event_listen`
     DISABLE KEYS */;
-/*!40000 ALTER TABLE `ha_system_event_listen`
+/*!40000 ALTER TABLE `yxd_system_event_listen`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ha_system_feedback`
+-- Table structure for table `yxd_system_feedback`
 --
 
-DROP TABLE IF EXISTS `ha_system_feedback`;
+DROP TABLE IF EXISTS `yxd_system_feedback`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ha_system_feedback`
+CREATE TABLE `yxd_system_feedback`
 (
     `id`           int(11)      NOT NULL AUTO_INCREMENT COMMENT '主键ID',
     `uid`          int(11)               DEFAULT NULL COMMENT '用户ID (可选，匿名用户可以为空)',
@@ -344,24 +349,24 @@ CREATE TABLE `ha_system_feedback`
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ha_system_feedback`
+-- Dumping data for table `yxd_system_feedback`
 --
 
-LOCK TABLES `ha_system_feedback` WRITE;
-/*!40000 ALTER TABLE `ha_system_feedback`
+LOCK TABLES `yxd_system_feedback` WRITE;
+/*!40000 ALTER TABLE `yxd_system_feedback`
     DISABLE KEYS */;
-/*!40000 ALTER TABLE `ha_system_feedback`
+/*!40000 ALTER TABLE `yxd_system_feedback`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ha_system_icon`
+-- Table structure for table `yxd_system_icon`
 --
 
-DROP TABLE IF EXISTS `ha_system_icon`;
+DROP TABLE IF EXISTS `yxd_system_icon`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ha_system_icon`
+CREATE TABLE `yxd_system_icon`
 (
     `id`          int(11)      NOT NULL AUTO_INCREMENT,
     `path`        varchar(255) NOT NULL,
@@ -381,29 +386,29 @@ CREATE TABLE `ha_system_icon`
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ha_system_icon`
+-- Dumping data for table `yxd_system_icon`
 --
 
-LOCK TABLES `ha_system_icon` WRITE;
-/*!40000 ALTER TABLE `ha_system_icon`
+LOCK TABLES `yxd_system_icon` WRITE;
+/*!40000 ALTER TABLE `yxd_system_icon`
     DISABLE KEYS */;
-INSERT INTO `ha_system_icon`
+INSERT INTO `yxd_system_icon`
 VALUES (1, 'public/static/libs/layui/css/layui.css', '/static/libs/layui/css/layui.css', 'layui', 0, 'layui-icon',
-        'layui-icon-', 1732974203, 1734425923, 15, 1),
-       (3, 'public/static/libs/icon/icon.css', '/static/libs/icon/icon.css', '阿里自选', 0, 'iconfont', 'icon-',
-        1734400900, 1735806355, 17, 1);
-/*!40000 ALTER TABLE `ha_system_icon`
+        'layui-icon-', 1732974203, 1776918005, 15, 1),
+       (3, 'public/static/libs/icon/icon.css', '/static/libs/icon/icon.css', '阿里自选', 1, 'iconfont', 'icon-',
+        1734400900, 1776918046, 17, 1);
+/*!40000 ALTER TABLE `yxd_system_icon`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ha_system_jobs`
+-- Table structure for table `yxd_system_jobs`
 --
 
-DROP TABLE IF EXISTS `ha_system_jobs`;
+DROP TABLE IF EXISTS `yxd_system_jobs`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ha_system_jobs`
+CREATE TABLE `yxd_system_jobs`
 (
     `id`             int(11) unsigned NOT NULL AUTO_INCREMENT,
     `queue`          varchar(255)        DEFAULT NULL,
@@ -419,24 +424,24 @@ CREATE TABLE `ha_system_jobs`
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ha_system_jobs`
+-- Dumping data for table `yxd_system_jobs`
 --
 
-LOCK TABLES `ha_system_jobs` WRITE;
-/*!40000 ALTER TABLE `ha_system_jobs`
+LOCK TABLES `yxd_system_jobs` WRITE;
+/*!40000 ALTER TABLE `yxd_system_jobs`
     DISABLE KEYS */;
-/*!40000 ALTER TABLE `ha_system_jobs`
+/*!40000 ALTER TABLE `yxd_system_jobs`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ha_system_jobs_failed`
+-- Table structure for table `yxd_system_jobs_failed`
 --
 
-DROP TABLE IF EXISTS `ha_system_jobs_failed`;
+DROP TABLE IF EXISTS `yxd_system_jobs_failed`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ha_system_jobs_failed`
+CREATE TABLE `yxd_system_jobs_failed`
 (
     `id`         int(11) unsigned NOT NULL AUTO_INCREMENT,
     `connection` text,
@@ -450,24 +455,24 @@ CREATE TABLE `ha_system_jobs_failed`
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ha_system_jobs_failed`
+-- Dumping data for table `yxd_system_jobs_failed`
 --
 
-LOCK TABLES `ha_system_jobs_failed` WRITE;
-/*!40000 ALTER TABLE `ha_system_jobs_failed`
+LOCK TABLES `yxd_system_jobs_failed` WRITE;
+/*!40000 ALTER TABLE `yxd_system_jobs_failed`
     DISABLE KEYS */;
-/*!40000 ALTER TABLE `ha_system_jobs_failed`
+/*!40000 ALTER TABLE `yxd_system_jobs_failed`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ha_system_links`
+-- Table structure for table `yxd_system_links`
 --
 
-DROP TABLE IF EXISTS `ha_system_links`;
+DROP TABLE IF EXISTS `yxd_system_links`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ha_system_links`
+CREATE TABLE `yxd_system_links`
 (
     `id`          int(11) unsigned NOT NULL AUTO_INCREMENT,
     `cid`         int(11)                   DEFAULT '0' COMMENT '分类id',
@@ -491,27 +496,27 @@ CREATE TABLE `ha_system_links`
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ha_system_links`
+-- Dumping data for table `yxd_system_links`
 --
 
-LOCK TABLES `ha_system_links` WRITE;
-/*!40000 ALTER TABLE `ha_system_links`
+LOCK TABLES `yxd_system_links` WRITE;
+/*!40000 ALTER TABLE `yxd_system_links`
     DISABLE KEYS */;
-INSERT INTO `ha_system_links`
+INSERT INTO `yxd_system_links`
 VALUES (1, 1, 1, '星座之家', 'https://www.xingzuohome.com/', 0, '123789', 1, '2025-01-06 11:45:42',
         '2025-01-06 11:45:42', 0, 1736135142, 1736135142);
-/*!40000 ALTER TABLE `ha_system_links`
+/*!40000 ALTER TABLE `yxd_system_links`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ha_system_menu`
+-- Table structure for table `yxd_system_menu`
 --
 
-DROP TABLE IF EXISTS `ha_system_menu`;
+DROP TABLE IF EXISTS `yxd_system_menu`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ha_system_menu`
+CREATE TABLE `yxd_system_menu`
 (
     `id`     int(11) NOT NULL AUTO_INCREMENT,
     `pid`    int(11)      DEFAULT '0' COMMENT '父级栏目ID',
@@ -527,18 +532,18 @@ CREATE TABLE `ha_system_menu`
     KEY `system_menu_node_index` (`node`),
     KEY `system_menu_status_index` (`status`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 42
+  AUTO_INCREMENT = 44
   DEFAULT CHARSET = utf8mb4 COMMENT ='系统菜单';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ha_system_menu`
+-- Dumping data for table `yxd_system_menu`
 --
 
-LOCK TABLES `ha_system_menu` WRITE;
-/*!40000 ALTER TABLE `ha_system_menu`
+LOCK TABLES `yxd_system_menu` WRITE;
+/*!40000 ALTER TABLE `yxd_system_menu`
     DISABLE KEYS */;
-INSERT INTO `ha_system_menu`
+INSERT INTO `yxd_system_menu`
 VALUES (1, 0, '系统管理', 'layui-icon layui-icon-set', 'system', '#', '', 1, 9000, 1),
        (2, 1, '设置管理', 'layui-icon layui-icon-set', 'system_config', '#', '', 1, 1000, 1),
        (3, 2, '系统设置', '', NULL, 'system/setting/index', '', 1, 800, 1),
@@ -572,19 +577,21 @@ VALUES (1, 0, '系统管理', 'layui-icon layui-icon-set', 'system', '#', '', 1,
        (38, 24, '计划任务', 'layui-icon layui-icon-senior', '', 'system/task/index', '', 1, 0, 1),
        (39, 24, 'SiteMap', 'layui-icon layui-icon-senior', '', 'system/sitemap/index', '', 1, 0, 1),
        (40, 27, 'IndexNow', '', '', 'system/indexNow/index', '', 1, 100, 1),
-       (41, 34, '蜘蛛日志', '', '', 'system/spider/index', '', 1, 100, 1);
-/*!40000 ALTER TABLE `ha_system_menu`
+       (41, 42, '蜘蛛图表', '', '', 'system/spider/index', '', 1, 100, 1),
+       (42, 12, '蜘蛛日志', 'layui-icon layui-icon-bot', 'spider', '#', '', 1, 0, 1),
+       (43, 42, '蜘蛛明细', '', '', 'system/spiderLogs/index', '', 1, 0, 1);
+/*!40000 ALTER TABLE `yxd_system_menu`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ha_system_module`
+-- Table structure for table `yxd_system_module`
 --
 
-DROP TABLE IF EXISTS `ha_system_module`;
+DROP TABLE IF EXISTS `yxd_system_module`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ha_system_module`
+CREATE TABLE `yxd_system_module`
 (
     `id`          int(11) NOT NULL AUTO_INCREMENT,
     `title`       varchar(64) DEFAULT '' COMMENT '模块名称',
@@ -601,26 +608,26 @@ CREATE TABLE `ha_system_module`
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ha_system_module`
+-- Dumping data for table `yxd_system_module`
 --
 
-LOCK TABLES `ha_system_module` WRITE;
-/*!40000 ALTER TABLE `ha_system_module`
+LOCK TABLES `yxd_system_module` WRITE;
+/*!40000 ALTER TABLE `yxd_system_module`
     DISABLE KEYS */;
-INSERT INTO `ha_system_module`
+INSERT INTO `yxd_system_module`
 VALUES (1, '系统核心', 'system', 1, 0, 1, 0, 0);
-/*!40000 ALTER TABLE `ha_system_module`
+/*!40000 ALTER TABLE `yxd_system_module`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ha_system_nav`
+-- Table structure for table `yxd_system_nav`
 --
 
-DROP TABLE IF EXISTS `ha_system_nav`;
+DROP TABLE IF EXISTS `yxd_system_nav`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ha_system_nav`
+CREATE TABLE `yxd_system_nav`
 (
     `id`     int(11) NOT NULL AUTO_INCREMENT,
     `pid`    int(11)      DEFAULT '0' COMMENT '父级栏目ID',
@@ -636,21 +643,21 @@ CREATE TABLE `ha_system_nav`
     `list`   int(11)      DEFAULT '0' COMMENT '排序',
     `status` int(11)      DEFAULT '1' COMMENT '状态',
     PRIMARY KEY (`id`),
-    KEY `ha_system_nav_dir_index` (`dir`),
-    KEY `ha_system_nav_pid_index` (`pid`)
+    KEY `yxd_system_nav_dir_index` (`dir`),
+    KEY `yxd_system_nav_pid_index` (`pid`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 10
   DEFAULT CHARSET = utf8mb4 COMMENT ='网站菜单导航';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ha_system_nav`
+-- Dumping data for table `yxd_system_nav`
 --
 
-LOCK TABLES `ha_system_nav` WRITE;
-/*!40000 ALTER TABLE `ha_system_nav`
+LOCK TABLES `yxd_system_nav` WRITE;
+/*!40000 ALTER TABLE `yxd_system_nav`
     DISABLE KEYS */;
-INSERT INTO `ha_system_nav`
+INSERT INTO `yxd_system_nav`
 VALUES (1, 0, '首页', 'layui-icon layui-icon-home', 'pc', '/', '_self', '', '', 2, '', 0, 1),
        (2, 0, '测试栏目', '', 'pc', '/', '_blank', '', '', 2, '', 0, 1),
        (3, 2, '测试子栏目', '', 'pc', '/', '_blank', '', '', 2, '', 0, 1),
@@ -660,18 +667,18 @@ VALUES (1, 0, '首页', 'layui-icon layui-icon-home', 'pc', '/', '_self', '', ''
        (7, 4, '修改密码', '', 'pc_user', '', '', 'user/index/pass', '', 1, '', 0, 1),
        (8, 4, '积分记录', '', 'pc_user', '', '', 'user/points_log/index', '', 1, '', 0, 1),
        (9, 4, '登录记录', '', 'pc_user', '', '', 'user/login_log/index', '', 1, '', 0, 1);
-/*!40000 ALTER TABLE `ha_system_nav`
+/*!40000 ALTER TABLE `yxd_system_nav`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ha_system_operation_log`
+-- Table structure for table `yxd_system_operation_log`
 --
 
-DROP TABLE IF EXISTS `ha_system_operation_log`;
+DROP TABLE IF EXISTS `yxd_system_operation_log`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ha_system_operation_log`
+CREATE TABLE `yxd_system_operation_log`
 (
     `id`          int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
     `uid`         int(10) unsigned NOT NULL COMMENT '管理员ID',
@@ -688,24 +695,24 @@ CREATE TABLE `ha_system_operation_log`
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ha_system_operation_log`
+-- Dumping data for table `yxd_system_operation_log`
 --
 
-LOCK TABLES `ha_system_operation_log` WRITE;
-/*!40000 ALTER TABLE `ha_system_operation_log`
+LOCK TABLES `yxd_system_operation_log` WRITE;
+/*!40000 ALTER TABLE `yxd_system_operation_log`
     DISABLE KEYS */;
-/*!40000 ALTER TABLE `ha_system_operation_log`
+/*!40000 ALTER TABLE `yxd_system_operation_log`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ha_system_sitemap`
+-- Table structure for table `yxd_system_sitemap`
 --
 
-DROP TABLE IF EXISTS `ha_system_sitemap`;
+DROP TABLE IF EXISTS `yxd_system_sitemap`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ha_system_sitemap`
+CREATE TABLE `yxd_system_sitemap`
 (
     `id`          int(11) unsigned NOT NULL AUTO_INCREMENT,
     `module`      varchar(64)      NOT NULL COMMENT '模块',
@@ -722,24 +729,24 @@ CREATE TABLE `ha_system_sitemap`
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ha_system_sitemap`
+-- Dumping data for table `yxd_system_sitemap`
 --
 
-LOCK TABLES `ha_system_sitemap` WRITE;
-/*!40000 ALTER TABLE `ha_system_sitemap`
+LOCK TABLES `yxd_system_sitemap` WRITE;
+/*!40000 ALTER TABLE `yxd_system_sitemap`
     DISABLE KEYS */;
-/*!40000 ALTER TABLE `ha_system_sitemap`
+/*!40000 ALTER TABLE `yxd_system_sitemap`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ha_system_spider_date`
+-- Table structure for table `yxd_system_spider_date`
 --
 
-DROP TABLE IF EXISTS `ha_system_spider_date`;
+DROP TABLE IF EXISTS `yxd_system_spider_date`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ha_system_spider_date`
+CREATE TABLE `yxd_system_spider_date`
 (
     `id`           bigint(20) unsigned NOT NULL AUTO_INCREMENT,
     `date`         date                NOT NULL COMMENT '统计日期',
@@ -753,24 +760,24 @@ CREATE TABLE `ha_system_spider_date`
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ha_system_spider_date`
+-- Dumping data for table `yxd_system_spider_date`
 --
 
-LOCK TABLES `ha_system_spider_date` WRITE;
-/*!40000 ALTER TABLE `ha_system_spider_date`
+LOCK TABLES `yxd_system_spider_date` WRITE;
+/*!40000 ALTER TABLE `yxd_system_spider_date`
     DISABLE KEYS */;
-/*!40000 ALTER TABLE `ha_system_spider_date`
+/*!40000 ALTER TABLE `yxd_system_spider_date`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ha_system_spider_hourly`
+-- Table structure for table `yxd_system_spider_hourly`
 --
 
-DROP TABLE IF EXISTS `ha_system_spider_hourly`;
+DROP TABLE IF EXISTS `yxd_system_spider_hourly`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ha_system_spider_hourly`
+CREATE TABLE `yxd_system_spider_hourly`
 (
     `id`           bigint(20) unsigned NOT NULL AUTO_INCREMENT,
     `name`         varchar(50)         NOT NULL COMMENT '蜘蛛名称（如 Google、百度）',
@@ -781,30 +788,30 @@ CREATE TABLE `ha_system_spider_hourly`
     PRIMARY KEY (`id`),
     KEY `idx_stat_date_spider` (`date`, `name`),
     KEY `idx_spider_name` (`name`),
-    KEY `ha_system_spider_hourly_hour_index` (`hour`)
+    KEY `yxd_system_spider_hourly_hour_index` (`hour`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='每小时蜘蛛抓取数据统计';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ha_system_spider_hourly`
+-- Dumping data for table `yxd_system_spider_hourly`
 --
 
-LOCK TABLES `ha_system_spider_hourly` WRITE;
-/*!40000 ALTER TABLE `ha_system_spider_hourly`
+LOCK TABLES `yxd_system_spider_hourly` WRITE;
+/*!40000 ALTER TABLE `yxd_system_spider_hourly`
     DISABLE KEYS */;
-/*!40000 ALTER TABLE `ha_system_spider_hourly`
+/*!40000 ALTER TABLE `yxd_system_spider_hourly`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ha_system_spider_logs`
+-- Table structure for table `yxd_system_spider_logs`
 --
 
-DROP TABLE IF EXISTS `ha_system_spider_logs`;
+DROP TABLE IF EXISTS `yxd_system_spider_logs`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ha_system_spider_logs`
+CREATE TABLE `yxd_system_spider_logs`
 (
     `id`          bigint(20) unsigned NOT NULL AUTO_INCREMENT,
     `name`        varchar(128)        NOT NULL COMMENT '蜘蛛名称，如 Googlebot',
@@ -814,31 +821,31 @@ CREATE TABLE `ha_system_spider_logs`
     `user_agent`  text                NOT NULL COMMENT 'User-Agent 字符串',
     `create_time` int(11)     DEFAULT '0',
     PRIMARY KEY (`id`),
-    KEY `ha_system_spider_logs_name_index` (`name`),
-    KEY `ha_system_spider_logs_module_index` (`module`)
+    KEY `yxd_system_spider_logs_name_index` (`name`),
+    KEY `yxd_system_spider_logs_module_index` (`module`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ha_system_spider_logs`
+-- Dumping data for table `yxd_system_spider_logs`
 --
 
-LOCK TABLES `ha_system_spider_logs` WRITE;
-/*!40000 ALTER TABLE `ha_system_spider_logs`
+LOCK TABLES `yxd_system_spider_logs` WRITE;
+/*!40000 ALTER TABLE `yxd_system_spider_logs`
     DISABLE KEYS */;
-/*!40000 ALTER TABLE `ha_system_spider_logs`
+/*!40000 ALTER TABLE `yxd_system_spider_logs`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ha_system_tasks`
+-- Table structure for table `yxd_system_tasks`
 --
 
-DROP TABLE IF EXISTS `ha_system_tasks`;
+DROP TABLE IF EXISTS `yxd_system_tasks`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ha_system_tasks`
+CREATE TABLE `yxd_system_tasks`
 (
     `id`          int(11)   NOT NULL AUTO_INCREMENT,
     `title`       char(50)           DEFAULT NULL COMMENT '任务名称',
@@ -854,36 +861,36 @@ CREATE TABLE `ha_system_tasks`
     `create_time` int(11)            DEFAULT NULL COMMENT '创建时间',
     `update_time` int(11)            DEFAULT NULL COMMENT '更新时间',
     PRIMARY KEY (`id`),
-    KEY `ha_system_tasks_list_index` (`list`),
-    KEY `ha_system_tasks_next_time_index` (`next_time`),
-    KEY `ha_system_tasks_status_index` (`status`)
+    KEY `yxd_system_tasks_list_index` (`list`),
+    KEY `yxd_system_tasks_next_time_index` (`next_time`),
+    KEY `yxd_system_tasks_status_index` (`status`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 2
   DEFAULT CHARSET = utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ha_system_tasks`
+-- Dumping data for table `yxd_system_tasks`
 --
 
-LOCK TABLES `ha_system_tasks` WRITE;
-/*!40000 ALTER TABLE `ha_system_tasks`
+LOCK TABLES `yxd_system_tasks` WRITE;
+/*!40000 ALTER TABLE `yxd_system_tasks`
     DISABLE KEYS */;
-INSERT INTO `ha_system_tasks`
+INSERT INTO `yxd_system_tasks`
 VALUES (1, 'indexNow推送', '46 */4 * * *', '\\app\\common\\task\\IndexNow', NULL, 0, 0, NULL, NULL, 1, NULL, 1776861707,
         1776861707);
-/*!40000 ALTER TABLE `ha_system_tasks`
+/*!40000 ALTER TABLE `yxd_system_tasks`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ha_system_tasks_log`
+-- Table structure for table `yxd_system_tasks_log`
 --
 
-DROP TABLE IF EXISTS `ha_system_tasks_log`;
+DROP TABLE IF EXISTS `yxd_system_tasks_log`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ha_system_tasks_log`
+CREATE TABLE `yxd_system_tasks_log`
 (
     `id`            int(11)      NOT NULL AUTO_INCREMENT,
     `task_name`     varchar(255) NOT NULL,
@@ -894,62 +901,62 @@ CREATE TABLE `ha_system_tasks_log`
     `create_time`   int(11)               DEFAULT '0',
     `update_time`   int(11)               DEFAULT '0',
     PRIMARY KEY (`id`),
-    KEY `ha_system_tasks_log_status_index` (`status`),
-    KEY `ha_system_tasks_log_task_id_index` (`task_id`)
+    KEY `yxd_system_tasks_log_status_index` (`status`),
+    KEY `yxd_system_tasks_log_task_id_index` (`task_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ha_system_tasks_log`
+-- Dumping data for table `yxd_system_tasks_log`
 --
 
-LOCK TABLES `ha_system_tasks_log` WRITE;
-/*!40000 ALTER TABLE `ha_system_tasks_log`
+LOCK TABLES `yxd_system_tasks_log` WRITE;
+/*!40000 ALTER TABLE `yxd_system_tasks_log`
     DISABLE KEYS */;
-/*!40000 ALTER TABLE `ha_system_tasks_log`
+/*!40000 ALTER TABLE `yxd_system_tasks_log`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ha_system_upgrade_log`
+-- Table structure for table `yxd_system_upgrade_log`
 --
 
-DROP TABLE IF EXISTS `ha_system_upgrade_log`;
+DROP TABLE IF EXISTS `yxd_system_upgrade_log`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ha_system_upgrade_log`
+CREATE TABLE `yxd_system_upgrade_log`
 (
     `id`          int(11) NOT NULL AUTO_INCREMENT,
     `module`      varchar(64)  DEFAULT NULL COMMENT '所属模块',
     `filename`    varchar(128) DEFAULT NULL,
     `create_time` int(11)      DEFAULT NULL COMMENT '升级日期',
     PRIMARY KEY (`id`),
-    KEY `ha_system_upgrade_log_filename_index` (`filename`),
-    KEY `ha_system_upgrade_log_module_index` (`module`)
+    KEY `yxd_system_upgrade_log_filename_index` (`filename`),
+    KEY `yxd_system_upgrade_log_module_index` (`module`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='升级日志';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ha_system_upgrade_log`
+-- Dumping data for table `yxd_system_upgrade_log`
 --
 
-LOCK TABLES `ha_system_upgrade_log` WRITE;
-/*!40000 ALTER TABLE `ha_system_upgrade_log`
+LOCK TABLES `yxd_system_upgrade_log` WRITE;
+/*!40000 ALTER TABLE `yxd_system_upgrade_log`
     DISABLE KEYS */;
-/*!40000 ALTER TABLE `ha_system_upgrade_log`
+/*!40000 ALTER TABLE `yxd_system_upgrade_log`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ha_user_auth`
+-- Table structure for table `yxd_user_auth`
 --
 
-DROP TABLE IF EXISTS `ha_user_auth`;
+DROP TABLE IF EXISTS `yxd_user_auth`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ha_user_auth`
+CREATE TABLE `yxd_user_auth`
 (
     `id`           int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
     `title`        varchar(64) DEFAULT NULL COMMENT '权限组',
@@ -964,26 +971,26 @@ CREATE TABLE `ha_user_auth`
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ha_user_auth`
+-- Dumping data for table `yxd_user_auth`
 --
 
-LOCK TABLES `ha_user_auth` WRITE;
-/*!40000 ALTER TABLE `ha_user_auth`
+LOCK TABLES `yxd_user_auth` WRITE;
+/*!40000 ALTER TABLE `yxd_user_auth`
     DISABLE KEYS */;
-INSERT INTO `ha_user_auth`
+INSERT INTO `yxd_user_auth`
 VALUES (1, '超级管理员', '超级管理员，拥有超多权限', '', 1, 1);
-/*!40000 ALTER TABLE `ha_user_auth`
+/*!40000 ALTER TABLE `yxd_user_auth`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ha_user_fav`
+-- Table structure for table `yxd_user_fav`
 --
 
-DROP TABLE IF EXISTS `ha_user_fav`;
+DROP TABLE IF EXISTS `yxd_user_fav`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ha_user_fav`
+CREATE TABLE `yxd_user_fav`
 (
     `id`            int(11) unsigned    NOT NULL AUTO_INCREMENT COMMENT '主键ID',
     `uid`           int(11) unsigned    NOT NULL COMMENT '用户ID',
@@ -1005,24 +1012,24 @@ CREATE TABLE `ha_user_fav`
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ha_user_fav`
+-- Dumping data for table `yxd_user_fav`
 --
 
-LOCK TABLES `ha_user_fav` WRITE;
-/*!40000 ALTER TABLE `ha_user_fav`
+LOCK TABLES `yxd_user_fav` WRITE;
+/*!40000 ALTER TABLE `yxd_user_fav`
     DISABLE KEYS */;
-/*!40000 ALTER TABLE `ha_user_fav`
+/*!40000 ALTER TABLE `yxd_user_fav`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ha_user_group`
+-- Table structure for table `yxd_user_group`
 --
 
-DROP TABLE IF EXISTS `ha_user_group`;
+DROP TABLE IF EXISTS `yxd_user_group`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ha_user_group`
+CREATE TABLE `yxd_user_group`
 (
     `id`             int(10) unsigned    NOT NULL AUTO_INCREMENT COMMENT '主键ID',
     `name`           varchar(64)         NOT NULL COMMENT '用户组名称',
@@ -1041,24 +1048,24 @@ CREATE TABLE `ha_user_group`
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ha_user_group`
+-- Dumping data for table `yxd_user_group`
 --
 
-LOCK TABLES `ha_user_group` WRITE;
-/*!40000 ALTER TABLE `ha_user_group`
+LOCK TABLES `yxd_user_group` WRITE;
+/*!40000 ALTER TABLE `yxd_user_group`
     DISABLE KEYS */;
-/*!40000 ALTER TABLE `ha_user_group`
+/*!40000 ALTER TABLE `yxd_user_group`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ha_user_group_upgrade_log`
+-- Table structure for table `yxd_user_group_upgrade_log`
 --
 
-DROP TABLE IF EXISTS `ha_user_group_upgrade_log`;
+DROP TABLE IF EXISTS `yxd_user_group_upgrade_log`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ha_user_group_upgrade_log`
+CREATE TABLE `yxd_user_group_upgrade_log`
 (
     `id`            int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
     `uid`           int(10) unsigned NOT NULL COMMENT '用户ID',
@@ -1076,24 +1083,24 @@ CREATE TABLE `ha_user_group_upgrade_log`
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ha_user_group_upgrade_log`
+-- Dumping data for table `yxd_user_group_upgrade_log`
 --
 
-LOCK TABLES `ha_user_group_upgrade_log` WRITE;
-/*!40000 ALTER TABLE `ha_user_group_upgrade_log`
+LOCK TABLES `yxd_user_group_upgrade_log` WRITE;
+/*!40000 ALTER TABLE `yxd_user_group_upgrade_log`
     DISABLE KEYS */;
-/*!40000 ALTER TABLE `ha_user_group_upgrade_log`
+/*!40000 ALTER TABLE `yxd_user_group_upgrade_log`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ha_user_info`
+-- Table structure for table `yxd_user_info`
 --
 
-DROP TABLE IF EXISTS `ha_user_info`;
+DROP TABLE IF EXISTS `yxd_user_info`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ha_user_info`
+CREATE TABLE `yxd_user_info`
 (
     `id`          int(11)          NOT NULL AUTO_INCREMENT COMMENT 'ID',
     `username`    varchar(64)      NOT NULL COMMENT '用户名',
@@ -1119,60 +1126,49 @@ CREATE TABLE `ha_user_info`
     KEY `user_info_create_time_index` (`create_time`),
     KEY `user_info_last_time_index` (`last_time`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 10000
+  AUTO_INCREMENT = 10001
   DEFAULT CHARSET = utf8mb4 COMMENT ='用户表';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ha_user_info`
+-- Table structure for table `yxd_user_login_log`
 --
 
-LOCK TABLES `ha_user_info` WRITE;
-/*!40000 ALTER TABLE `ha_user_info`
-    DISABLE KEYS */;
-/*!40000 ALTER TABLE `ha_user_info`
-    ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `ha_user_login_log`
---
-
-DROP TABLE IF EXISTS `ha_user_login_log`;
+DROP TABLE IF EXISTS `yxd_user_login_log`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ha_user_login_log`
+CREATE TABLE `yxd_user_login_log`
 (
     `id`          int(11) NOT NULL AUTO_INCREMENT,
     `ip`          varchar(64) DEFAULT '',
     `uid`         int(11)     DEFAULT '0' COMMENT '用户id',
     `create_time` int(11)     DEFAULT NULL COMMENT '登录时间',
     PRIMARY KEY (`id`),
-    KEY `ha_user_login_log_create_time_index` (`create_time`),
-    KEY `ha_user_login_log_uid_index` (`uid`)
+    KEY `yxd_user_login_log_create_time_index` (`create_time`),
+    KEY `yxd_user_login_log_uid_index` (`uid`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='登录日志';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ha_user_login_log`
+-- Dumping data for table `yxd_user_login_log`
 --
 
-LOCK TABLES `ha_user_login_log` WRITE;
-/*!40000 ALTER TABLE `ha_user_login_log`
+LOCK TABLES `yxd_user_login_log` WRITE;
+/*!40000 ALTER TABLE `yxd_user_login_log`
     DISABLE KEYS */;
-/*!40000 ALTER TABLE `ha_user_login_log`
+/*!40000 ALTER TABLE `yxd_user_login_log`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ha_user_oauth`
+-- Table structure for table `yxd_user_oauth`
 --
 
-DROP TABLE IF EXISTS `ha_user_oauth`;
+DROP TABLE IF EXISTS `yxd_user_oauth`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ha_user_oauth`
+CREATE TABLE `yxd_user_oauth`
 (
     `id`          int(11)     NOT NULL AUTO_INCREMENT,
     `uid`         int(11)     NOT NULL COMMENT '用户id',
@@ -1188,24 +1184,24 @@ CREATE TABLE `ha_user_oauth`
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ha_user_oauth`
+-- Dumping data for table `yxd_user_oauth`
 --
 
-LOCK TABLES `ha_user_oauth` WRITE;
-/*!40000 ALTER TABLE `ha_user_oauth`
+LOCK TABLES `yxd_user_oauth` WRITE;
+/*!40000 ALTER TABLE `yxd_user_oauth`
     DISABLE KEYS */;
-/*!40000 ALTER TABLE `ha_user_oauth`
+/*!40000 ALTER TABLE `yxd_user_oauth`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ha_user_points_log`
+-- Table structure for table `yxd_user_points_log`
 --
 
-DROP TABLE IF EXISTS `ha_user_points_log`;
+DROP TABLE IF EXISTS `yxd_user_points_log`;
 /*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ha_user_points_log`
+CREATE TABLE `yxd_user_points_log`
 (
     `id`          int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
     `uid`         int(10) unsigned NOT NULL COMMENT '用户ID',
@@ -1221,13 +1217,13 @@ CREATE TABLE `ha_user_points_log`
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ha_user_points_log`
+-- Dumping data for table `yxd_user_points_log`
 --
 
-LOCK TABLES `ha_user_points_log` WRITE;
-/*!40000 ALTER TABLE `ha_user_points_log`
+LOCK TABLES `yxd_user_points_log` WRITE;
+/*!40000 ALTER TABLE `yxd_user_points_log`
     DISABLE KEYS */;
-/*!40000 ALTER TABLE `ha_user_points_log`
+/*!40000 ALTER TABLE `yxd_user_points_log`
     ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1248,4 +1244,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION = @OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES = @OLD_SQL_NOTES */;
 
--- Dump completed on 2026-04-23  8:49:21
+-- Dump completed on 2026-04-23 12:47:57
