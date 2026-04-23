@@ -390,7 +390,7 @@ LOCK TABLES `ha_system_icon` WRITE;
 INSERT INTO `ha_system_icon`
 VALUES (1, 'public/static/libs/layui/css/layui.css', '/static/libs/layui/css/layui.css', 'layui', 0, 'layui-icon',
         'layui-icon-', 1732974203, 1734425923, 15, 1),
-       (3, 'public/static/admin/css/icon.css', '/static/admin/css/icon.css', '阿里自选', 0, 'iconfont', 'icon-',
+       (3, 'public/static/libs/icon/icon.css', '/static/libs/icon/icon.css', '阿里自选', 0, 'iconfont', 'icon-',
         1734400900, 1735806355, 17, 1);
 /*!40000 ALTER TABLE `ha_system_icon`
     ENABLE KEYS */;
