@@ -1,7 +1,6 @@
 <?php
-declare (strict_types=1);
 
-namespace app\common\util;
+namespace app\logic\system;
 
 use think\facade\Cache;
 use think\db\exception\DbException;
@@ -9,10 +8,7 @@ use app\model\system\SystemAttachment;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\ModelNotFoundException;
 
-/**
- * ueditor 配置信息
- */
-class AttachmentUtil
+class AttachmentLogic
 {
     // 定义允许的文件类型
     protected static $imageExtensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'svg'];
@@ -58,50 +54,50 @@ class AttachmentUtil
                 'localhost',
                 'img.baidu.com',
             ],
-            'catcherActionName' => 'catchimage',                                                      // 执行抓取远程图片的action名称
-            'catcherFieldName' => 'source',                                                           // 提交的图片列表表单名称
-            'catcherPathFormat' => '/public/uploads/bd_ueditor/image/{yyyy}{mm}{dd}/{time}{rand:6}',  // 上传保存路径
-            'catcherUrlPrefix' => '',                                                                 // 图片访问路径前缀
-            'catcherMaxSize' => 2048000,                                                              // 上传大小限制，单位B (2MB)
+            'catcherActionName' => 'catchimage',                                                       // 执行抓取远程图片的action名称
+            'catcherFieldName' => 'source',                                                            // 提交的图片列表表单名称
+            'catcherPathFormat' => '/public/uploads/bd_ueditor/image/{yyyy}{mm}{dd}/{time}{rand:6}',   // 上传保存路径
+            'catcherUrlPrefix' => '',                                                                  // 图片访问路径前缀
+            'catcherMaxSize' => 2048000,                                                               // 上传大小限制，单位B (2MB)
             'catcherAllowFiles' => [              // 抓取图片格式显示
                 '.png', '.jpg', '.jpeg', '.gif', '.bmp',
             ],
 
             // 上传视频配置
-            'videoActionName' => 'save',                                                              // 执行上传视频的action名称
-            'videoFieldName' => 'file',                                                               // 提交的视频表单名称
-            'videoPathFormat' => '/public/uploads/bd_ueditor/video/{yyyy}{mm}{dd}/{time}{rand:6}',    // 上传保存路径
-            'videoUrlPrefix' => '',                                                                   // 视频访问路径前缀
-            'videoMaxSize' => 102400000,                                                              // 上传大小限制，单位B (100MB)
+            'videoActionName' => 'save',                                                               // 执行上传视频的action名称
+            'videoFieldName' => 'file',                                                                // 提交的视频表单名称
+            'videoPathFormat' => '/public/uploads/bd_ueditor/video/{yyyy}{mm}{dd}/{time}{rand:6}',     // 上传保存路径
+            'videoUrlPrefix' => '',                                                                    // 视频访问路径前缀
+            'videoMaxSize' => 102400000,                                                               // 上传大小限制，单位B (100MB)
             'videoAllowFiles' => [                // 上传视频格式显示
                 '.flv', '.swf', '.mkv', '.avi', '.rm', '.rmvb', '.mpeg', '.mpg', '.ogg', '.ogv', '.mov', '.wmv', '.mp4', '.webm', '.mp3', '.wav', '.mid',
             ],
 
             // 上传文件配置
-            'fileActionName' => 'save',                                                               // 执行上传文件的action名称
-            'fileFieldName' => 'file',                                                                // 提交的文件表单名称
-            'filePathFormat' => '/public/uploads/bd_ueditor/file/{yyyy}{mm}{dd}/{time}{rand:6}',      // 上传保存路径
-            'fileUrlPrefix' => '',                                                                    // 文件访问路径前缀
-            'fileMaxSize' => 51200000,                                                                // 上传大小限制，单位B (50MB)
+            'fileActionName' => 'save',                                                                // 执行上传文件的action名称
+            'fileFieldName' => 'file',                                                                 // 提交的文件表单名称
+            'filePathFormat' => '/public/uploads/bd_ueditor/file/{yyyy}{mm}{dd}/{time}{rand:6}',       // 上传保存路径
+            'fileUrlPrefix' => '',                                                                     // 文件访问路径前缀
+            'fileMaxSize' => 51200000,                                                                 // 上传大小限制，单位B (50MB)
             'fileAllowFiles' => [                 // 上传文件格式显示
                 '.png', '.jpg', '.jpeg', '.gif', '.bmp', '.flv', '.swf', '.mkv', '.avi', '.rm', '.rmvb', '.mpeg', '.mpg', '.ogg', '.ogv', '.mov', '.wmv', '.mp4', '.webm', '.mp3', '.wav', '.mid', '.rar', '.zip', '.tar', '.gz', '.7z', '.bz2', '.cab', '.iso', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.pdf', '.txt', '.md', '.xml',
             ],
 
             // 列出指定目录下的图片
-            'imageManagerActionName' => 'listimage',                                                  // 执行图片管理的action名称
-            'imageManagerListPath' => '/public/uploads/bd_ueditor/image/',                            // 指定要列出图片的目录
-            'imageManagerListSize' => 20,                                                             // 每次列出文件数量
-            'imageManagerUrlPrefix' => '',                                                            // 图片访问路径前缀
-            'imageManagerInsertAlign' => 'none',                                                      // 插入的图片浮动方式
+            'imageManagerActionName' => 'list_image',                                                  // 执行图片管理的action名称
+            'imageManagerListPath' => '/public/uploads/bd_ueditor/image/',                             // 指定要列出图片的目录
+            'imageManagerListSize' => 20,                                                              // 每次列出文件数量
+            'imageManagerUrlPrefix' => '',                                                             // 图片访问路径前缀
+            'imageManagerInsertAlign' => 'none',                                                       // 插入的图片浮动方式
             'imageManagerAllowFiles' => [             // 列出的文件类型
                 '.png', '.jpg', '.jpeg', '.gif', '.bmp', '.svg',
             ],
 
             // 列出指定目录下的文件
-            'fileManagerActionName' => 'listfile',                                                    // 执行文件管理的action名称
-            'fileManagerListPath' => '/public/uploads/bd_ueditor/file/',                              // 指定要列出文件的目录
-            'fileManagerUrlPrefix' => '',                                                             // 文件访问路径前缀
-            'fileManagerListSize' => 20,                                                              // 每次列出文件数量
+            'fileManagerActionName' => 'list_file',                                                    // 执行文件管理的action名称
+            'fileManagerListPath' => '/public/uploads/bd_ueditor/file/',                               // 指定要列出文件的目录
+            'fileManagerUrlPrefix' => '',                                                              // 文件访问路径前缀
+            'fileManagerListSize' => 20,                                                               // 每次列出文件数量
             'fileManagerAllowFiles' => [              // 列出的文件类型
                 '.png', '.jpg', '.jpeg', '.gif', '.bmp', '.flv', '.swf', '.mkv', '.avi', '.rm', '.rmvb', '.mpeg', '.mpg', '.ogg', '.ogv', '.mov', '.wmv', '.mp4', '.webm', '.mp3', '.wav', '.mid', '.rar', '.zip', '.tar', '.gz', '.7z', '.bz2', '.cab', '.iso', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.pdf', '.txt', '.md', '.xml',
             ],

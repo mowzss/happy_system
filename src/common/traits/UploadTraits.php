@@ -3,19 +3,19 @@ declare (strict_types=1);
 
 namespace app\common\traits;
 
-use app\common\util\AttachmentUtil;
-use app\logic\system\ConfigLogic;
-use app\model\system\SystemAttachment;
+use think\File;
+use think\facade\View;
+use think\response\Json;
+use think\facade\Filesystem;
 use mowzs\lib\helper\MimeHelper;
 use mowzs\lib\helper\UserHelper;
-use think\db\exception\DataNotFoundException;
+use app\logic\system\ConfigLogic;
 use think\db\exception\DbException;
-use think\db\exception\ModelNotFoundException;
+use app\logic\system\AttachmentLogic;
+use app\model\system\SystemAttachment;
 use think\exception\ValidateException;
-use think\facade\Filesystem;
-use think\facade\View;
-use think\File;
-use think\response\Json;
+use think\db\exception\DataNotFoundException;
+use think\db\exception\ModelNotFoundException;
 
 trait UploadTraits
 {
@@ -104,7 +104,7 @@ trait UploadTraits
 
                 // 如果是图片文件，获取宽度和高度
                 if (in_array($data['mime'], ['image/jpeg', 'image/png', 'image/gif'])) {
-                    list($width, $height) = getimagesize($file->getPathname());
+                    [$width, $height] = getimagesize($file->getPathname());
                     $data['imagewidth'] = $width;
                     $data['imageheight'] = $height;
                 }
@@ -114,10 +114,9 @@ trait UploadTraits
 
                 // 返回JSON格式的成功响应
                 return json(['code' => 0, 'msg' => '上传成功', 'data' => $data]);
-            } else {
-                // 上传失败返回错误信息
-                throw new \Exception("文件上传失败");
             }
+            return json(['code' => 1, 'msg' => '上传失败']);
+
         } catch (ValidateException $e) {
             // 验证失败返回错误信息
             return json(['code' => 1, 'msg' => $e->getError()]);
@@ -131,6 +130,9 @@ trait UploadTraits
      *
      * @param string $action 操作类型 (config, listimage, listfile)
      * @return Json
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
      */
     public function ueditor(string $action = ''): Json
     {
@@ -144,26 +146,15 @@ trait UploadTraits
         if ($size <= 0 || $size > 100) {
             return json([
                 'state' => 'ERROR',
-                'msg' => 'Invalid page size'
+                'msg' => 'Invalid page size',
             ]);
         }
-
-        switch ($action) {
-            case 'config':
-                // 返回 UEditor 配置
-                return json(AttachmentUtil::getConfig());
-
-            case 'listimage':
-                // 获取图片列表
-                return json(AttachmentUtil::getListImage($userId, $start, $size));
-
-            case 'listfile':
-                // 获取文件列表
-                return json(AttachmentUtil::getListFile($userId, $start, $size));
-
-            default:
-                return json(['state' => 'ERROR', 'msg' => '无效的操作类型']);
-        }
+        return match ($action) {
+            'config' => json(AttachmentLogic::getConfig()),
+            'list_image' => json(AttachmentLogic::getListImage($userId, $start, $size)),
+            'list_file' => json(AttachmentLogic::getListFile($userId, $start, $size)),
+            default => json(['state' => 'ERROR', 'msg' => '无效的操作类型']),
+        };
     }
 
     /**
@@ -297,7 +288,7 @@ trait UploadTraits
 
                 // 如果是图片文件，获取宽度和高度
                 if (in_array($mimeType, ['image/jpeg', 'image/png', 'image/gif'])) {
-                    list($width, $height) = getimagesize($tmpFile);
+                    [$width, $height] = getimagesize($tmpFile);
                     $data['imagewidth'] = $width;
                     $data['imageheight'] = $height;
                 }
