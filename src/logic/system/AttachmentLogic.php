@@ -127,6 +127,9 @@ class AttachmentLogic
      * @param int $start 起始偏移量
      * @param int $size 每页显示的数量
      * @return array
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
      */
     public static function getListFile(mixed $userId, int $start = 0, int $size = 20): array
     {
@@ -186,11 +189,16 @@ class AttachmentLogic
         return [
             'state' => 'SUCCESS',
             'list' => array_map(function ($item) {
+                $thumb = $item['url'];
+                if (sys_config('storage_driver') === 'oss') {
+                    $thumb = $item['url'] . '?x-oss-process=image/auto-orient,1/resize,m_lfit,w_120/quality,q_40';
+                }
                 return [
                     'url' => $item['url'],                                            // 文件链接
                     'name' => $item['name'],                                          // 文件名
                     'size' => $item['size'],                                          // 文件大小
                     'type' => $item['mime'],                                          // 文件类型
+                    'thumb' => $thumb,                                                //缩略图
                     'mtime' => date('Y-m-d H:i:s', strtotime($item['create_time'])),  // 上传时间
                 ];
             }, $paginatedData['list']),
