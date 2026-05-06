@@ -3,15 +3,15 @@ declare (strict_types=1);
 
 namespace app\common\traits;
 
-use app\common\util\CrudUtil;
-use mowzs\lib\Forms;
-use think\db\exception\DataNotFoundException;
-use think\db\exception\DbException;
-use think\db\exception\ModelNotFoundException;
-use think\db\Query;
-use think\Exception;
 use think\Model;
+use think\db\Query;
+use mowzs\lib\Forms;
+use think\Exception;
+use app\common\util\CrudUtil;
+use think\db\exception\DbException;
 use think\model\contract\Modelable;
+use think\db\exception\DataNotFoundException;
+use think\db\exception\ModelNotFoundException;
 use think\template\exception\TemplateNotFoundException;
 
 trait CrudTrait
@@ -80,7 +80,7 @@ trait CrudTrait
             }
             $paginateResult = $query->paginate([
                 'page' => $page,
-                'list_rows' => $limit
+                'list_rows' => $limit,
             ]);
 
 
@@ -95,7 +95,7 @@ trait CrudTrait
             $this->assign([
                 'search_code' => Forms::instance(['display' => false, 'outputMode' => 'code'])
                     ->setFormHtml([
-                        'data-table-id' => get_lay_table_id()
+                        'data-table-id' => get_lay_table_id(),
                     ])
                     ->setSubmit('搜索')
                     ->render($this->getSearchFields(), 'form_search'),
@@ -128,7 +128,7 @@ trait CrudTrait
         $where = [];
         foreach ($this->search as $config) {
             // 拆分配置字符串
-            list($fields, $operator, $paramKey) = explode('#', $config);
+            [$fields, $operator, $paramKey] = explode('#', $config);
             if (isset($get[$paramKey])) {
                 $where[$paramKey] = $get[$paramKey];
             }
@@ -147,7 +147,7 @@ trait CrudTrait
         // 使用类的 search 属性作为搜索配置
         foreach ($this->search as $config) {
             // 拆分配置字符串
-            list($fields, $operator, $paramKey) = explode('#', $config);
+            [$fields, $operator, $paramKey] = explode('#', $config);
 
             // 如果是多个字段使用 | 分隔符进行分割
             $fieldList = explode('|', $fields);
@@ -160,10 +160,10 @@ trait CrudTrait
                 }
 
                 // 对于 like 操作符，防止 SQL 注入攻击，处理用户输入
-                if ($operator == 'like') {
+                if ($operator === 'like') {
                     $value = '%' . addcslashes($value, '_%') . '%';
                 }
-                if ($operator == 'between') {
+                if ($operator === 'between') {
                     $operator = 'BETWEEN TIME';
                     $value = explode(' - ', $value);
                 }
@@ -392,7 +392,7 @@ trait CrudTrait
     protected function setListOrder(Query|Model $query, array $params): Model|Query
     {
         // 获取排序参数
-        $orderField = $params['_order'] ?? 'id'; // 默认按 list 排序
+        $orderField = $params['_order'] ?? 'id';                                // 默认按 list 排序
         $orderBy = strtolower($params['_by'] ?? '') === 'asc' ? 'asc' : 'desc'; // 默认降序
 
         // 设置默认排序
@@ -491,7 +491,7 @@ trait CrudTrait
         $fieldMap = array_merge($fieldMap, $dynamicFields);
         foreach ($searchConfig as $config) {
             // 拆分配置字符串
-            list($fields, $operator, $paramKey) = explode('#', $config);
+            [$fields, $operator, $paramKey] = explode('#', $config);
 
             // 如果是多个字段使用 | 分隔符进行分割
             $fieldList = explode('|', $fields);
@@ -531,8 +531,5 @@ trait CrudTrait
      * 设置参数
      * @return void
      */
-    protected function setParams()
-    {
-
-    }
+    protected function setParams() {}
 }

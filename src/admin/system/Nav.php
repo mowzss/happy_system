@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace app\admin\system;
 
-use app\common\controllers\BaseAdmin;
-use app\common\traits\CrudTrait;
-use app\common\util\CrudUtil;
-use app\model\system\SystemNav;
-use mowzs\lib\Forms;
-use mowzs\lib\helper\DataHelper;
 use think\App;
+use mowzs\lib\Forms;
+use app\common\util\CrudUtil;
+use app\logic\system\NavLogic;
+use app\model\system\SystemNav;
+use mowzs\lib\helper\DataHelper;
+use app\common\traits\CrudTrait;
+use app\common\controllers\BaseAdmin;
 
 /**
  * 网站导航管理
@@ -30,7 +31,7 @@ class Nav extends BaseAdmin
      * @var array
      */
     protected array $default_order = [
-        'list' => 'desc'
+        'list' => 'desc',
     ];
 
     /**
@@ -83,7 +84,7 @@ class Nav extends BaseAdmin
             }
             $paginateResult = $query->paginate([
                 'page' => $page,
-                'list_rows' => $limit
+                'list_rows' => $limit,
             ]);
 
 
@@ -98,7 +99,7 @@ class Nav extends BaseAdmin
             $this->assign([
                 'search_code' => Forms::instance(['display' => false, 'outputMode' => 'code'])
                     ->setFormHtml([
-                        'data-table-id' => get_lay_table_id()
+                        'data-table-id' => get_lay_table_id(),
                     ])
                     ->setSubmit('搜索')
                     ->render($this->getSearchFields(), 'form_search'),
@@ -110,7 +111,7 @@ class Nav extends BaseAdmin
             'where' => $this->bulidWhere(),
             'right_button' => CrudUtil::getButtonHtml($this->tables['right_button'] ?? []),
             'top_button' => CrudUtil::getButtonHtml($this->tables['top_button'] ?? [], 'top'),
-            'dirs' => $this->menuType
+            'dirs' => $this->menuType,
         ]);
         //渲染页面
         return $this->fetch();
@@ -134,7 +135,7 @@ class Nav extends BaseAdmin
                 [
                     'field' => 'title',
                     'title' => '菜单名称',
-                    'align' => 'left'
+                    'align' => 'left',
                 ],
                 [
                     'field' => 'dir_name',
@@ -167,7 +168,7 @@ class Nav extends BaseAdmin
                 ],
 
             ],
-            'tips' => '网站导航分类 需在项目配置文件/config/extra/nav.php中进行设置'
+            'tips' => '网站导航分类 需在项目配置文件/config/extra/nav.php中进行设置',
         ];
 
         // 定义表单字段
@@ -180,7 +181,7 @@ class Nav extends BaseAdmin
                     'options' => $this->menuType,
                     'help' => '分类数据可以在项目配置目录下extra/menu.php文件中增加分类配置',
                     'required' => true,
-                    'value' => $this->request->param('dir')
+                    'value' => $this->request->param('dir'),
                 ],
                 [
                     'type' => 'select',
@@ -242,7 +243,7 @@ class Nav extends BaseAdmin
                     'name' => 'list',
                     'label' => '排序',
                     'default' => 0,
-                ]
+                ],
             ],
             'trigger' => [
                 [
@@ -250,9 +251,9 @@ class Nav extends BaseAdmin
                     'values' => [
                         ['value' => "1", 'field' => ['node', 'params']],
                         ['value' => "2", 'field' => ['url']],
-                    ]
+                    ],
                 ],
-            ]
+            ],
         ];
 
         // 定义搜索条件
@@ -298,5 +299,15 @@ class Nav extends BaseAdmin
         if (!empty($data['node'])) {
             $data['url'] = hurl($data['node'], $data['params'] ?: []);
         }
+    }
+
+    /**
+     * 保存后数据处理
+     * @param $data
+     * @return void
+     */
+    protected function _save_result(&$data): void
+    {
+        NavLogic::instance()->delNavCache();//删除导航缓存
     }
 }
