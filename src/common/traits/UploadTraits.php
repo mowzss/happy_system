@@ -184,7 +184,7 @@ trait UploadTraits
         // 判断允许的文件类型是否包含任意一个可能的扩展名
         $isValidType = false;
         foreach ($possibleExtensions as $ext) {
-            if (in_array($ext, $this->allowed_types)) {
+            if (in_array($ext, $this->allowed_types, true)) {
                 $isValidType = true;
                 break;
             }
