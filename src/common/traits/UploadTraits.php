@@ -205,13 +205,13 @@ trait UploadTraits
     {
         if (is_numeric($sizeInMb)) {
             return (int)($sizeInMb * 1024 * 1024);
-        } elseif (is_string($sizeInMb) && preg_match('/^(\d+(\.\d+)?)\s*(MB|mb|M|b)?$/', $sizeInMb, $matches)) {
+        }
+        if (is_string($sizeInMb) && preg_match('/^(\d+(\.\d+)?)\s*(MB|mb|M|b)?$/', $sizeInMb, $matches)) {
             // 提取数字部分并转换为字节
             $numericValue = (float)$matches[1];
             return (int)($numericValue * 1024 * 1024);
-        } else {
-            throw new \InvalidArgumentException('无效的文件大小格式');
         }
+        throw new \InvalidArgumentException('无效的文件大小格式');
     }
 
     /**
@@ -244,16 +244,11 @@ trait UploadTraits
             $fileInfo = get_headers($url, 1);
             $mimeType = $fileInfo['Content-Type'] ?? '';
             $fileSize = (int)($fileInfo['Content-Length'] ?? 0);
-
-            // 关闭 cURL 会话
-            curl_close($ch);
-
             // 创建临时文件
             $tmpFile = tempnam(sys_get_temp_dir(), 'remote_');
             if (!file_put_contents($tmpFile, $fileContent)) {
                 throw new \Exception('无法写入临时文件');
             }
-
             // 创建 File 对象以便后续操作
             $file = new File($tmpFile, false);
             $file->setOriginalMime($mimeType);
@@ -267,7 +262,7 @@ trait UploadTraits
 
             // 使用 Filesystem facade 处理文件上传
             $disk = Filesystem::disk($this->storage_driver);
-            $savedPath = $disk->put($path, $file, 'md5');
+            $savedPath = $disk->putFile($path, $file, 'md5');
 
             if ($savedPath) {
                 // 成功上传后 获取上传信息
@@ -301,10 +296,9 @@ trait UploadTraits
 
                 // 返回JSON格式的成功响应
                 return json(['code' => 0, 'msg' => '下载并上传成功', 'data' => $data]);
-            } else {
-                // 上传失败返回错误信息
-                throw new \Exception("文件保存失败");
             }
+            // 上传失败返回错误信息
+            throw new \Exception("文件保存失败");
         } catch (\Exception $e) {
             // 清理临时文件（如果存在）
             if (isset($tmpFile) && file_exists($tmpFile)) {
