@@ -2,21 +2,22 @@
 
 namespace app\service;
 
-use app\command\module\ContentSync;
+use think\facade\Queue;
 use app\command\module\TagSpy;
-use app\command\system\cloud\UploadStaticToCloud;
-use app\command\system\indexnow\IndexNowClean;
-use app\command\system\indexnow\IndexNowPush;
-use app\command\system\sitemap\SitemapBuild;
-use app\command\system\sitemap\SitemapColumn;
-use app\command\system\sitemap\SitemapIndex;
-use app\command\system\spider\ClearLogs;
-use app\command\system\spider\DailyReport;
-use app\command\system\spider\HourlyReport;
+use app\command\module\ContentSync;
+use app\job\system\RecordSpiderLog;
 use app\command\system\xuns\XunsAdd;
 use app\command\system\xuns\XunsClean;
-use app\job\system\RecordSpiderLog;
-use think\facade\Queue;
+use app\command\system\spider\ClearLogs;
+use app\command\system\nav\NavRestNodeUrl;
+use app\command\system\spider\DailyReport;
+use app\command\system\spider\HourlyReport;
+use app\command\system\sitemap\SitemapBuild;
+use app\command\system\sitemap\SitemapIndex;
+use app\command\system\indexnow\IndexNowPush;
+use app\command\system\sitemap\SitemapColumn;
+use app\command\system\indexnow\IndexNowClean;
+use app\command\system\cloud\UploadStaticToCloud;
 
 class CommonService extends \think\Service
 {
@@ -51,7 +52,7 @@ class CommonService extends \think\Service
                         'ip' => $ip,
                         'module' => $this->app->request->layer(),
                         'user_agent' => $userAgent,
-                        'create_time' => time()
+                        'create_time' => time(),
                     ];
                     Queue::push(RecordSpiderLog::class, $data);
                     break;
@@ -79,6 +80,7 @@ class CommonService extends \think\Service
             HourlyReport::class,
             UploadStaticToCloud::class,
             TagSpy::class,
+            NavRestNodeUrl::class,
         ]);
     }
 }

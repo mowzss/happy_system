@@ -12,6 +12,7 @@ use app\model\system\SystemNav;
 use mowzs\lib\helper\DataHelper;
 use app\common\traits\CrudTrait;
 use app\common\controllers\BaseAdmin;
+use mowzs\lib\Exception\LogicException;
 
 /**
  * 网站导航管理
@@ -169,6 +170,21 @@ class Nav extends BaseAdmin
 
             ],
             'tips' => '网站导航分类 需在项目配置文件/config/extra/nav.php中进行设置',
+            'top_button' => [
+                [
+                    'event' => 'add',
+                ],
+
+                [
+                    'event' => '',
+                    'name' => '重置导航链接',
+                    'type' => 'data-ajax',
+                    'url' => aurl('reset'),
+                ],
+                [
+                    'event' => 'del',
+                ],
+            ],
         ];
 
         // 定义表单字段
@@ -187,7 +203,7 @@ class Nav extends BaseAdmin
                     'type' => 'select',
                     'name' => 'pid',
                     'label' => '父级栏目',
-                    'options' => $this->model->getMenuForm(['status' => 1, 'dir' => $this->request->param('dir')]),
+                    'options' => NavLogic::instance()->getMenuForm(),
                     'required' => true,
                 ],
                 [
@@ -260,6 +276,19 @@ class Nav extends BaseAdmin
         $this->search = [
             'id#=#id', 'title#like#title', 'url#like#url', 'node#=#node', 'dir#=#dir', 'status#=#status',
         ];
+    }
+
+    /**
+     * @return void
+     */
+    public function reset(): void
+    {
+        try {
+            NavLogic::instance()->setNodeUrl();
+            $this->success('重置成功');
+        } catch (LogicException $e) {
+            $this->error($e->getMessage());
+        }
     }
 
     /**
