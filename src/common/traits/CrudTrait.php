@@ -10,6 +10,7 @@ use think\Exception;
 use app\common\util\CrudUtil;
 use think\db\exception\DbException;
 use think\model\contract\Modelable;
+use mowzs\lib\Exception\FormsException;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\ModelNotFoundException;
 use think\template\exception\TemplateNotFoundException;
@@ -254,15 +255,16 @@ trait CrudTrait
     /**
      * 修改
      * @auth true
-     * @param string $id
-     * @return bool|void
+     * @param int $id
+     * @return bool|null
      * @throws Exception
+     * @throws FormsException
      */
-    public function edit(string $id = '')
+    public function edit(int $id = 0): ?bool
     {
         try {
             $data = $this->request->post();
-            $record = $this->model->findOrEmpty($id);
+            $update = $record = $this->model->findOrEmpty($id);
             if ($record->isEmpty()) {
                 $this->error('记录不存在');
             }
@@ -283,7 +285,7 @@ trait CrudTrait
                 return false;
             }
             $this->checkRequiredFields($data);
-            $record->save($data);
+            $update->save($data);
             // 结果回调处理
             $result = true;
             if (false === $this->callback('_save_result', $result, $record, $data)) {
