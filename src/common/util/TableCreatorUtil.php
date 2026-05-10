@@ -3,12 +3,12 @@ declare (strict_types=1);
 
 namespace app\common\util;
 
-use app\common\util\table\TableStructures;
-use InvalidArgumentException;
 use PDO;
-use think\db\exception\DbException;
 use think\facade\Db;
 use think\facade\Log;
+use InvalidArgumentException;
+use think\db\exception\DbException;
+use app\common\util\table\TableStructures;
 
 class TableCreatorUtil extends UtilBase
 {
@@ -113,7 +113,7 @@ class TableCreatorUtil extends UtilBase
         try {
             $sourceTable = $this->getTableName($sourceTable);
             $targetTable = $this->getTableName($targetTable);
-            
+
             // 获取源表的创建语句
             $showCreateTable = Db::query("SHOW CREATE TABLE `{$sourceTable}`");
 
@@ -494,8 +494,8 @@ class TableCreatorUtil extends UtilBase
     /**
      * 修改已有的字段
      * @param string $tableName 表名
-     * @param string $fieldName 字段名称
-     * @param array $newFieldOptions 新字段选项
+     * @param string $fieldName 字段原名称
+     * @param array $newFieldOptions 新字段选项（可能包含新字段名）
      * @return array 返回操作结果
      */
     public function modifyField(string $tableName, string $fieldName, array $newFieldOptions): array
@@ -503,15 +503,43 @@ class TableCreatorUtil extends UtilBase
         try {
             // 确保表名包含前缀
             $tableName = $this->getTableName($tableName);
+
+            // 检查字段是否存在
+            if (!$this->fieldExists($tableName, $fieldName)) {
+                return [
+                    'success' => false,
+                    'message' => "Field '{$fieldName}' does not exist in table '{$tableName}'.",
+                ];
+            }
+
+            // 获取新字段名（如果存在于 newFieldOptions 中）
+            $newFieldName = $fieldName; // 默认保持原字段名
+            if (isset($newFieldOptions['name'])) {
+                $newFieldName = $newFieldOptions['name'];
+            } elseif (isset($newFieldOptions['fieldName'])) {
+                $newFieldName = $newFieldOptions['fieldName'];
+            }
+
             // 构建字段定义
             $fieldDefinition = $this->buildFieldDefinition($newFieldOptions);
-            // 构建 SQL 语句
-            $sql = "ALTER TABLE `{$tableName}` MODIFY COLUMN `{$fieldName}` {$fieldDefinition};";
+
+            // 根据是否更改字段名来构建 SQL 语句
+            if ($newFieldName !== $fieldName) {
+                // 更改字段名和属性
+                $sql = "ALTER TABLE `{$tableName}` CHANGE `{$fieldName}` `{$newFieldName}` {$fieldDefinition};";
+            } else {
+                // 只修改字段属性
+                $sql = "ALTER TABLE `{$tableName}` MODIFY COLUMN `{$fieldName}` {$fieldDefinition};";
+            }
+
             // 执行 SQL 语句
             Db::execute($sql);
+
+            $affectedFieldName = $newFieldName !== $fieldName ? "{$fieldName} to {$newFieldName}" : $fieldName;
+
             return [
                 'success' => true,
-                'message' => "Field '{$fieldName}' in table '{$tableName}' modified successfully.",
+                'message' => "Field '{$affectedFieldName}' in table '{$tableName}' modified successfully.",
             ];
         } catch (\Exception $e) {
             Log::error("Error modifying field '{$fieldName}' in table '{$tableName}': " . $e->getMessage());
@@ -520,5 +548,24 @@ class TableCreatorUtil extends UtilBase
                 'message' => "Error modifying field '{$fieldName}' in table '{$tableName}': " . $e->getMessage(),
             ];
         }
+    }
+
+    /**
+     * 检查字段是否存在
+     * @param string $tableName 表名
+     * @param string $fieldName 字段名称
+     * @return bool
+     */
+    private function fieldExists(string $tableName, string $fieldName): bool
+    {
+        $sql = "SELECT COUNT(*) as count 
+            FROM INFORMATION_SCHEMA.COLUMNS 
+            WHERE TABLE_NAME = ? 
+            AND COLUMN_NAME = ? 
+            AND TABLE_SCHEMA = DATABASE()";
+
+        $result = Db::query($sql, [$tableName, $fieldName]);
+
+        return isset($result[0]['count']) && $result[0]['count'] > 0;
     }
 }

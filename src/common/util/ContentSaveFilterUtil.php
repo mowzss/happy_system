@@ -2,16 +2,16 @@
 
 namespace app\common\util;
 
-use app\logic\system\ConfigLogic;
 use HTMLPurifier;
+use think\facade\Log;
 use HTMLPurifier_Config;
 use mowzs\lib\baidu\AipNlp;
-use mowzs\lib\module\logic\FieldBaseLogic;
-use mowzs\lib\module\logic\TagBaseLogic;
-use think\db\exception\DataNotFoundException;
+use app\logic\system\ConfigLogic;
 use think\db\exception\DbException;
+use mowzs\lib\module\logic\TagBaseLogic;
+use mowzs\lib\module\logic\FieldBaseLogic;
+use think\db\exception\DataNotFoundException;
 use think\db\exception\ModelNotFoundException;
-use think\facade\Log;
 
 class ContentSaveFilterUtil extends UtilBase
 {
@@ -88,10 +88,7 @@ class ContentSaveFilterUtil extends UtilBase
             'qiniu' => $this->web_config['system']['qiniu_domain'],
             default => $this->app->request->host(true),
         };
-        if (stristr($url, $host) !== false) {
-            return true;
-        }
-        return false;
+        return stripos($url, $host) !== false;
     }
 
     /**
@@ -109,15 +106,15 @@ class ContentSaveFilterUtil extends UtilBase
         if ($this->isPuriferHtml()) {
             return true;
         }
-//        if ($this->cheek_search()) {
-//            return true;
-//        }
-//        if ($this->cheek_push_baidu()) {
-//            return true;
-//        }
-//        if ($this->cheek_push_bing()) {
-//            return true;
-//        }
+        //        if ($this->cheek_search()) {
+        //            return true;
+        //        }
+        //        if ($this->cheek_push_baidu()) {
+        //            return true;
+        //        }
+        //        if ($this->cheek_push_bing()) {
+        //            return true;
+        //        }
         return false;
     }
 
@@ -126,7 +123,7 @@ class ContentSaveFilterUtil extends UtilBase
      * @param string $content
      * @return string
      */
-    public function puriferContent($content): string
+    public function puriferContent(string $content): string
     {
         $config = HTMLPurifier_Config::createDefault();
         //设置允许出现的html标签
@@ -137,8 +134,7 @@ class ContentSaveFilterUtil extends UtilBase
             $this->config['content_purifer_css'] ?? 'font,font-size,font-weight,font-style,font-family,text-decoration,padding-left,color,background-color,text-align'
         );
         $config->set('AutoFormat.RemoveEmpty', (bool)$this->config['content_purifer_remove_empty']);
-        $purifier = new HTMLPurifier($config);
-        return $purifier->purify($content);
+        return (new HTMLPurifier($config))->purify($content);
     }
 
     /**
