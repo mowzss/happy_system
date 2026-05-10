@@ -264,7 +264,8 @@ trait CrudTrait
     {
         try {
             $data = $this->request->post();
-            $update = $record = $this->model->findOrEmpty($id);
+            $record = $this->model->findOrEmpty($id);
+
             if ($record->isEmpty()) {
                 $this->error('记录不存在');
             }
@@ -272,7 +273,8 @@ trait CrudTrait
                 if (empty($this->forms['fields'])) {
                     $this->error('未设置 forms 参数');
                 }
-                $forms = Forms::instance()->setValue($record->toArray());
+                $record = $record->toArray();
+                $forms = Forms::instance()->setValue($record);
                 if (!empty($this->forms['trigger'])) {
                     $forms = $forms->setTriggers($this->forms['trigger']);
                 }
@@ -285,10 +287,12 @@ trait CrudTrait
                 return false;
             }
             $this->checkRequiredFields($data);
-            $update->save($data);
+            // 保存前获取原始数据的副本
+            $originalData = $record->toArray();
+            $record->save($data);
             // 结果回调处理
             $result = true;
-            if (false === $this->callback('_save_result', $result, $record, $data)) {
+            if (false === $this->callback('_save_result', $result, $originalData, $data)) {
                 return $result;
             }
             $this->success('更新成功');

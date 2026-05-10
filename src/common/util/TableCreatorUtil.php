@@ -498,7 +498,7 @@ class TableCreatorUtil extends UtilBase
      * @param array $newFieldOptions 新字段选项（可能包含新字段名）
      * @return array 返回操作结果
      */
-    public function modifyField(string $tableName, string $fieldName, array $newFieldOptions): array
+    public function modifyField(string $tableName, string $fieldName, string $newFieldName, array $newFieldOptions): array
     {
         try {
             // 确保表名包含前缀
@@ -511,15 +511,6 @@ class TableCreatorUtil extends UtilBase
                     'message' => "Field '{$fieldName}' does not exist in table '{$tableName}'.",
                 ];
             }
-
-            // 获取新字段名（如果存在于 newFieldOptions 中）
-            $newFieldName = $fieldName; // 默认保持原字段名
-            if (isset($newFieldOptions['name'])) {
-                $newFieldName = $newFieldOptions['name'];
-            } elseif (isset($newFieldOptions['fieldName'])) {
-                $newFieldName = $newFieldOptions['fieldName'];
-            }
-
             // 构建字段定义
             $fieldDefinition = $this->buildFieldDefinition($newFieldOptions);
 
