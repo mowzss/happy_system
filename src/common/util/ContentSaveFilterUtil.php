@@ -7,9 +7,9 @@ use think\facade\Log;
 use HTMLPurifier_Config;
 use mowzs\lib\baidu\AipNlp;
 use app\logic\system\ConfigLogic;
+use mowzs\cms\logic\TagBaseLogic;
 use think\db\exception\DbException;
-use mowzs\lib\module\logic\TagBaseLogic;
-use mowzs\lib\module\logic\FieldBaseLogic;
+use mowzs\cms\logic\FieldBaseLogic;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\ModelNotFoundException;
 
