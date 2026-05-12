@@ -5,6 +5,9 @@ namespace app\common\util;
 
 use think\facade\Db;
 
+/**
+ * SQL执行器
+ */
 class SqlExecutor extends UtilBase
 {
     /**

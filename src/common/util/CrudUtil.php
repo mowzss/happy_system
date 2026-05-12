@@ -12,24 +12,22 @@ class CrudUtil
         if ($buttons === false) {
             return '';
         }
-
         // 如果 buttons 为空数组，默认添加编辑和删除按钮
         if (empty($buttons)) {
 
             if ($type === 'right') {
                 $buttons = [
                     ['event' => 'edit', 'name' => '编辑'],
-                    ['event' => 'del', 'name' => '删除']
+                    ['event' => 'del', 'name' => '删除'],
                 ];
             } elseif ($type === 'top') {
                 $buttons = [
                     ['event' => 'add', 'name' => '添加'],
-                    ['event' => 'del', 'name' => '删除']
+                    ['event' => 'del', 'name' => '删除'],
                 ];
             }
 
         }
-
         $html = '';
         foreach ($buttons as $button) {
             // 检查是否应该跳过该按钮

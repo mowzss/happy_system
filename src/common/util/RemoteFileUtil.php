@@ -3,12 +3,13 @@ declare(strict_types=1);
 
 namespace app\common\util;
 
+use think\facade\Log;
+use think\facade\Filesystem;
+use mowzs\lib\helper\MimeHelper;
 use app\logic\system\ConfigLogic;
 use app\model\system\SystemAttachment;
-use mowzs\lib\helper\MimeHelper;
 use think\exception\ValidateException;
-use think\facade\Filesystem;
-use think\facade\Log;
+use mowzs\lib\Exception\ModuleException;
 
 class RemoteFileUtil
 {
@@ -53,13 +54,13 @@ class RemoteFileUtil
             // 使用 cURL 获取远程文件内容
             $ch = curl_init($url);
             if (!$ch) {
-                throw new \Exception('cURL初始化失败');
+                throw new ModuleException('cURL初始化失败');
             }
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // 跟踪重定向
             $fileContent = curl_exec($ch);
             if (curl_errno($ch)) {
-                throw new \Exception(curl_error($ch));
+                throw new ModuleException(curl_error($ch));
             }
             curl_close($ch);
 
@@ -71,7 +72,7 @@ class RemoteFileUtil
             // 创建临时文件并将内容写入
             $tmpFile = tempnam(sys_get_temp_dir(), 'remote_');
             if (!file_put_contents($tmpFile, $fileContent)) {
-                throw new \Exception('无法写入临时文件');
+                throw new ModuleException('无法写入临时文件');
             }
 
             // 验证文件
@@ -90,11 +91,11 @@ class RemoteFileUtil
             if ($savedPath) {
                 // 成功上传后 获取上传信息
                 $data = [
-                    'uid' => 0, // 假设用户ID存储在session中，这里可以根据实际情况调整
+                    'uid' => 0,                   // 假设用户ID存储在session中，这里可以根据实际情况调整
                     'name' => basename($tmpFile), // 使用更新后的文件名
                     'path' => $savedPath,
                     'url' => $disk->url($savedPath),
-                    'mime' => mime_content_type($tmpFile), // 使用实际MIME类型
+                    'mime' => mime_content_type($tmpFile),           // 使用实际MIME类型
                     'ext' => pathinfo($tmpFile, PATHINFO_EXTENSION), // 使用更新后的扩展名
                     'size' => $fileSize,
                     'md5' => md5_file($tmpFile),
@@ -106,7 +107,7 @@ class RemoteFileUtil
 
                 // 如果是图片文件，获取宽度和高度
                 if (in_array(mime_content_type($tmpFile), ['image/jpeg', 'image/png', 'image/gif', 'image/webp'])) {
-                    list($width, $height) = getimagesize($tmpFile);
+                    [$width, $height] = getimagesize($tmpFile);
                     $data['imagewidth'] = $width;
                     $data['imageheight'] = $height;
                 }
@@ -118,16 +119,16 @@ class RemoteFileUtil
                 unlink($tmpFile);
 
                 return $data;
-            } else {
-                throw new \Exception("文件保存失败");
             }
-        } catch (\Exception $e) {
+
+            throw new ModuleException("文件保存失败");
+        } catch (ModuleException $e) {
             // 清理临时文件（如果存在）
             if ($tmpFile && file_exists($tmpFile)) {
                 unlink($tmpFile);
             }
             Log::error('Remote file download failed: ' . $e->getMessage());
-            throw $e;
+            throw new ModuleException($e->getMessage());
         }
     }
 
@@ -181,7 +182,7 @@ class RemoteFileUtil
 
         // 重命名文件
         if (!rename($filePath, $newFilePath)) {
-            throw new \Exception('无法重命名文件以更新其扩展名');
+            throw new ModuleException('无法重命名文件以更新其扩展名');
         }
 
         // 更新 filePath 变量以便后续使用
@@ -199,12 +200,12 @@ class RemoteFileUtil
     {
         if (is_numeric($sizeInMb)) {
             return (int)($sizeInMb * 1024 * 1024);
-        } elseif (is_string($sizeInMb) && preg_match('/^(\d+(\.\d+)?)\s*(MB|mb|M|b)?$/', $sizeInMb, $matches)) {
+        }
+        if (is_string($sizeInMb) && preg_match('/^(\d+(\.\d+)?)\s*(MB|mb|M|b)?$/', $sizeInMb, $matches)) {
             // 提取数字部分并转换为字节
             $numericValue = (float)$matches[1];
             return (int)($numericValue * 1024 * 1024);
-        } else {
-            throw new \InvalidArgumentException('无效的文件大小格式');
         }
+        throw new \InvalidArgumentException('无效的文件大小格式');
     }
 }

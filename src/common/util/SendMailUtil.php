@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 namespace app\common\util;
 
-use PHPMailer\PHPMailer\Exception as MailException;
-use PHPMailer\PHPMailer\PHPMailer;
-use think\db\exception\DataNotFoundException;
-use think\db\exception\DbException;
-use think\db\exception\ModelNotFoundException;
 use think\Exception;
 use think\facade\Log;
+use PHPMailer\PHPMailer\PHPMailer;
+use think\db\exception\DbException;
+use think\db\exception\DataNotFoundException;
+use think\db\exception\ModelNotFoundException;
+use PHPMailer\PHPMailer\Exception as MailException;
 
 class SendMailUtil
 {
@@ -47,7 +47,7 @@ class SendMailUtil
                 'username' => sys_config('mail_username'),
                 'password' => sys_config('mail_password'),
                 'smtp_secure' => sys_config('mail_smtp_secure', 'ssl'), // 默认为 ssl
-                'charset' => sys_config('mail_charset', 'utf-8'), // 默认为 utf-8
+                'charset' => sys_config('mail_charset', 'utf-8'),       // 默认为 utf-8
             ];
             $this->fromEmail = sys_config('mail_username');
             $this->fromName = sys_config('mail_from_name', 'No Reply');
@@ -151,7 +151,7 @@ class SendMailUtil
      * 发送邮件.
      *
      * @return bool
-     * @throws MailException
+     * @throws MailException|Exception
      */
     public function send(): bool
     {

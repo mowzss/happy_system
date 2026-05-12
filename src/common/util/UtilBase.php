@@ -5,7 +5,6 @@ namespace app\common\util;
 
 use think\App;
 use think\Container;
-use mowzs\lib\Helper;
 
 class UtilBase
 {
@@ -30,10 +29,7 @@ class UtilBase
      * 初始化
      * @return void
      */
-    protected function initialize(): void
-    {
-
-    }
+    protected function initialize(): void {}
 
     /**
      * 获取当前时间戳
@@ -60,7 +56,7 @@ class UtilBase
      * 静态实例对象
      * @param array $var 实例参数
      * @param boolean $new 创建新实例
-     * @return Helper
+     * @return UtilBase
      */
     public static function instance(array $var = [], bool $new = false): static
     {
