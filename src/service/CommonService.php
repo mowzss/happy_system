@@ -3,8 +3,6 @@
 namespace app\service;
 
 use think\facade\Queue;
-use app\command\module\TagSpy;
-use app\command\module\ContentSync;
 use app\job\system\RecordSpiderLog;
 use app\command\system\xuns\XunsAdd;
 use app\command\system\xuns\XunsClean;
@@ -74,12 +72,10 @@ class CommonService extends \think\Service
             IndexNowClean::class,
             XunsAdd::class,
             XunsClean::class,
-            ContentSync::class,
             ClearLogs::class,
             DailyReport::class,
             HourlyReport::class,
             UploadStaticToCloud::class,
-            TagSpy::class,
             NavRestNodeUrl::class,
         ]);
     }
