@@ -148,7 +148,7 @@ class Nav extends BaseAdmin
                     'title' => '链接地址',
                     'edit' => 'text',
                 ], [
-                    'field' => 'dir',
+                    'field' => 'active',
                     'title' => '激活标记',
                     'width' => 120,
                     'edit' => 'text',
@@ -246,7 +246,7 @@ class Nav extends BaseAdmin
                 ],
                 [
                     'type' => 'text',
-                    'name' => 'dir',
+                    'name' => 'active',
                     'label' => '激活标记',
                     'help' => '菜单激活标记',
                 ],
