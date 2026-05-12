@@ -146,7 +146,11 @@ class Nav extends BaseAdmin
                 [
                     'field' => 'url',
                     'title' => '链接地址',
-                    'width' => 300,
+                    'edit' => 'text',
+                ], [
+                    'field' => 'dir',
+                    'title' => '激活标记',
+                    'width' => 120,
                     'edit' => 'text',
                 ], [
                     'field' => 'list',
@@ -240,7 +244,12 @@ class Nav extends BaseAdmin
                     'label' => '参数',
                     'help' => 'url ?后的参数',
                 ],
-
+                [
+                    'type' => 'text',
+                    'name' => 'dir',
+                    'label' => '激活标记',
+                    'help' => '菜单激活标记',
+                ],
                 [
                     'type' => 'select',
                     'name' => 'target',
