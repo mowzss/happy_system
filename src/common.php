@@ -21,12 +21,12 @@ if (!function_exists('baidu_tongji')) {
     function baidu_tongji(string $token = '', bool $html = true): string
     {
         $token = $token ?: sys_config('baidu_tongji');
-        $_hmt = new BaiduTongjiUtil($token);
-        $_hmtPixel = $_hmt->trackPageView();
-        if (!$html) {
-            return '<img src="' . $_hmtPixel . '" style="display: none;" />';
+        $tongji = new BaiduTongjiUtil($token);
+        $uri = $tongji->trackPageView();
+        if ($html) {
+            return '<img src="' . $uri . '" style="display: none;" />';
         }
-        return $_hmtPixel;
+        return $uri;
     }
 }
 if (!function_exists('sort_urls')) {

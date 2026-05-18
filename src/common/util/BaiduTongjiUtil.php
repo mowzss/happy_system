@@ -3,6 +3,8 @@ declare (strict_types=1);
 
 namespace app\common\util;
 
+use think\facade\Cookie;
+
 class BaiduTongjiUtil
 {
     private string $VERSION = "wap-0-0.2";
@@ -103,15 +105,15 @@ class BaiduTongjiUtil
 
         $currentPageVisitTime = time();
 
-        $lastPageVisitTime = (int)$_COOKIE["Hm_lpvt_" . $this->siteId];
+        $lastPageVisitTime = (int)cookie("Hm_lpvt_" . $this->siteId);
 
-        $lastVisitTime = $_COOKIE["Hm_lvt_" . $this->siteId];
+        $lastVisitTime = cookie("Hm_lvt_" . $this->siteId);
 
         $sourceType = $this->getSourceType($path, $referer, $currentPageVisitTime, $lastPageVisitTime);
         $isNewVisit = ($sourceType == 4) ? 0 : 1;
 
-        setCookie("Hm_lpvt_" . $this->siteId, $currentPageVisitTime, 0, "/");
-        setCookie("Hm_lvt_" . $this->siteId, $currentPageVisitTime, time() + $this->VISITOR_MAX_AGE, "/");
+        Cookie::set("Hm_lpvt_" . $this->siteId, (string)$currentPageVisitTime);
+        Cookie::set("Hm_lvt_" . $this->siteId, (string)$currentPageVisitTime, ['expire' => time() + $this->VISITOR_MAX_AGE]);
 
         $pixelUrl = "http://hm.baidu.com/hm.gif" .
             "?si=" . $this->siteId .
@@ -125,7 +127,7 @@ class BaiduTongjiUtil
             (!is_null($referer) ? "&su=" . urlencode($referer) : "") .
             ($this->visitUrl !== "" ? "&u=" . urlencode($this->visitUrl) : "") .
             "&v=" . $this->VERSION .
-            "&rnd=" . rand(10e8, 10e9);
+            "&rnd=" . rand((int)10e8, (int)10e9);
 
         return htmlspecialchars($pixelUrl);
     }
