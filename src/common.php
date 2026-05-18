@@ -7,9 +7,27 @@
 use app\logic\system\NavLogic;
 use app\logic\system\LinksLogic;
 use app\logic\system\ConfigLogic;
+use app\common\util\BaiduTongjiUtil;
 
 if (is_file(__DIR__ . 'function.php')) {
     include_once __DIR__ . 'function.php';
+}
+if (!function_exists('baidu_tongji')) {
+    /**
+     * @param string $token
+     * @param bool $html
+     * @return string
+     */
+    function baidu_tongji(string $token = '', bool $html = true): string
+    {
+        $token = $token ?: sys_config('baidu_tongji');
+        $_hmt = new BaiduTongjiUtil($token);
+        $_hmtPixel = $_hmt->trackPageView();
+        if (!$html) {
+            return '<img src="' . $_hmtPixel . '" style="display: none;" />';
+        }
+        return $_hmtPixel;
+    }
 }
 if (!function_exists('sort_urls')) {
     /**
