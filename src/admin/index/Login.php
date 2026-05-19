@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace app\admin\index;
 
-use app\common\controllers\BaseAdmin;
 use app\model\user\UserInfo;
 use mowzs\lib\helper\AuthHelper;
+use app\common\controllers\BaseAdmin;
 
 /**
  * 登录入口
@@ -18,8 +18,9 @@ class Login extends BaseAdmin
      */
     public function index(): string
     {
+        $admin_entrance = '/' . app()->config->get('happy.admin_entrance', 'admin.php');
         if (AuthHelper::instance()->isLogin()) {
-            $this->redirect(urls('index/index/index'));
+            $this->redirect($admin_entrance);
         }
         if (request()->isPost()) {
             $data = $this->request->post();
@@ -47,14 +48,14 @@ class Login extends BaseAdmin
             $save_data = [
                 'id' => $user['id'],
                 'last_time' => time(),
-                'last_ip' => $this->request->ip()
+                'last_ip' => $this->request->ip(),
             ];
             if (password_needs_rehash($user['password'], PASSWORD_DEFAULT)) {
                 // 如果是这样，则创建新散列，替换旧散列
                 $save_data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
             }
             $user->inc('login_num')->save($save_data);
-            $this->success('登陆成功', [], '/' . app()->config->get('happy.admin_entrance', 'admin.php'));
+            $this->success('登陆成功', [], $admin_entrance);
         }
         return $this->fetch();
     }
