@@ -62,6 +62,9 @@ class NavLogic extends BaseLogic
                 $query->whereOr('node', '!=', '')->whereNotNull('node', 'OR');
             })->field(['id', 'node', 'params']);
             foreach ($model->cursor() as $item) {
+                if (empty($item['node'])) {
+                    $item['node'] = 'index/index/index';
+                }
                 $item['url'] = hurl($item['node'], $item['params'] ?: []);
                 SystemNav::update($item);
             }
