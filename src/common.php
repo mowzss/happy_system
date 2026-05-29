@@ -7,6 +7,7 @@
 use app\logic\system\NavLogic;
 use app\logic\system\LinksLogic;
 use app\logic\system\ConfigLogic;
+use mowzs\cms\logic\FieldBaseLogic;
 
 if (is_file(__DIR__ . 'function.php')) {
     include_once __DIR__ . 'function.php';
@@ -56,7 +57,7 @@ if (!function_exists('filter_urls')) {
      */
     function filter_urls(int $mid, string $module = ''): array
     {
-        return \mowzs\lib\module\logic\FieldBaseLogic::instance([$module])->buildFieldsUrls($mid);
+        return FieldBaseLogic::instance([$module])->buildFieldsUrls($mid);
     }
 }
 if (!function_exists('url_with')) {
