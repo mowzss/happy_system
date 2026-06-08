@@ -13,7 +13,7 @@ use think\db\exception\ModelNotFoundException;
 
 class ConfigLogic extends BaseLogic
 {
-
+    
     /**
      * 清理重复的配置项
      *
@@ -29,7 +29,7 @@ class ConfigLogic extends BaseLogic
         // 2. 按 group_id 分组清理
         $this->clearByField('group_id');
     }
-
+    
     /**
      * 根据指定字段清理重复的配置项
      *
@@ -43,36 +43,36 @@ class ConfigLogic extends BaseLogic
     {
         // 获取所有不同的分组值
         $groups = SystemConfig::group($field)->column($field);
-
+        
         foreach ($groups as $group) {
             // 如果分组值为空，跳过
             if (empty($group)) {
                 continue;
             }
-
+            
             // 找到该分组下所有 name 相同的记录，并按 update_time 降序排序
             $names = SystemConfig::where($field, $group)
                 ->group('name')
                 ->having('COUNT(name) > 1')  // 只选择有重复 name 的记录
                 ->column('name');
-
+            
             foreach ($names as $name) {
                 // 查询该分组下 name 相同的记录，并按 update_time 降序排序
                 $records = SystemConfig::where([$field => $group, 'name' => $name])
                     ->order('update_time', 'desc')
                     ->select();
-
+                
                 // 如果没有重复记录，跳过
                 if ($records->count() <= 1) {
                     continue;
                 }
-
+                
                 // 保留最新的记录，删除其他重复的记录
                 $latestRecord = $records->first();
                 $duplicates = $records->filter(function ($record) use ($latestRecord) {
                     return $record['id'] !== $latestRecord['id'];
                 });
-
+                
                 // 删除重复的记录
                 foreach ($duplicates as $duplicate) {
                     SystemConfig::destroy($duplicate['id']);
@@ -80,7 +80,7 @@ class ConfigLogic extends BaseLogic
             }
         }
     }
-
+    
     /**
      * @param $gid
      * @return array
@@ -94,7 +94,7 @@ class ConfigLogic extends BaseLogic
             $item['label'] = $item['title'];
         })->toArray();
     }
-
+    
     /**
      * 保存配置项
      *
@@ -109,13 +109,13 @@ class ConfigLogic extends BaseLogic
             return $this->transaction(function () use ($data) {
                 // 清理重复的配置项
                 $this->clearDuplicates();
-
+                
                 // 遍历提交的数据并保存
                 foreach ($data as $key => $value) {
                     if ($key === 'group_id') {
                         continue;  // 跳过 group_id，因为它不是配置项的 name
                     }
-
+                    
                     // 查找是否存在该 name 的配置项
                     $config = SystemConfig::where(['name' => $key, 'group_id' => $data['group_id']])->findOrEmpty();
                     // 如果存在，更新现有记录
@@ -131,65 +131,66 @@ class ConfigLogic extends BaseLogic
             throw new LogicException('保存配置失败: ' . $e->getMessage());
         }
     }
-
-
+    
+    
     /**
      * 根据名称获取配置值，名称可以是单个名称或 "module.name" 的形式
      * 如果 name 为空，则返回所有配置数据
      * @param string|null $name 配置名称或 "module.name" 或 null
      * @param mixed|null $default 默认值
      * @return mixed 返回配置值或默认值，或所有配置数据
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
      */
     public function getConfigValue(?string $name = null, mixed $default = null): mixed
     {
         // 确保所有配置已加载到缓存
         $this->loadAllConfigsToCache();
-
+        
         // 构建缓存键
         $cacheKey = 'all_configs';
-
+        
         // 从缓存中获取所有配置
         $allConfigs = Cache::get($cacheKey);
-
+        
         // 如果 name 为空，返回所有配置数据
         if (is_null($name)) {
             return $allConfigs;
         }
-
+        
         // 解析模块和名称
         $parts = explode('.', $name, 2);
         if (count($parts) === 1) {
             // 如果只有名称，默认从 system 模块查找
             $module = 'system';
             $name = $parts[0];
-        } else {
+        } else if (!empty($parts)) {
             // 如果提供了模块.名称的形式
             [$module, $name] = $parts;
         }
-
+        
         // 尝试从缓存中获取特定模块和名称的配置值
         return $allConfigs[$module][$name] ?? $default;
     }
-
+    
     /**
      * 将所有配置项加载到缓存中
      * @return void
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
      */
     public function loadAllConfigsToCache(): void
     {
         // 构建缓存键
         $cacheKey = 'all_configs';
-
+        
         // 如果缓存中没有，则从数据库加载并设置缓存
         if (!Cache::has($cacheKey)) {
-            try {
-                $configs = SystemConfig::field('name, module, value')
-                    ->select()
-                    ->toArray();
-            } catch (DataNotFoundException|ModelNotFoundException|DbException $e) {
-                $configs = [];
-            }
-
+            $configs = SystemConfig::field('name, module, value')
+                ->select()
+                ->toArray();
             // 转换为所需的结构
             $formattedConfigs = [];
             foreach ($configs as $config) {
@@ -199,7 +200,7 @@ class ConfigLogic extends BaseLogic
             Cache::set($cacheKey, $formattedConfigs, 7200);
         }
     }
-
+    
     /**
      * 清除配置缓存，用于当配置发生变更时调用
      * @return void
