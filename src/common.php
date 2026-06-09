@@ -410,7 +410,7 @@ if (!function_exists('system_runtime')) {
      */
     function system_runtime(bool $html = false): string
     {
-        $runtime = number_format(microtime(true) - app()->getBeginTime(), 10, '.', '');
+        $runtime = number_format(microtime(true) - app()->getBeginTime(), 3, '.', '');
         if ($html) {
             return '<!-- Dynamic page generated in ' . $runtime . ' seconds. -->';
         }
