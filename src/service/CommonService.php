@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace app\service;
 
@@ -25,9 +26,21 @@ class CommonService extends \think\Service
         $this->registerCommand();
         // 注册事件
         $this->registerEvent();
+        // 注册中间件
+        $this->registerMiddleware();
     }
-
+    
     /**
+     * 注册中间件
+     * @return void
+     */
+    private function registerMiddleware(): void
+    {
+    
+    }
+    
+    /**
+     * 注册事件
      * @return void
      */
     private function registerEvent(): void
@@ -42,7 +55,7 @@ class CommonService extends \think\Service
                     // 匹配到蜘蛛，记录日志
                     $spiderCode = $spiders[$pattern];
                     $url = $this->app->request->url();
-
+                    
                     $data = [
                         'name' => $spiderCode,
                         //截取url长度 不超500
@@ -58,8 +71,9 @@ class CommonService extends \think\Service
             }
         });
     }
-
+    
     /**
+     * 注册命令行
      * @return void
      */
     private function registerCommand(): void
