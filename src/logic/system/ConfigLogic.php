@@ -141,18 +141,12 @@ class ConfigLogic extends BaseLogic
      * @return mixed 返回配置值或默认值，或所有配置数据
      * @throws DataNotFoundException
      * @throws DbException
-     * @throws ModelNotFoundException
+     * @throws ModelNotFoundException|\Throwable
      */
     public function getConfigValue(?string $name = null, mixed $default = null): mixed
     {
-        // 确保所有配置已加载到缓存
-        $this->loadAllConfigsToCache();
-        
-        // 构建缓存键
-        $cacheKey = 'all_configs';
-        
         // 从缓存中获取所有配置
-        $allConfigs = Cache::get($cacheKey);
+        $allConfigs = $this->loadAllConfigsToCache();
         
         // 如果 name 为空，返回所有配置数据
         if (is_null($name)) {
@@ -176,18 +170,15 @@ class ConfigLogic extends BaseLogic
     
     /**
      * 将所有配置项加载到缓存中
-     * @return void
-     * @throws DataNotFoundException
-     * @throws DbException
-     * @throws ModelNotFoundException
+     * @return mixed
+     * @throws \Throwable
      */
-    public function loadAllConfigsToCache(): void
+    public function loadAllConfigsToCache(): mixed
     {
         // 构建缓存键
-        $cacheKey = 'all_configs';
-        
+        $cacheKey = 'all_system_configs';
         // 如果缓存中没有，则从数据库加载并设置缓存
-        if (!Cache::has($cacheKey)) {
+        return Cache::remember($cacheKey, function () {
             $configs = SystemConfig::field('name, module, value')
                 ->select()
                 ->toArray();
@@ -196,9 +187,8 @@ class ConfigLogic extends BaseLogic
             foreach ($configs as $config) {
                 $formattedConfigs[$config['module']][$config['name']] = $config['value'];
             }
-            // 设置缓存，可以指定过期时间，这里假设7200秒
-            Cache::set($cacheKey, $formattedConfigs, 7200);
-        }
+            return $formattedConfigs;
+        }, 7200);
     }
     
     /**
@@ -207,6 +197,6 @@ class ConfigLogic extends BaseLogic
      */
     public static function clearConfigCache(): void
     {
-        Cache::delete('all_configs');
+        Cache::delete('all_system_configs');
     }
 }
