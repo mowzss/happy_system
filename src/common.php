@@ -404,9 +404,17 @@ if (!function_exists('format_time')) {
     }
 }
 if (!function_exists('system_runtime')) {
-    function system_runtime(): string
+    /**
+     * @param bool $html
+     * @return string
+     */
+    function system_runtime(bool $html = false): string
     {
-        return number_format(microtime(true) - app()->getBeginTime(), 10, '.', '');
+        $runtime = number_format(microtime(true) - app()->getBeginTime(), 10, '.', '');
+        if ($html) {
+            return '<!-- Dynamic page generated in ' . $runtime . ' seconds. -->';
+        }
+        return $runtime;
     }
 }
 if (!function_exists('sys_config')) {
