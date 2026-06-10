@@ -33,7 +33,7 @@ class U20260610001
                 'title' => '默认海报图片',
                 'group_id' => $group_id,
                 'options' => '',
-                'help' => '系统全局默认海报图片',
+                'help' => '系统全局默认海报图片，海报生成时候如果没有设置图片则使用此图片',
                 'value' => '',
                 'extend' => NULL,
                 'list' => '0',
