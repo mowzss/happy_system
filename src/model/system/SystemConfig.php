@@ -94,7 +94,7 @@ class SystemConfig extends Model
      */
     public static function getListByGroup($gid): array
     {
-        return static::where('group_id', $gid)->where(['status' => 1])->order('list', 'desc')->select()->each(function ($item) {
+        return static::where('group_id', $gid)->where(['status' => 1])->order(['list' => 'desc', 'id' => 'asc'])->select()->each(function ($item) {
             $item['label'] = $item['title'];
         })->toArray();
     }
