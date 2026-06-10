@@ -26,7 +26,7 @@ class U20260610001
         if (empty($group_id)) {
             throw new Exception('分组id为空');
         }
-        (new \app\model\system\SystemConfig)->insert(
+        \app\model\system\SystemConfig::create(
             [
                 'name' => 'posters_image',
                 'type' => 'image',
