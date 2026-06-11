@@ -2,24 +2,24 @@
 
 namespace app\admin\system;
 
-use app\common\controllers\BaseAdmin;
+use think\App;
 use app\common\traits\CrudTrait;
 use app\logic\system\ModuleLogic;
+use app\common\controllers\BaseAdmin;
 use app\model\system\SystemSpiderLogs;
-use think\App;
 
 class SpiderLogs extends BaseAdmin
 {
     use CrudTrait;
-
-
+    
+    
     public function __construct(SystemSpiderLogs $model, App $app)
     {
         parent::__construct($app);
         $this->model = $model;
         $this->setParams();
     }
-
+    
     /**
      * @return void
      */
@@ -59,22 +59,22 @@ class SpiderLogs extends BaseAdmin
                     'field' => 'user_agent',
                     'title' => 'UA',
                     'align' => 'left',
-
+                
                 ], [
                     'field' => 'create_time',
                     'title' => '记录时间',
                     'width' => 160,
-
-                ]
+                
+                ],
             ],
             'top_button' => [
-                ['event' => 'del']
-
+                ['event' => 'del'],
+            
             ],
             'right_button' => [
-                ['event' => 'del']
-            ]
-
+                ['event' => 'del'],
+            ],
+        
         ];
         $spiders = $this->app->config->get('spiders.list', []);
         $spiders = array_unique(array_values($spiders));
@@ -85,13 +85,13 @@ class SpiderLogs extends BaseAdmin
                 'name' => 'name',
                 'label' => '蜘蛛名称',
                 'options' => $spiders,
-                'required' => true
+                'required' => true,
             ], [
                 'type' => 'select',
                 'name' => 'module',
                 'label' => '模块',
                 'options' => ModuleLogic::instance()->getModuleAll(),
-                'required' => true
+                'required' => true,
             ], [
                 'type' => 'text',
                 'name' => 'url',
@@ -104,13 +104,13 @@ class SpiderLogs extends BaseAdmin
                 'type' => 'text',
                 'name' => 'user_agent',
                 'label' => 'user_agent',
-            ]
+            ],
         ]];
         $this->search = [
-            'id#=#id', 'name#like#name', 'module#=#module', 'url#like#url', 'ip#=#ip', 'user_agent#like#user_agent', 'create_time#between#create_time'
+            'id#=#id', 'name#like#name', 'module#=#module', 'url#like#url', 'ip#like#ip', 'user_agent#like#user_agent', 'create_time#between#create_time',
         ];
     }
-
+    
     /**
      * 处理列表数据
      * @param $data
@@ -118,7 +118,7 @@ class SpiderLogs extends BaseAdmin
      */
     protected function _index_list_filter(&$data): void
     {
-
+        
         foreach ($data['data'] as &$vo) {
             try {
                 $vo['isp'] = (new \Ip2Region())->simple($vo['ip']);
@@ -128,5 +128,5 @@ class SpiderLogs extends BaseAdmin
             $vo['module'] = ModuleLogic::instance()->getModuleNameByDir($vo['module']);
         }
     }
-
+    
 }
