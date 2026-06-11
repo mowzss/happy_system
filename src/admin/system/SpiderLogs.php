@@ -47,6 +47,7 @@ class SpiderLogs extends BaseAdmin
                     'field' => 'url',
                     'title' => '抓取页面',
                     'align' => 'left',
+                    'templet' => 'link',
                 ], [
                     'field' => 'ip',
                     'title' => 'IP地址',
@@ -126,6 +127,7 @@ class SpiderLogs extends BaseAdmin
                 $vo['isp'] = '未知';
             }
             $vo['module'] = ModuleLogic::instance()->getModuleNameByDir($vo['module']);
+            $vo['url'] = $this->request->domain() . $vo['url'];
         }
     }
     
