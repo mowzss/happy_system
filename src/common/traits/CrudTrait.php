@@ -17,7 +17,7 @@ use think\template\exception\TemplateNotFoundException;
 
 trait CrudTrait
 {
-
+    
     /**
      * 用于存储模块名称
      * @var string
@@ -48,8 +48,8 @@ trait CrudTrait
      * @var bool
      */
     protected bool $is_page = true;
-
-
+    
+    
     /**
      * 内容列表
      * @auth true
@@ -70,7 +70,7 @@ trait CrudTrait
                     $query->with(trim($relation));
                 }
             }
-
+            
             //设置排序
             $query = $this->setListOrder($query, $params);
             // 分页
@@ -83,11 +83,11 @@ trait CrudTrait
                 'page' => $page,
                 'list_rows' => $limit,
             ]);
-
-
+            
+            
             // 转换结果为数组
             $data = $paginateResult->toArray();
-
+            
             // 回调过滤器
             $this->callback('_list_filter', $data);
             $this->success($data);
@@ -102,7 +102,7 @@ trait CrudTrait
                     ->render($this->getSearchFields(), 'form_search'),
             ]);
         }
-
+        
         // 分配模板变量
         $this->assign([
             'where' => $this->bulidWhere(),
@@ -116,9 +116,9 @@ trait CrudTrait
             //模板不存在时 尝试读取公用模板
             return $this->fetch('common@/page_table');
         }
-
+        
     }
-
+    
     /**
      * 绑定get
      * @return array
@@ -136,7 +136,7 @@ trait CrudTrait
         }
         return $where;
     }
-
+    
     /**
      * 构建where查询条件
      * @param Model|Query $model
@@ -149,7 +149,7 @@ trait CrudTrait
         foreach ($this->search as $config) {
             // 拆分配置字符串
             [$fields, $operator, $paramKey] = explode('#', $config);
-
+            
             // 如果是多个字段使用 | 分隔符进行分割
             $fieldList = explode('|', $fields);
             // 检查请求数据中是否存在对应的参数
@@ -159,7 +159,7 @@ trait CrudTrait
                 if (empty($value)) {
                     continue;
                 }
-
+                
                 // 对于 like 操作符，防止 SQL 注入攻击，处理用户输入
                 if ($operator === 'like') {
                     $value = '%' . addcslashes($value, '_%') . '%';
@@ -188,7 +188,7 @@ trait CrudTrait
         // 返回修改后的模型实例
         return $model;
     }
-
+    
     /**
      * 添加
      * @auth true
@@ -231,7 +231,7 @@ trait CrudTrait
         }
         return $forms->render($this->forms['fields']);
     }
-
+    
     /**
      * 校验必填项不能为空
      * @param $data
@@ -251,7 +251,7 @@ trait CrudTrait
             }
         }
     }
-
+    
     /**
      * 修改
      * @auth true
@@ -265,7 +265,7 @@ trait CrudTrait
         try {
             $data = $this->request->post();
             $record = $this->model->findOrEmpty($id);
-
+            
             if ($record->isEmpty()) {
                 $this->error('记录不存在');
             }
@@ -300,7 +300,7 @@ trait CrudTrait
             $this->error('记录不存在：' . $e->getMessage());
         }
     }
-
+    
     /**
      * 删除
      * @auth true
@@ -313,14 +313,14 @@ trait CrudTrait
     {
         if ($this->request->isPost()) {
             $ids = $this->request->param('ids');
-
+            
             if (is_null($ids)) {
                 $this->error('id不能为空');
             }
             if (is_array($ids)) {
                 // 批量删除
                 $records = $this->model->whereIn('id', $ids)->select();
-
+                
                 if (!$records->isEmpty()) {
                     if (false === $this->callback('_delete_filter', $record, $ids)) {
                         return false;
@@ -354,9 +354,9 @@ trait CrudTrait
         } else {
             $this->error('请求错误');
         }
-
+        
     }
-
+    
     /**
      * 列表编辑
      * @auth true
@@ -379,7 +379,7 @@ trait CrudTrait
         }
         $this->success('更新成功');
     }
-
+    
     /**
      * @return bool
      */
@@ -387,7 +387,7 @@ trait CrudTrait
     {
         return $this->request->isAjax() && ($this->request->param('out') == 'json' || $this->request->header('out') == 'json');
     }
-
+    
     /**
      * 设置列表的排序规则
      *
@@ -400,10 +400,10 @@ trait CrudTrait
         // 获取排序参数
         $orderField = $params['_order'] ?? 'id';                                // 默认按 list 排序
         $orderBy = strtolower($params['_by'] ?? '') === 'asc' ? 'asc' : 'desc'; // 默认降序
-
+        
         // 设置默认排序
         $defaultOrder = $this->default_order ?? ['id' => 'desc'];
-
+        
         // 如果提供了自定义排序，则覆盖默认排序
         if (!empty($orderField)) {
             $defaultOrder = [$orderField => $orderBy];
@@ -411,7 +411,7 @@ trait CrudTrait
         // 应用排序
         return $query->order($defaultOrder);
     }
-
+    
     /**
      * 合并数据 name索引
      * @param array $existing_fields
@@ -426,7 +426,7 @@ trait CrudTrait
         foreach ($existing_fields as $index => $field) {
             $field_map[$field[$key]] = $index;
         }
-
+        
         // 遍历 new_fields 并更新或添加字段
         foreach ($new_fields as $new_field) {
             if (isset($field_map[$new_field[$key]])) {
@@ -438,10 +438,10 @@ trait CrudTrait
                 $existing_fields[] = $new_field;
             }
         }
-
+        
         return $existing_fields;
     }
-
+    
     /**
      * 获取搜索字段
      * @return array
@@ -451,13 +451,13 @@ trait CrudTrait
         $searchFields = [];
         $formFields = $this->forms['fields'];
         $searchConfig = $this->search;
-
+        
         // 创建一个映射，用于快速查找表单字段
         $fieldMap = array_column($formFields, null, 'name');
-
+        
         // 动态添加缺失的字段，并存储在一个单独的数组中
         $dynamicFields = [];
-
+        
         // 动态添加 status 字段
         if (!isset($fieldMap['status'])) {
             $dynamicFields['status'] = [
@@ -474,7 +474,7 @@ trait CrudTrait
                 'label' => 'ID',
             ];
         }
-
+        
         // 动态添加 create_time 字段
         if (!isset($fieldMap['create_time'])) {
             $dynamicFields['create_time'] = [
@@ -483,7 +483,7 @@ trait CrudTrait
                 'label' => '创建时间',
             ];
         }
-
+        
         // 动态添加 update_time 字段
         if (!isset($fieldMap['update_time'])) {
             $dynamicFields['update_time'] = [
@@ -492,13 +492,13 @@ trait CrudTrait
                 'label' => '更新时间',
             ];
         }
-
+        
         // 合并动态字段到 fieldMap 中
         $fieldMap = array_merge($fieldMap, $dynamicFields);
         foreach ($searchConfig as $config) {
             // 拆分配置字符串
             [$fields, $operator, $paramKey] = explode('#', $config);
-
+            
             // 如果是多个字段使用 | 分隔符进行分割
             $fieldList = explode('|', $fields);
             foreach ($fieldList as $field) {
@@ -523,7 +523,7 @@ trait CrudTrait
         }
         return $searchFields;
     }
-
+    
     /**
      * 获取模块名称。
      * @return string 模块名称
@@ -532,10 +532,12 @@ trait CrudTrait
     {
         return $this->request->layer(true);
     }
-
+    
     /**
      * 设置参数
      * @return void
      */
-    protected function setParams() {}
+    protected function setParams()
+    {
+    }
 }
