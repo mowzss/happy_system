@@ -26,7 +26,7 @@ class ContentSaveFilterUtil extends UtilBase
      * @var mixed
      */
     protected mixed $web_config;
-
+    
     /**
      * 初始化
      * @return void
@@ -40,7 +40,7 @@ class ContentSaveFilterUtil extends UtilBase
         $this->web_config = ConfigLogic::instance()->getConfigValue();
         $this->config = $this->web_config[$this->app->request->layer(true)];
     }
-
+    
     /**
      * 校验是否开启下载图片
      * @return bool
@@ -52,7 +52,7 @@ class ContentSaveFilterUtil extends UtilBase
         }
         return false;
     }
-
+    
     /**
      * 检测是否开启获取缩略图
      * @return bool
@@ -64,7 +64,7 @@ class ContentSaveFilterUtil extends UtilBase
         }
         return false;
     }
-
+    
     /**
      * 检测是否开启内容过滤
      * @return bool
@@ -76,7 +76,7 @@ class ContentSaveFilterUtil extends UtilBase
         }
         return false;
     }
-
+    
     /**
      * 检查排除域名
      * @param string $url
@@ -91,7 +91,7 @@ class ContentSaveFilterUtil extends UtilBase
         };
         return stripos($url, $host) !== false;
     }
-
+    
     /**
      * 钩子总检测
      * @return bool
@@ -118,7 +118,7 @@ class ContentSaveFilterUtil extends UtilBase
         //        }
         return false;
     }
-
+    
     /**
      * 内容过滤
      * @param string $content
@@ -137,7 +137,7 @@ class ContentSaveFilterUtil extends UtilBase
         $config->set('AutoFormat.RemoveEmpty', (bool)$this->config['content_purifer_remove_empty']);
         return (new HTMLPurifier($config))->purify($content);
     }
-
+    
     /**
      * 处理数据
      * @param $info
@@ -179,12 +179,12 @@ class ContentSaveFilterUtil extends UtilBase
                 //处理缩略图
                 if ($this->isImagesThum()) {
                     preg_match_all($pattern, $info['content'], $images);
-                    $picurls = $images[1];
-                    if (count($picurls) > $this->config['is_content_thum_num']) {
-                        $picurls = array_slice($picurls, 0, $this->config['is_content_thum_num']);
+                    $info_images = $images[1];
+                    if (count($info_images) > $this->config['is_content_thum_num']) {
+                        $info_images = array_slice($info_images, 0, (int)$this->config['is_content_thum_num']);
                     }
-                    if (!empty($picurls)) {
-                        $picurl = implode(',', $picurls);
+                    if (!empty($info_images)) {
+                        $picurl = implode(',', $info_images);
                         $ispic = 1;
                     }
                     $update['images'] = $picurl ?? '';
@@ -195,7 +195,7 @@ class ContentSaveFilterUtil extends UtilBase
         }
         return $info;
     }
-
+    
     protected function setCheckboxData($info)
     {
         if (!empty($info['mid'])) {
@@ -208,7 +208,7 @@ class ContentSaveFilterUtil extends UtilBase
         }
         return $info;
     }
-
+    
     /**
      * @param $data
      * @return mixed
