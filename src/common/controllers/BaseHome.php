@@ -7,16 +7,17 @@ use think\App;
 
 class BaseHome extends Base
 {
-
+    
     public function __construct(App $app)
     {
         parent::__construct($app);
         $this->app->event->trigger('HomeControllerInit');
     }
-
+    
     /**
      * 初始化设置
      * @return void
+     * @throws \Throwable
      */
     protected function initialize(): void
     {
