@@ -17,6 +17,7 @@ use app\command\system\indexnow\IndexNowPush;
 use app\command\system\sitemap\SitemapColumn;
 use app\command\system\indexnow\IndexNowClean;
 use app\command\system\cloud\UploadStaticToCloud;
+use app\common\middleware\system\MobileBrowseMiddleware;
 
 class CommonService extends \think\Service
 {
@@ -36,7 +37,7 @@ class CommonService extends \think\Service
      */
     private function registerMiddleware(): void
     {
-    
+        $this->app->middleware->add(MobileBrowseMiddleware::class);
     }
     
     /**
