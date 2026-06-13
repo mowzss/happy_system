@@ -127,7 +127,7 @@ class SpiderLogs extends BaseAdmin
                 $vo['isp'] = '未知';
             }
             $vo['module'] = ModuleLogic::instance()->getModuleNameByDir($vo['module']);
-            $vo['url'] = $this->request->domain() . $vo['url'];
+            $vo['url'] = $vo['domain'] . $vo['url'];
         }
     }
     
