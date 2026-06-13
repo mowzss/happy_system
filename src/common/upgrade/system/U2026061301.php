@@ -17,14 +17,12 @@ class U2026061301
      */
     private function updateModuleConfig(): void
     {
-        $group_model = new SystemConfigGroup();
-        $config_group_data = [
+        $group_model = SystemConfigGroup::create([
             'title' => '手机版设置',
             'sys_show' => 1,
             'module' => 'system',
             'status' => 1,
-        ];
-        $group_model = $group_model->save($config_group_data);
+        ]);
         
         SystemConfig::saveAll([
             [
