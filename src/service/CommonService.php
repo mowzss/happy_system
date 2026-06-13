@@ -46,29 +46,7 @@ class CommonService extends \think\Service
     private function registerEvent(): void
     {
         $this->app->event->listen('HomeControllerInit', function () {
-            $spiders = $this->app->config->get('spiders.list', []);
-            $userAgent = $this->app->request->server('HTTP_USER_AGENT', '');
-            $ip = $this->app->request->ip();
-            foreach (array_keys($spiders) as $pattern) {
-                if (stripos($userAgent, $pattern) !== false) {
-                    $isSpider = true;
-                    // 匹配到蜘蛛，记录日志
-                    $spiderCode = $spiders[$pattern];
-                    $url = $this->app->request->url();
-                    
-                    $data = [
-                        'name' => $spiderCode,
-                        //截取url长度 不超500
-                        'url' => strlen($url) > 500 ? substr($url, 0, 500) : $url,
-                        'ip' => $ip,
-                        'module' => $this->app->request->layer(),
-                        'user_agent' => $userAgent,
-                        'create_time' => time(),
-                    ];
-                    Queue::push(RecordSpiderLog::class, $data);
-                    break;
-                }
-            }
+            $this->registerSpidersLog();
         });
     }
     
@@ -92,5 +70,37 @@ class CommonService extends \think\Service
             UploadStaticToCloud::class,
             NavRestNodeUrl::class,
         ]);
+    }
+    
+    /**
+     * 注册蜘蛛日志
+     * @return void
+     */
+    public function registerSpidersLog(): void
+    {
+        $spiders = $this->app->config->get('spiders.list', []);
+        $userAgent = $this->app->request->server('HTTP_USER_AGENT', '');
+        $ip = $this->app->request->ip();
+        foreach (array_keys($spiders) as $pattern) {
+            if (stripos($userAgent, $pattern) !== false) {
+                $isSpider = true;
+                // 匹配到蜘蛛，记录日志
+                $spiderCode = $spiders[$pattern];
+                $url = $this->app->request->url();
+                
+                $data = [
+                    'name' => $spiderCode,
+                    //截取url长度 不超500
+                    'url' => strlen($url) > 500 ? substr($url, 0, 500) : $url,
+                    'ip' => $ip,
+                    'module' => $this->app->request->layer(),
+                    'domain' => $this->app->request->domain(),
+                    'user_agent' => $userAgent,
+                    'create_time' => time(),
+                ];
+                Queue::push(RecordSpiderLog::class, $data);
+                break;
+            }
+        }
     }
 }
