@@ -109,8 +109,12 @@ trait ViewTheme
     {
         $isMobile = Request::instance()->isMobile();
         try {
-            if (!empty((int)sys_config('is_wap_domain', 0)) && format_url(sys_config('site_wap_domain'), 'host') === Request::instance()->host()) {
-                $isMobile = true;
+            if (!empty((int)sys_config('is_wap_domain', 0))) {
+                if (format_url(sys_config('site_wap_domain'), 'host') === Request::instance()->host()) {
+                    $isMobile = true;
+                } else {
+                    $isMobile = false;
+                }
             }
         } catch (DataNotFoundException|ModelNotFoundException|DbException|\Throwable $e) {
             $isMobile = false;

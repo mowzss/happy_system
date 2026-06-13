@@ -41,9 +41,10 @@ class MobileBrowseMiddleware
                 return redirect(sys_config('site_wap_domain') . $this->app->request->url(), 301);
             }
             
-            if (!$this->app->request->isMobile() && format_url(sys_config('site_url'), 'host') !== $this->app->request->host()) {
-                return redirect(sys_config('site_url') . $this->app->request->url(), 301);
+            if (!$this->app->request->isMobile() && format_url(sys_config('site_domain'), 'host') !== $this->app->request->host()) {
+                return redirect(sys_config('site_domain') . $this->app->request->url(), 301);
             }
+            
         }
         
         return $next($request);
