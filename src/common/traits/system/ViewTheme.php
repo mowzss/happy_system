@@ -54,7 +54,7 @@ trait ViewTheme
     protected function getTheme(): string
     {
         // 获取当前请求的设备类型
-        $isMobile = $this->isDomainMobile();
+        $isMobile = $this->isMobile();
         $controllerLayer = Env::get('CONTROLLER_LAYER');
         
         // 使用与 getStylePath 相同的逻辑判断控制器层
@@ -105,7 +105,7 @@ trait ViewTheme
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    protected function isDomainMobile(): bool
+    protected function isMobile(): bool
     {
         $isMobile = Request::instance()->isMobile();
         try {
