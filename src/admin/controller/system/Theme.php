@@ -1,0 +1,33 @@
+<?php
+declare(strict_types=1);
+
+namespace app\admin\controller\system;
+
+use mowzs\lib\helper\TemplateHelper;
+use app\common\controllers\BaseAdmin;
+
+class Theme extends BaseAdmin
+{
+    protected $info;
+
+    protected array $types = [
+        'home' => '网站',
+        'admin' => '管理',
+        'user' => '会员'
+    ];
+
+    /**
+     * @auth true
+     * @return string
+     */
+    public function index(): string
+    {
+
+
+        foreach ($this->types as $type => $name) {
+            $this->info[$type] = TemplateHelper::instance()->getStyleInfo($type);
+        }
+
+        return $this->fetch();
+    }
+}
