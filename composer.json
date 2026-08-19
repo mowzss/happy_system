@@ -42,7 +42,8 @@
       "copy": {
         "app/provider.php": "src/provider.php",
         "public/robots.txt": "stc/public/robots.txt",
-        "public/router.php": "stc/public/router.php"
+        "public/router.php": "stc/public/router.php",
+        "think": "stc/think"
       },
       "del": true
     }
