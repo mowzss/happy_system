@@ -28,6 +28,7 @@
         "app/job": "src/job",
         "app/common": "src/common",
         "app/logic": "src/logic",
+        "app/middleware": "src/middleware",
         "app/common.php": "src/common.php",
         "public/admin.php": "stc/public/admin.php",
         "public/index.php": "stc/public/index.php",
