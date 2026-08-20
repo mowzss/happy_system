@@ -12,7 +12,8 @@
 // [ 应用入口文件 ]
 namespace think;
 
-use mowzs\lib\Run;
+
+use happy\admin\libs\Run;
 
 require __DIR__ . '/../vendor/autoload.php';
 // 执行HTTP应用并响应

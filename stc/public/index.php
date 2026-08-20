@@ -2,7 +2,7 @@
 // [ 应用入口文件 ]
 namespace think;
 
-use mowzs\lib\Run;
+use happy\admin\libs\Run;
 
 require __DIR__ . '/../vendor/autoload.php';
 // 初始化应用
