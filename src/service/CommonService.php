@@ -17,7 +17,7 @@ use app\command\system\indexnow\IndexNowPush;
 use app\command\system\sitemap\SitemapColumn;
 use app\command\system\indexnow\IndexNowClean;
 use app\command\system\cloud\UploadStaticToCloud;
-use app\common\middleware\system\MobileBrowseMiddleware;
+use app\middleware\system\MobileBrowseMiddleware;
 
 class CommonService extends \think\Service
 {

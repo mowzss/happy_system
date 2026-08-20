@@ -1,6 +1,6 @@
 <?php
 
-namespace app\common\middleware\system;
+namespace app\middleware\system;
 
 use think\App;
 use think\response\Redirect;
