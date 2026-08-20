@@ -14,7 +14,6 @@ class Index extends BaseHome
      */
     public function index(): string
     {
-        dump($this->app->config->get('view'));
         return $this->fetch();
     }
 

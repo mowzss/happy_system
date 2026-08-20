@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace app\common\traits\system;
 
-use think\facade\Env;
 use think\facade\Request;
 use think\db\exception\DbException;
 use think\db\exception\DataNotFoundException;
@@ -20,7 +19,7 @@ trait ViewTheme
      */
     protected function setView(): void
     {
-        $this->app->config->set(['view_dir_name' => $this->getPath()], 'view');
+        $this->app->config->set(['view_path' => $this->getViewPath()], 'view');
     }
     
     /**
@@ -30,18 +29,17 @@ trait ViewTheme
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    protected function getPath(): string
+    protected function getViewPath(): string
     {
         if (!$this->app->config->get('happy.installed', false)) {
-            $theme = 'default';
+            $style_path = 'install_style';
         } else {
             // 根据控制器层和设备类型获取模板风格
-            $theme = $this->getTheme();
+            $style_path = $this->getStylePath();
         }
         
-        
         // 构建完整的模板路径
-        return 'view' . DIRECTORY_SEPARATOR . $theme . DIRECTORY_SEPARATOR;
+        return $this->app->getRootPath() . 'view' . DIRECTORY_SEPARATOR . $style_path . DIRECTORY_SEPARATOR . $this->getTheme();
     }
     
     /**
@@ -80,7 +78,7 @@ trait ViewTheme
             $this->app->config->set(['cache_prefix' => 'pc_'], 'view');
         }
         
-        return $theme;
+        return $theme . DIRECTORY_SEPARATOR;
     }
     
     /**
@@ -130,10 +128,10 @@ trait ViewTheme
     protected function getStylePath(): string
     {
         // 使用现有逻辑判断控制器层
-        if (Env::get('CONTROLLER_LAYER') === 'admin') {
+        if ($this->app->http->getName() === 'admin') {
             return 'admin_style';
         }
-        if ($this->request->layer(true) === 'user') {
+        if ($this->app->http->getName() === 'user') {
             return 'user_style';
         }
         return 'home_style';
