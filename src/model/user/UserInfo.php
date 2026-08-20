@@ -3,7 +3,7 @@ declare (strict_types=1);
 
 namespace app\model\user;
 
-use mowzs\lib\Model;
+use happy\admin\libs\Model;
 
 class UserInfo extends Model
 {
@@ -15,7 +15,7 @@ class UserInfo extends Model
     {
         return date('Y-m-d H:i:s', $value ?: 0);
     }
-
+    
     /**
      * 查询后处理
      * @param $model
@@ -29,7 +29,7 @@ class UserInfo extends Model
         $model['home_url'] = urls('user/index/home', ['id' => $model['id']]);
         return $model;
     }
-
+    
     /**
      * 群组关联
      * @return \think\model\relation\HasOne

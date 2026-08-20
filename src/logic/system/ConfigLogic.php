@@ -4,10 +4,10 @@ namespace app\logic\system;
 
 
 use think\facade\Cache;
-use mowzs\lib\BaseLogic;
+use happy\admin\libs\BaseLogic;
 use app\model\system\SystemConfig;
 use think\db\exception\DbException;
-use mowzs\lib\Exception\LogicException;
+use happy\admin\libs\Exception\LogicException;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\ModelNotFoundException;
 

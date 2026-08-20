@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace app\common\controllers;
 
-use mowzs\lib\helper\AuthHelper;
+use happy\admin\libs\helper\AuthHelper;
 
 class BaseUser extends Base
 {
@@ -14,9 +14,9 @@ class BaseUser extends Base
         if (!AuthHelper::instance()->isLogin()) {
             $this->error('请先登录账号', '', urls('index/login/index'));
         }
-
+        
     }
-
+    
     /**
      * 判断是否layui 数据表格请求
      * @return bool

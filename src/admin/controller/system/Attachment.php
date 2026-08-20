@@ -4,7 +4,7 @@ declare (strict_types=1);
 namespace app\admin\controller\system;
 
 use think\App;
-use mowzs\lib\Forms;
+use happy\admin\libs\Forms;
 use think\Exception;
 use think\facade\Filesystem;
 use app\common\traits\CrudTrait;
@@ -18,13 +18,13 @@ use think\db\exception\ModelNotFoundException;
 class Attachment extends BaseAdmin
 {
     use CrudTrait;
-
+    
     protected array $type;
     /**
      * @var array|string[]
      */
     protected array $types;
-
+    
     public function __construct(App $app, SystemAttachment $attachment)
     {
         parent::__construct($app);
@@ -54,27 +54,27 @@ class Attachment extends BaseAdmin
                 [
                     'field' => 'name',
                     'title' => '文件名',
-                    'align' => 'content'
+                    'align' => 'content',
                 ], [
                     'field' => 'url',
                     'title' => '链接地址',
-                    'align' => 'content'
+                    'align' => 'content',
                 ], [
                     'field' => 'mime',
                     'title' => '文件类型',
-                    'align' => 'content'
+                    'align' => 'content',
                 ], [
                     'field' => 'ext',
                     'title' => '文件后缀',
-                    'align' => 'content'
+                    'align' => 'content',
                 ], [
                     'field' => 'size',
                     'title' => '文件大小',
-                    'align' => 'content'
+                    'align' => 'content',
                 ], [
                     'field' => 'driver',
                     'title' => '存储驱动',
-                    'align' => 'content'
+                    'align' => 'content',
                 ],
             ],
             'top_button' => [
@@ -87,16 +87,16 @@ class Attachment extends BaseAdmin
                     'name' => '清理重复记录',
                     'class' => 'layui-btn-danger',//默认包含 layui-btn layui-btn-xs
                     'extra' => [
-                        'data-load' => urls('cleanDuplicates')
-                    ]
+                        'data-load' => urls('cleanDuplicates'),
+                    ],
                 ],
             ],
             'right_button' => [
-                ['event' => 'del']
-            ]
+                ['event' => 'del'],
+            ],
         ];
     }
-
+    
     /**
      * 清理重复记录
      * @auth true
@@ -107,7 +107,7 @@ class Attachment extends BaseAdmin
         $this->model->removeDuplicateUidMd5Records();
         $this->success('清理成功');
     }
-
+    
     /**
      * 上传文件
      * @return string
@@ -121,9 +121,9 @@ class Attachment extends BaseAdmin
                     'type' => 'files',
                     'name' => 'title',
                     'label' => '上传文件',
-                    'required' => true
-                ]
-            ]
+                    'required' => true,
+                ],
+            ],
         ];
         if ($this->request->isPost()) {
             $this->success('添加成功');
@@ -133,7 +133,7 @@ class Attachment extends BaseAdmin
         }
         return Forms::instance()->render($this->forms['fields']);
     }
-
+    
     /**
      * @param string $ids
      * @return void

@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace app\model\system;
 
-use mowzs\lib\Model;
+use happy\admin\libs\Model;
 
-class SystemNav extends Model {}
+class SystemNav extends Model
+{
+}

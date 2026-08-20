@@ -2,8 +2,8 @@
 
 namespace app\common\task;
 
-use mowzs\lib\extend\RuntimeExtend;
-use mowzs\lib\task\Task;
+use happy\admin\libs\extend\RuntimeExtend;
+use happy\admin\libs\task\Task;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\facade\Console;
@@ -16,9 +16,9 @@ class IndexNow extends Task
      * @var bool
      */
     public bool $onOneServer = true;
-
+    
     public int $expiresAt = 36000;
-
+    
     /**
      *
      * @return void
@@ -37,7 +37,7 @@ class IndexNow extends Task
                     $this->app->log->log('task', $model . '模块推送索引成功');
                     sleep(5);
                 }
-
+                
             }
         } catch (DataNotFoundException|DbException $e) {
             Log::error($e->getMessage());

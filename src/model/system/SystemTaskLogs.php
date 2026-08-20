@@ -2,7 +2,7 @@
 
 namespace app\model\system;
 
-use mowzs\lib\Model;
+use happy\admin\libs\Model;
 
 /**
  * 系统任务日志模型

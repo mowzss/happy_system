@@ -3,8 +3,8 @@
 namespace app\command\system\sitemap;
 
 use app\model\system\SystemSitemap;
-use mowzs\lib\extend\RuntimeExtend;
-use mowzs\lib\extend\SitemapIndexExtend;
+use happy\admin\libs\extend\RuntimeExtend;
+use happy\admin\libs\extend\SitemapIndexExtend;
 use think\console\Command;
 use think\console\Input;
 use think\console\input\Option;
@@ -14,14 +14,14 @@ use think\facade\Log;
 class SitemapIndex extends Command
 {
     protected mixed $domain;
-
+    
     protected function configure(): void
     {
         $this->setName('sitemap:index');
         $this->addOption('domain', null, Option::VALUE_OPTIONAL, '生成sitamap域名 参数为pc 或者wap', 'pc');
         $this->setDescription('生成sitemap索引文件');
     }
-
+    
     /**
      * @param Input $input
      * @param Output $output

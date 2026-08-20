@@ -3,7 +3,7 @@
 namespace app\command\system\xuns;
 
 use app\logic\search\XunSearchLogic;
-use mowzs\lib\extend\RuntimeExtend;
+use happy\admin\libs\extend\RuntimeExtend;
 use think\console\Command;
 use think\console\Input;
 use think\console\input\Argument;
@@ -25,7 +25,7 @@ class XunsAdd extends Command
      */
     protected array $where = ['status' => 1, 'delete_time' => null];
     protected XunSearchLogic $xs;
-
+    
     /**
      * 配置消息指令
      */
@@ -35,8 +35,8 @@ class XunsAdd extends Command
         $this->addArgument('module', Argument::OPTIONAL, '模块名称', 'article');
         $this->setDescription('XunSearch数据入库');
     }
-
-
+    
+    
     /**
      * @param Input $input
      * @param Output $output
@@ -91,5 +91,5 @@ class XunsAdd extends Command
             }
         }
     }
-
+    
 }

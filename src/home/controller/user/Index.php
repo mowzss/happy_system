@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace app\home\controller\user;
 
-use mowzs\lib\Forms;
+use happy\admin\libs\Forms;
 use think\Exception;
 use app\model\user\UserInfo;
 use app\model\user\UserLoginLog;
@@ -22,7 +22,7 @@ class Index extends BaseUser
     {
         return $this->fetch();
     }
-
+    
     /**
      * 默认页
      * @return string
@@ -35,7 +35,7 @@ class Index extends BaseUser
         $this->assign('login_log', UserLoginLog::where('uid', $this->user['id'])->limit(20)->order('id desc')->select());
         return $this->fetch();
     }
-
+    
     /**
      * @param string $uid
      * @return string
@@ -44,17 +44,17 @@ class Index extends BaseUser
     {
         return $this->fetch();
     }
-
+    
     /**
      * 修改密码
      * @return string
      */
     public function pass(): string
     {
-
+        
         return $this->fetch();
     }
-
+    
     /**
      * 修改资料
      * @return string
@@ -78,8 +78,8 @@ class Index extends BaseUser
         $this->assign(['forms_html' => Forms::instance()->setValue($this->user)->render($this->getProfileForms(), '', 'code')]);
         return $this->fetch();
     }
-
-
+    
+    
     /**
      * @return array
      */
@@ -101,7 +101,7 @@ class Index extends BaseUser
                 'options' => [
                     1 => '男',
                     2 => '女',
-                ]
+                ],
             ], [
                 'type' => 'date',
                 'name' => 'birthday',

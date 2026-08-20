@@ -4,7 +4,7 @@ declare (strict_types=1);
 namespace app\admin\controller\system;
 
 use think\App;
-use mowzs\lib\Forms;
+use happy\admin\libs\Forms;
 use app\logic\system\ConfigLogic;
 use app\model\system\SystemConfig;
 use PHPMailer\PHPMailer\Exception;
@@ -33,14 +33,14 @@ class Setting extends BaseAdmin
      * @var
      */
     protected $list;
-
+    
     public function __construct(App $app, SystemConfig $config, SystemConfigGroup $configGroup)
     {
         parent::__construct($app);
         $this->model = $config;
         $this->groupModel = $configGroup;
     }
-
+    
     /**
      * 设置
      * @auth true
@@ -53,7 +53,7 @@ class Setting extends BaseAdmin
     {
         if ($this->request->isPost()) {
             $data = $this->request->post();
-
+            
             if (empty($data['group_id'])) {
                 $this->error('group_id不能为空');
             }
@@ -76,12 +76,12 @@ class Setting extends BaseAdmin
         }
         $this->list = $this->groupModel->where([
             'sys_show' => 1,
-            'status' => 1
+            'status' => 1,
         ])->select();
-
+        
         return $this->fetch();
     }
-
+    
     /**
      * 获取设置表单
      * @auth true

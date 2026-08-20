@@ -2,7 +2,7 @@
 
 namespace app\model\system;
 
-use mowzs\lib\Model;
+use happy\admin\libs\Model;
 use think\db\Query;
 
 class SystemTasks extends Model
@@ -21,5 +21,5 @@ class SystemTasks extends Model
             ->order('list', 'asc')
             ->column('id,title,exptime,task,data', 'id');
     }
-
+    
 }

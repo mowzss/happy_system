@@ -6,7 +6,7 @@ namespace app\common\util;
 use HTMLPurifier;
 use think\facade\Log;
 use HTMLPurifier_Config;
-use mowzs\lib\baidu\AipNlp;
+use happy\admin\libs\baidu\AipNlp;
 use app\logic\system\ConfigLogic;
 use mowzs\cms\logic\TagBaseLogic;
 use think\db\exception\DbException;

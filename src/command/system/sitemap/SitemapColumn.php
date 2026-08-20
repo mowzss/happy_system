@@ -4,8 +4,8 @@ namespace app\command\system\sitemap;
 
 use app\logic\system\ModuleLogic;
 use app\model\system\SystemSitemap;
-use mowzs\lib\extend\RuntimeExtend;
-use mowzs\lib\extend\SiteMapExtend;
+use happy\admin\libs\extend\RuntimeExtend;
+use happy\admin\libs\extend\SiteMapExtend;
 use think\console\Command;
 use think\console\Input;
 use think\console\input\Argument;
@@ -30,7 +30,7 @@ class SitemapColumn extends Command
      * @var array|string[]
      */
     protected array $config;
-
+    
     /**
      * 配置消息指令
      */
@@ -41,7 +41,7 @@ class SitemapColumn extends Command
         $this->addOption('domain', null, Option::VALUE_OPTIONAL, '生成sitamap域名 参数为pc 或者wap', 'pc');
         $this->setDescription('生成网站全部模块的栏目sitemap网站地图');
     }
-
+    
     /**
      * @param Input $input
      * @param Output $output
@@ -58,7 +58,7 @@ class SitemapColumn extends Command
             $output->error('当前命令【sitemap:column】可执行条件不足-Route');
             return;
         }
-
+        
         $type = $input->getArgument('type');
         //参数处理
         $module = ModuleLogic::instance()->getSitemapModule();
@@ -75,7 +75,7 @@ class SitemapColumn extends Command
                 $table = "{$key}_column";
                 $data = $this->app->db->name($table)->where($this->where)->field('id')->select();
                 foreach ($data->toArray() as $value) {
-//                    $url = "{$this->domain}/{$key}/list_{$value['id']}.html";
+                    //                    $url = "{$this->domain}/{$key}/list_{$value['id']}.html";
                     $url = $this->domain . urls("{$key}/column/index", ['id' => $value['id']]);
                     $sitemap->addItem($url, date('Y-m-d', time()));
                 }
@@ -91,9 +91,9 @@ class SitemapColumn extends Command
         SystemSitemap::where('type', $type)->where('class', 'column')->where('module', 'all')->delete();
         SystemSitemap::create($in_data);
         $this->output->info("生成栏目sitemap成功");
-
+        
     }
-
+    
     protected function setConfig($domain)
     {
         $this->config = [

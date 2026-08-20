@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace app\model\user;
 
-use mowzs\lib\Model;
+use happy\admin\libs\Model;
 
 class UserPointsLog extends Model
 {

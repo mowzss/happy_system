@@ -2,7 +2,7 @@
 
 namespace app\model\system;
 
-use mowzs\lib\Model;
+use happy\admin\libs\Model;
 
 class SystemSitemap extends Model
 {

@@ -2,7 +2,7 @@
 
 namespace app\model\user;
 
-use mowzs\lib\Model;
+use happy\admin\libs\Model;
 
 class UserOauth extends Model
 {

@@ -2,12 +2,12 @@
 
 namespace app\logic\system;
 
-use mowzs\lib\BaseLogic;
+use happy\admin\libs\BaseLogic;
 use app\common\util\SqlExecutor;
 use app\model\system\SystemModule;
 use think\db\exception\DbException;
-use mowzs\lib\Exception\LogicException;
-use mowzs\lib\helper\ModuleInstallHelper;
+use happy\admin\libs\Exception\LogicException;
+use happy\admin\libs\helper\ModuleInstallHelper;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\ModelNotFoundException;
 
@@ -22,10 +22,10 @@ class ModuleLogic extends BaseLogic
     {
         // 获取所有已存在的模块目录
         $existingDirs = SystemModule::column('dir');
-
+        
         // 使用ModuleInstallHelper实例扫描并读取info.php文件
         $filesData = ModuleInstallHelper::instance()->scanAndReadInfoPhpFiles();
-
+        
         // 过滤掉已在数据库中的模块
         $newModules = [];
         foreach ($filesData as $fileInfo) {
@@ -34,10 +34,10 @@ class ModuleLogic extends BaseLogic
                 $newModules[] = $fileInfo;
             }
         }
-
+        
         return $newModules;
     }
-
+    
     /**
      * @param $module
      * @return true
@@ -51,7 +51,7 @@ class ModuleLogic extends BaseLogic
             if (is_string($fileOrClass) && !class_exists($fileOrClass)) {
                 // 假设是SQL文件
                 $sqlFilePath = DIRECTORY_SEPARATOR . $module . DIRECTORY_SEPARATOR . $fileOrClass;
-
+                
                 try {
                     // 创建SqlExecutor实例并执行SQL文件
                     $sqlExecutor = new SqlExecutor();
@@ -85,7 +85,7 @@ class ModuleLogic extends BaseLogic
         ]);
         return true;
     }
-
+    
     /**
      * 读取文件信息
      * @param $module
@@ -100,7 +100,7 @@ class ModuleLogic extends BaseLogic
         }
         return null;
     }
-
+    
     /**
      * 获取开启搜索功能的模块
      * @return array
@@ -113,15 +113,15 @@ class ModuleLogic extends BaseLogic
         $data = SystemModule::where('status', 1)->field('dir,title')->select();
         $module = [];
         foreach ($data as $value) {
-
+            
             if (!empty(sys_config($value['dir'] . '.is_open_search'))) {
                 $module[$value['dir']] = $value['title'];
             }
-
+            
         }
         return $module;
     }
-
+    
     /**
      * @return array
      * @throws DataNotFoundException
@@ -143,7 +143,7 @@ class ModuleLogic extends BaseLogic
         }
         return $module;
     }
-
+    
     /**
      * 获取所有模块
      * @return array
@@ -152,7 +152,7 @@ class ModuleLogic extends BaseLogic
     {
         return SystemModule::where('status', 1)->column('title', 'dir');
     }
-
+    
     /**
      * 通过模块目录获取模块名称
      * @param string $module

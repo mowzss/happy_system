@@ -3,7 +3,7 @@
 namespace app\logic\system;
 
 use think\Exception;
-use mowzs\lib\BaseLogic;
+use happy\admin\libs\BaseLogic;
 use app\common\util\SqlExecutor;
 use app\model\system\SystemModule;
 use app\model\system\SystemUpgradeLog;
@@ -14,7 +14,7 @@ class UpgradeLogic extends BaseLogic
     {
         parent::initialize();
     }
-
+    
     /**
      * 判断指定模块的指定文件是否已执行过升级
      *
@@ -36,7 +36,7 @@ class UpgradeLogic extends BaseLogic
             ->find();
         return !empty($exists);
     }
-
+    
     /**
      * 获取所有升级文件，并按模块分组，每个模块内按 filename 升序排列
      *
@@ -46,25 +46,25 @@ class UpgradeLogic extends BaseLogic
     {
         $allFilesData = [];
         $directoryPath = $this->app->getAppPath() . 'common/upgrade';
-
+        
         if (!is_dir($directoryPath)) {
             return $allFilesData;
         }
-
+        
         $iterator = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator($directoryPath, \RecursiveDirectoryIterator::SKIP_DOTS),
             \RecursiveIteratorIterator::SELF_FIRST
         );
-
+        
         $filesToCheck = [];
         foreach ($iterator as $file) {
             if ($file->isFile() && in_array($file->getExtension(), ['php', 'sql'], true)) {
                 $fullPath = $file->getPathname();
                 $relativePath = substr($fullPath, strlen($directoryPath) + 1);
                 $subDir = dirname($relativePath);
-
+                
                 $module = ($subDir === '.' || $subDir === '\\') ? 'root' : basename($subDir);
-
+                
                 $filesToCheck[] = [
                     'module' => $module,
                     'filename' => $file->getBasename(),
@@ -83,16 +83,16 @@ class UpgradeLogic extends BaseLogic
                 'relative_path' => $info['relative_path'],
             ];
         }
-
+        
         // 对每个模块内的文件按 filename 升序排序（关键！）
         foreach ($allFilesData as $module => &$files) {
             usort($files, fn($a, $b) => strcmp($a['filename'], $b['filename']));
         }
         unset($files); // 解除引用
-
+        
         return $allFilesData;
     }
-
+    
     /**
      * 安装时执行所有升级文件（通常用于首次安装）
      *
@@ -102,13 +102,13 @@ class UpgradeLogic extends BaseLogic
     public function install(): bool
     {
         $files = $this->getUpgradeFiles();
-
+        
         foreach ($files as $module => $moduleFiles) {
             foreach ($moduleFiles as $file) {
                 $filename = $file['filename'];
                 $className = str_replace('.php', '', $filename);
                 $class = "\\app\common\upgrade\\{$module}\\{$className}";
-
+                
                 if (!class_exists($class)) {
                     // SQL 文件
                     $sqlFilePath = DIRECTORY_SEPARATOR . $module . DIRECTORY_SEPARATOR . $filename;
@@ -130,7 +130,7 @@ class UpgradeLogic extends BaseLogic
                         throw new \Exception('运行安装类失败: ' . $e->getMessage());
                     }
                 }
-
+                
                 SystemUpgradeLog::create([
                     'module' => $module,
                     'filename' => $filename,
@@ -138,7 +138,7 @@ class UpgradeLogic extends BaseLogic
                 ]);
             }
         }
-
+        
         return true;
     }
 }

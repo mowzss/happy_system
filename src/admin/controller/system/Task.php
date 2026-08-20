@@ -11,7 +11,7 @@ use app\common\controllers\BaseAdmin;
 class Task extends BaseAdmin
 {
     use CrudTrait;
-
+    
     /**
      * 页面标题
      * @var string
@@ -22,16 +22,16 @@ class Task extends BaseAdmin
      * @var array
      */
     protected array $default_order = [
-        'list' => 'desc'
+        'list' => 'desc',
     ];
-
+    
     public function __construct(SystemTasks $model, App $app)
     {
         parent::__construct($app);
         $this->model = $model;
         $this->setParams();
     }
-
+    
     /**
      * @return void
      */
@@ -48,7 +48,7 @@ class Task extends BaseAdmin
                 [
                     'field' => 'title',
                     'title' => '任务名称',
-                    'align' => 'content'
+                    'align' => 'content',
                 ], [
                     'field' => 'exptime',
                     'title' => 'cron表达式',
@@ -74,49 +74,49 @@ class Task extends BaseAdmin
                 ], [
                     'field' => 'status',
                     'title' => '状态',
-                    'templet' => 'switch'
+                    'templet' => 'switch',
                 ],
             ],
             'top_button' => [
-
+            
             ],
             'right_button' => [
-
-            ]
-
+            
+            ],
+        
         ];
-
+        
         $this->forms = [
             'fields' => [
                 [
                     'type' => 'text',
                     'name' => 'title',
                     'label' => '菜单名称',
-                    'required' => true
+                    'required' => true,
                 ], [
                     'type' => 'cron',
                     'name' => 'exptime',
                     'label' => 'cron 表达式',
                     'options' => '',
                     'required' => true,
-                    'help' => 'cron表达式，不支持 秒级执行'
+                    'help' => 'cron表达式，不支持 秒级执行',
                 ], [
                     'type' => 'text',
                     'name' => 'task',
                     'label' => '任务类/命令',
-                    'required' => true
+                    'required' => true,
                 ], [
                     'type' => 'textarea',
                     'name' => 'data',
                     'label' => '任务参数',
-                ]
-            ]
+                ],
+            ],
         ];
         $this->search = [
-            'id#=#id', 'title#like#name', 'task#=#task', 'status#=#status', 'last_time#between#last_time', 'next_time#between#next_time', 'create_time#between#create_time', 'update_time#between#update_time'
+            'id#=#id', 'title#like#name', 'task#=#task', 'status#=#status', 'last_time#between#last_time', 'next_time#between#next_time', 'create_time#between#create_time', 'update_time#between#update_time',
         ];
     }
-
+    
     /**
      * 处理列表数据
      * @param $data
@@ -125,10 +125,10 @@ class Task extends BaseAdmin
     protected function _index_list_filter(&$data): void
     {
         foreach ($data['data'] as &$vo) {
-            $vo['exptime_info'] = (new \mowzs\lib\helper\CronExpressionParserHelper)->parse($vo['exptime']);
+            $vo['exptime_info'] = (new \happy\admin\libs\helper\CronExpressionParserHelper)->parse($vo['exptime']);
         }
     }
-
+    
     /**
      * cron表达式生成
      * @return void
@@ -160,6 +160,6 @@ class Task extends BaseAdmin
             $nextRuns[] = $expression->getNextRunDate($now, $i, true)->format('Y-m-d H:i:s');
         }
         $this->success('运行结果', $nextRuns);
-
+        
     }
 }

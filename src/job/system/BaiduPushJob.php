@@ -2,7 +2,7 @@
 
 namespace app\job\system;
 
-use mowzs\lib\extend\push\BaiduPush;
+use happy\admin\libs\extend\push\BaiduPush;
 use think\facade\Log;
 use think\queue\Job;
 
@@ -17,16 +17,16 @@ class BaiduPushJob
     public function fire(Job $job, array $data): void
     {
         $urls = $data['urls'] ?? [];
-
+        
         if (empty($urls)) {
             $job->delete(); // 无需重试
             return;
         }
-
+        
         try {
             $pusher = new BaiduPush();
             $result = $pusher->pushBatch($urls);
-
+            
             if ($result['success']) {
                 // 推送成功，删除任务
                 $job->delete();
@@ -35,7 +35,7 @@ class BaiduPushJob
                 // 推送失败，根据失败原因决定是否重试
                 $attempts = $job->attempts();
                 $maxAttempts = 3;
-
+                
                 if ($attempts < $maxAttempts) {
                     // 可选择延迟重试，比如指数退避
                     $delaySeconds = pow(2, $attempts); // 2, 4, 8 秒
@@ -57,7 +57,7 @@ class BaiduPushJob
             }
         }
     }
-
+    
     /**
      * 任务失败处理
      *
@@ -68,5 +68,5 @@ class BaiduPushJob
     {
         Log::channel('push')->error('百度推送任务最终失败: ' . $exception->getMessage(), $data);
     }
-
+    
 }

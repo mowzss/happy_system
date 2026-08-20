@@ -7,9 +7,9 @@ use think\App;
 use app\common\traits\CrudTrait;
 use app\model\system\SystemModule;
 use app\model\system\SystemConfig;
-use mowzs\lib\forms\FormFieldConfig;
 use app\common\controllers\BaseAdmin;
 use app\model\system\SystemConfigGroup;
+use happy\admin\libs\forms\FormFieldConfig;
 
 /**
  * 系统参数设计
@@ -17,10 +17,10 @@ use app\model\system\SystemConfigGroup;
 class Config extends BaseAdmin
 {
     use CrudTrait;
-
+    
     protected SystemConfigGroup $group_model;
-
-
+    
+    
     public function __construct(App $app, SystemConfig $model, SystemConfigGroup $group)
     {
         parent::__construct($app);
@@ -28,7 +28,7 @@ class Config extends BaseAdmin
         $this->group_model = $group;
         $this->setParams();
     }
-
+    
     protected function setParams(): void
     {
         $this->tables = [
@@ -42,20 +42,20 @@ class Config extends BaseAdmin
                 [
                     'field' => 'title',
                     'title' => '参数名称',
-                    'width' => '200'
+                    'width' => '200',
                 ], [
                     'field' => 'name',
                     'title' => '参数字段',
-                    'width' => '200'
+                    'width' => '200',
                 ], [
                     'field' => 'type_name',
                     'title' => '表单类型',
-                    'width' => '160'
+                    'width' => '160',
                 ], [
                     'field' => 'group_name',
                     'title' => '所属分组',
                     'sort' => true,
-                    'width' => '160'
+                    'width' => '160',
                 ], [
                     'field' => 'list',
                     'title' => '排序',
@@ -65,7 +65,7 @@ class Config extends BaseAdmin
                     'field' => 'status',
                     'title' => '状态',
                     'width' => '120',
-                    'templet' => 'switch'
+                    'templet' => 'switch',
                 ], [
                     'field' => 'create_time',
                     'title' => '添加时间',
@@ -76,7 +76,7 @@ class Config extends BaseAdmin
             'top_button' => [
             ],
             'right_button' => [
-            ]
+            ],
         ];
         $this->forms = [
             'fields' => [
@@ -84,7 +84,7 @@ class Config extends BaseAdmin
                     'type' => 'text',
                     'name' => 'title',
                     'label' => '参数名称',
-                    'required' => true
+                    'required' => true,
                 ], [
                     'type' => 'text',
                     'name' => 'name',
@@ -95,7 +95,7 @@ class Config extends BaseAdmin
                     'type' => 'textarea',
                     'name' => 'help',
                     'label' => '输入提示',
-                    'help' => '设置项输入提示信息,可为空'
+                    'help' => '设置项输入提示信息,可为空',
                 ], [
                     'type' => 'select',
                     'name' => 'type',
@@ -112,20 +112,20 @@ class Config extends BaseAdmin
                     'type' => 'textarea',
                     'name' => 'options',
                     'label' => '数据参数',
-                    'help' => '用法'
+                    'help' => '用法',
                 ], [
                     'type' => 'text',
                     'name' => 'value',
                     'label' => '默认值',
-                    'help' => '增加设置项时设置的值，可在系统设置中修改'
-                ]
-            ]
+                    'help' => '增加设置项时设置的值，可在系统设置中修改',
+                ],
+            ],
         ];
         $this->search = [
-            'id#=#id', 'title#like#title', 'name#like#name', 'type#=#type', 'group_id#=#group_id', 'status#=#status', 'create_time#between#create_time', 'update_time#between#update_time'
+            'id#=#id', 'title#like#title', 'name#like#name', 'type#=#type', 'group_id#=#group_id', 'status#=#status', 'create_time#between#create_time', 'update_time#between#update_time',
         ];
     }
-
+    
     /**
      * 获取分组信息
      * @return array
@@ -143,7 +143,7 @@ class Config extends BaseAdmin
         }
         return $group;
     }
-
+    
     /**
      * 获取分组信息
      * @param string|int $group_id
@@ -158,7 +158,7 @@ class Config extends BaseAdmin
         }
         return '未知';
     }
-
+    
     /**
      * 列表数据回调
      * @param $data
@@ -168,12 +168,12 @@ class Config extends BaseAdmin
     {
         $forms = FormFieldConfig::get();
         foreach ($data['data'] as &$item) {
-
+            
             $item['group_name'] = $this->getConfigGroupInfo($item['group_id']);
             $item['type_name'] = $forms[$item['type']] ?? '未定义类型';
         }
     }
-
+    
     /**
      * 保存前置处理
      * @param $data

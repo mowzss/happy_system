@@ -3,7 +3,7 @@ declare (strict_types=1);
 
 namespace app\model\user;
 
-use mowzs\lib\Model;
+use happy\admin\libs\Model;
 
 class UserAuth extends Model
 {
@@ -13,7 +13,7 @@ class UserAuth extends Model
         return [
             'type' => [
                 // 设置JSON字段的类型
-                'nodes' => 'json'
+                'nodes' => 'json',
             ],
             'jsonAssoc' => true,  // 设置JSON数据返回数组
         ];

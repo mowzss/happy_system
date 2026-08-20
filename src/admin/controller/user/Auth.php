@@ -7,7 +7,7 @@ use think\App;
 use think\Exception;
 use app\model\user\UserAuth;
 use app\common\traits\CrudTrait;
-use mowzs\lib\helper\NodeHelper;
+use happy\admin\libs\helper\NodeHelper;
 use app\common\controllers\BaseAdmin;
 
 /**
@@ -16,7 +16,7 @@ use app\common\controllers\BaseAdmin;
 class Auth extends BaseAdmin
 {
     use CrudTrait;
-
+    
     /**
      * @var array|mixed
      */
@@ -25,14 +25,14 @@ class Auth extends BaseAdmin
      * @var UserAuth|array|mixed|\think\Model
      */
     protected mixed $info;
-
+    
     public function __construct(App $app, UserAuth $userAuth)
     {
         parent::__construct($app);
         $this->model = $userAuth;
         $this->setParams();
     }
-
+    
     /**
      * @return void
      */
@@ -54,10 +54,10 @@ class Auth extends BaseAdmin
                     'field' => 'desc',
                     'title' => '描述',
                     'edit' => 'textarea',
-                ]
+                ],
             ],
             'top_button' => [
-
+            
             ],
             'right_button' => [
                 [
@@ -69,8 +69,8 @@ class Auth extends BaseAdmin
                 ],
                 ['event' => 'edit'],
                 ['event' => 'del'],
-            ]
-
+            ],
+        
         ];
         $this->forms = [
             'fields' => [
@@ -78,7 +78,7 @@ class Auth extends BaseAdmin
                     'type' => 'text',
                     'name' => 'title',
                     'label' => '名称',
-                    'required' => true
+                    'required' => true,
                 ], [
                     'type' => 'textarea',
                     'name' => 'desc',
@@ -89,13 +89,13 @@ class Auth extends BaseAdmin
                     'label' => '管理权限',
                     'options' => [
                         '0' => '用户组（无权限）',
-                        '1' => '管理组（有权限）'
-                    ]
-                ]
-            ]
+                        '1' => '管理组（有权限）',
+                    ],
+                ],
+            ],
         ];
     }
-
+    
     /**
      * 权限组授权
      * @auth true
@@ -109,7 +109,7 @@ class Auth extends BaseAdmin
             $this->error('id不能为空');
         }
         $this->nodes = $this->buildHierarchicalArray(NodeHelper::instance()->getMethods(true));
-
+        
         $this->info = $this->model->findOrEmpty($id);
         if ($this->info->isEmpty()) {
             $this->error('权限组不存在');
@@ -135,7 +135,7 @@ class Auth extends BaseAdmin
         }
         return $this->fetch();
     }
-
+    
     /**
      * 将扁平的关联数组转换为具有层级结构的数组，并保留原始键。
      *
@@ -145,19 +145,19 @@ class Auth extends BaseAdmin
     protected function buildHierarchicalArray(array $flatArray): array
     {
         $hierarchicalArray = [];
-
+        
         foreach ($flatArray as $key => $value) {
             // 首先以.分割键名为主要层级
             $mainParts = explode('.', $key);
             $currentLevel = &$hierarchicalArray;
-
+            
             // 递归处理每个部分，创建层级结构
             $this->processParts($mainParts, $value, $currentLevel, $key);
         }
-
+        
         return $hierarchicalArray;
     }
-
+    
     /**
      * 递归处理键的部分，创建层级结构。
      *
@@ -171,23 +171,23 @@ class Auth extends BaseAdmin
         if (empty($parts)) {
             return;
         }
-
+        
         $part = array_shift($parts);
-
+        
         // 如果当前部分包含斜杠，进一步分割
         if (strpos($part, '/') !== false) {
             $subParts = explode('/', $part);
             $part = array_shift($subParts);
             $remainingKey = implode('/', $subParts);
-
+            
             if (!isset($currentLevel[$part])) {
                 $currentLevel[$part] = [
                     'title' => isset($value['title']) ? $value['title'] : ucfirst(str_replace('_', ' ', $part)),
                     'node' => $part,
-                    'sub' => []
+                    'sub' => [],
                 ];
             }
-
+            
             // 递归处理剩余的斜杠分割部分
             $this->processParts([$remainingKey], $value, $currentLevel[$part]['sub'], $originalKey);
         } else {
@@ -195,10 +195,10 @@ class Auth extends BaseAdmin
                 $currentLevel[$part] = [
                     'title' => isset($value['title']) ? $value['title'] : ucfirst(str_replace('_', ' ', $part)),
                     'node' => $part,
-                    'sub' => []
+                    'sub' => [],
                 ];
             }
-
+            
             // 如果还有剩余部分，继续递归处理
             if (!empty($parts)) {
                 $this->processParts($parts, $value, $currentLevel[$part]['sub'], $originalKey);
@@ -209,7 +209,7 @@ class Auth extends BaseAdmin
                     'is_login' => isset($value['is_login']) ? $value['is_login'] : true,
                     'is_menu' => isset($value['is_menu']) ? $value['is_menu'] : false,
                     'is_auth' => isset($value['is_auth']) ? $value['is_auth'] : true,
-                    'node' => $originalKey
+                    'node' => $originalKey,
                 ];
             }
         }

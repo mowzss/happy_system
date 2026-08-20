@@ -2,7 +2,7 @@
 
 namespace app\command\system\indexnow;
 
-use mowzs\lib\extend\RuntimeExtend;
+use happy\admin\libs\extend\RuntimeExtend;
 use think\console\Command;
 use think\console\Input;
 use think\console\input\Argument;
@@ -15,7 +15,7 @@ use think\facade\Log;
 
 class IndexNowPush extends Command
 {
-
+    
     /**
      * @var int[]
      */
@@ -33,7 +33,7 @@ class IndexNowPush extends Command
      * @var string
      */
     protected string $upJsonField = 'index_now';
-
+    
     protected function configure(): void
     {
         $this->setName('indexnow:push');
@@ -42,7 +42,7 @@ class IndexNowPush extends Command
         $this->addOption('domain', null, Option::VALUE_OPTIONAL, 'bing indexNow 域名 参数为pc 或者wap', 'pc');
         $this->setDescription('IndexNow推送');
     }
-
+    
     /**
      * @param Input $input
      * @param Output $output
@@ -74,7 +74,7 @@ class IndexNowPush extends Command
         }
         $this->contentPush($module, $num);
     }
-
+    
     /**
      * 推送内容
      * @param string $module 模块
@@ -86,7 +86,7 @@ class IndexNowPush extends Command
      */
     private function contentPush(string $module, int $num): void
     {
-        $push = new \mowzs\lib\extend\push\IndexNowPush($this->domain, sys_config('p_index_now.index_key'));
+        $push = new \happy\admin\libs\extend\push\IndexNowPush($this->domain, sys_config('p_index_now.index_key'));
         $model_table = $module . '_model';
         $models = $this->app->db->name($model_table)->where('id', '>', 0)->column('title', 'id');
         foreach ($models as $mid => $model_name) {
@@ -106,7 +106,7 @@ class IndexNowPush extends Command
         }
         $this->output->info('推送完成');
     }
-
+    
     /**
      * 更新记录
      * @param $data
@@ -118,7 +118,7 @@ class IndexNowPush extends Command
     {
         foreach ($data as $key => $value) {
             $up_data[$this->jsonField] = 1;
-
+            
             if (empty($value['extend'])) {
                 $up_data['extend'][$this->upJsonField] = 1;
             } else {
@@ -131,14 +131,14 @@ class IndexNowPush extends Command
             $this->output->info("正在更新数据库记录--[{$value['id']}]成功");
         }
     }
-
+    
     /**
      * 创建内容链接
      * @param string $module
      * @param $data
      * @return array|string[]
      */
-
+    
     private function createContentUrl(string $module, $data)
     {
         $urls = [];

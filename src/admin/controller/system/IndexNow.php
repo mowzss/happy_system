@@ -3,7 +3,7 @@
 namespace app\admin\controller\system;
 
 use think\App;
-use mowzs\lib\Forms;
+use happy\admin\libs\Forms;
 use app\logic\system\ConfigLogic;
 use think\db\exception\DbException;
 use app\common\controllers\BaseAdmin;
@@ -14,7 +14,7 @@ use think\template\exception\TemplateNotFoundException;
 
 class IndexNow extends BaseAdmin
 {
-
+    
     /**
      * 分组模型
      * @var SystemConfigGroup
@@ -24,13 +24,13 @@ class IndexNow extends BaseAdmin
      * @var
      */
     protected $list;
-
+    
     public function __construct(App $app, SystemConfigGroup $configGroup)
     {
         parent::__construct($app);
         $this->groupModel = $configGroup;
     }
-
+    
     /**
      * 设置
      * @auth true
@@ -43,11 +43,11 @@ class IndexNow extends BaseAdmin
     {
         $this->list = $this->groupModel->where([
             'module' => 'p_index_now',
-            'status' => 1
+            'status' => 1,
         ])->select();
         if ($this->request->isPost()) {
             $data = $this->request->post();
-
+            
             if (empty($data['group_id'])) {
                 $this->error('group_id不能为空');
             }
@@ -65,8 +65,8 @@ class IndexNow extends BaseAdmin
                 $this->error('保存失败');
             }
         }
-
-
+        
+        
         //渲染页面
         try {
             return $this->fetch();
@@ -75,7 +75,7 @@ class IndexNow extends BaseAdmin
             return $this->fetch('common@/setting');
         }
     }
-
+    
     /**
      * 获取设置表单
      * @auth true

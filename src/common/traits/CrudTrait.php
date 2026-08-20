@@ -5,12 +5,12 @@ namespace app\common\traits;
 
 use think\Model;
 use think\db\Query;
-use mowzs\lib\Forms;
+use happy\admin\libs\Forms;
 use think\Exception;
 use app\common\util\CrudUtil;
 use think\db\exception\DbException;
 use think\model\contract\Modelable;
-use mowzs\lib\Exception\FormsException;
+use happy\admin\libs\Exception\FormsException;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\ModelNotFoundException;
 use think\template\exception\TemplateNotFoundException;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace app\admin\controller\index;
 
 use app\model\user\UserInfo;
-use mowzs\lib\helper\AuthHelper;
+use happy\admin\libs\helper\AuthHelper;
 use app\common\controllers\BaseAdmin;
 
 /**
@@ -42,9 +42,9 @@ class Login extends BaseAdmin
             if (!password_verify($data['password'], $user->password)) {
                 $this->error('账号或密码错误!');
             }
-
+            
             $this->app->session->set('user', $user->toArray());
-
+            
             $save_data = [
                 'id' => $user['id'],
                 'last_time' => time(),
@@ -59,5 +59,5 @@ class Login extends BaseAdmin
         }
         return $this->fetch();
     }
-
+    
 }

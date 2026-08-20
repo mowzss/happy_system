@@ -1,4 +1,4 @@
 <?php
 return [
-    'think\Paginator' => 'mowzs\lib\Page'
+    'think\Paginator' => 'happy\admin\libs\Page',
 ];

@@ -3,13 +3,13 @@ declare (strict_types=1);
 
 namespace app\admin\controller\index;
 
-use mowzs\lib\Run;
+use happy\admin\libs\Run;
 use think\facade\Db;
 use think\response\Json;
 use think\facade\Console;
 use app\model\system\SystemMenu;
 use think\db\exception\DbException;
-use mowzs\lib\helper\ComposerHelper;
+use happy\admin\libs\helper\ComposerHelper;
 use app\common\controllers\BaseAdmin;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\ModelNotFoundException;
@@ -26,10 +26,10 @@ class Index extends BaseAdmin
      */
     public function index(): string
     {
-
+        
         return $this->fetch();
     }
-
+    
     /**
      * 后台欢迎页
      * @auth true
@@ -69,14 +69,14 @@ class Index extends BaseAdmin
             $this->assign('system_modules', $systemModules);
             $this->assign('happy_modules', $happyModules);
         } catch (\Exception $e) {
-
+            
         }
         $this->assign('is_debug', $this->app->isDebug());
         $this->assign('php_ext', $php_ext);
         $this->assign('system', $system);
         return $this->fetch();
     }
-
+    
     /**
      * 切换运行模式
      * @auth true
@@ -96,7 +96,7 @@ class Index extends BaseAdmin
             $this->success('已切换为调试模式');
         }
     }
-
+    
     /**
      * 管理菜单数据
      * @login true
@@ -113,7 +113,7 @@ class Index extends BaseAdmin
         }
         $this->error('访问方式错误');
     }
-
+    
     /**
      * 清理缓存
      * @auth true
@@ -127,7 +127,7 @@ class Index extends BaseAdmin
         Console::call('optimize:schema');
         $this->success('清理成功');
     }
-
+    
     /**
      * 安全退出
      * @login true

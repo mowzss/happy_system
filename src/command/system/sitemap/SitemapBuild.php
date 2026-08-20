@@ -3,8 +3,8 @@
 namespace app\command\system\sitemap;
 
 use app\model\system\SystemSitemap;
-use mowzs\lib\extend\RuntimeExtend;
-use mowzs\lib\extend\SiteMapExtend;
+use happy\admin\libs\extend\RuntimeExtend;
+use happy\admin\libs\extend\SiteMapExtend;
 use think\Collection;
 use think\console\Command;
 use think\console\Input;
@@ -41,7 +41,7 @@ class SitemapBuild extends Command
      * @var array|string[]
      */
     private array $config;
-
+    
     /**
      * 配置消息指令
      */
@@ -55,8 +55,8 @@ class SitemapBuild extends Command
         $this->addOption('num', null, Option::VALUE_OPTIONAL, '单个文件url默认条数，默认值10000', 10000);
         $this->setDescription('生成sitemap网站地图');
     }
-
-
+    
+    
     /**
      * @param Input $input
      * @param Output $output
@@ -101,7 +101,7 @@ class SitemapBuild extends Command
             $this->buildBadlinkMap($module, $type, $num, $class);
         }
     }
-
+    
     /**
      * 设置生成信息
      * @param $module
@@ -127,7 +127,7 @@ class SitemapBuild extends Command
             ];
         }
     }
-
+    
     /**
      * 生成内容地图
      * @param string $module 模块
@@ -159,7 +159,7 @@ class SitemapBuild extends Command
             }, 'id', 'desc');
         $this->output->info("本次共计生成 {$total} 条sitemap。");
     }
-
+    
     /**
      * 生成SiteMap
      * @param SiteMapExtend $sitemap
@@ -188,7 +188,7 @@ class SitemapBuild extends Command
         SystemSitemap::create($in_data);
         $this->output->info("第[" . $count . "]条生成成功");
     }
-
+    
     /**
      * 生成TAG地图
      * @param string $module 模块
@@ -220,7 +220,7 @@ class SitemapBuild extends Command
         );
         $this->output->info("本次共计生成 {$total} 条sitemap。");
     }
-
+    
     /**
      * 生成死链地图
      * @param string $module 模块

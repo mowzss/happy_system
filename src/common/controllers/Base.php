@@ -3,8 +3,8 @@ declare (strict_types=1);
 
 namespace app\common\controllers;
 
-use mowzs\lib\Controller;
-use mowzs\lib\helper\UserHelper;
+use happy\admin\libs\Controller;
+use happy\admin\libs\helper\UserHelper;
 use app\logic\system\ConfigLogic;
 use app\common\traits\system\ViewTheme;
 

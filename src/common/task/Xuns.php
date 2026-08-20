@@ -3,7 +3,7 @@
 namespace app\common\task;
 
 use app\model\system\SystemModule;
-use mowzs\lib\task\Task;
+use happy\admin\libs\task\Task;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
@@ -17,9 +17,9 @@ class Xuns extends Task
      * @var bool
      */
     public bool $onOneServer = true;
-
+    
     public int $expiresAt = 36000;
-
+    
     /**
      * 生成sitemap
      * @return void

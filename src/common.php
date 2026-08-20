@@ -140,7 +140,7 @@ if (!function_exists('get_user_avatar')) {
     function get_user_avatar($uid = '')
     {
         if (empty($uid)) {
-            $uid = \mowzs\lib\helper\UserHelper::instance()->getUserId();
+            $uid = \happy\admin\libs\helper\UserHelper::instance()->getUserId();
         }
     }
 }
@@ -192,7 +192,7 @@ if (!function_exists('event_listen')) {
      */
     function event_listen(object|string $event, mixed &$params = [], bool $once = false): void
     {
-        \mowzs\lib\helper\EventHelper::instance()->listen($event, $params, $once);
+        \happy\admin\libs\helper\EventHelper::instance()->listen($event, $params, $once);
     }
 }
 if (!function_exists('get_links')) {
@@ -439,7 +439,7 @@ if (!function_exists('sys_opt_log')) {
      */
     function sys_opt_log(string $desc = ''): bool
     {
-        return \mowzs\lib\helper\OperationLogHelper::log($desc);
+        return \happy\admin\libs\helper\OperationLogHelper::log($desc);
     }
 }
 if (!function_exists('download_file')) {

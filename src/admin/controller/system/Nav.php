@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace app\admin\controller\system;
 
 use think\App;
-use mowzs\lib\Forms;
+use happy\admin\libs\Forms;
 use app\common\util\CrudUtil;
 use app\logic\system\NavLogic;
 use app\model\system\SystemNav;
-use mowzs\lib\helper\DataHelper;
+use happy\admin\libs\helper\DataHelper;
 use app\common\traits\CrudTrait;
 use app\common\controllers\BaseAdmin;
-use mowzs\lib\Exception\LogicException;
+use happy\admin\libs\Exception\LogicException;
 
 /**
  * 网站导航管理
@@ -20,13 +20,13 @@ use mowzs\lib\Exception\LogicException;
 class Nav extends BaseAdmin
 {
     use CrudTrait;
-
+    
     /**
      * 页面标题
      * @var string
      */
     protected string $title = '网站导航菜单';
-
+    
     /**
      * 默认排序
      * @var array
@@ -34,7 +34,7 @@ class Nav extends BaseAdmin
     protected array $default_order = [
         'list' => 'desc',
     ];
-
+    
     /**
      * 开启树形表格
      * @var bool
@@ -45,7 +45,7 @@ class Nav extends BaseAdmin
      */
     protected array $menuType;
     protected array $where;
-
+    
     /**
      * @param App $app
      * @param SystemNav $systemSiteMenu
@@ -59,7 +59,7 @@ class Nav extends BaseAdmin
         $this->menuType = (array)$app->config->get('nav');
         $this->setParams();
     }
-
+    
     public function index(): string
     {
         $params = $this->request->param();
@@ -74,7 +74,7 @@ class Nav extends BaseAdmin
                     $query->with(trim($relation));
                 }
             }
-
+            
             //设置排序
             $query = $this->setListOrder($query, $params);
             // 分页
@@ -87,11 +87,11 @@ class Nav extends BaseAdmin
                 'page' => $page,
                 'list_rows' => $limit,
             ]);
-
-
+            
+            
             // 转换结果为数组
             $data = $paginateResult->toArray();
-
+            
             // 回调过滤器
             $this->callback('_list_filter', $data);
             $this->success($data);
@@ -106,7 +106,7 @@ class Nav extends BaseAdmin
                     ->render($this->getSearchFields(), 'form_search'),
             ]);
         }
-
+        
         // 分配模板变量
         $this->assign([
             'where' => $this->bulidWhere(),
@@ -117,7 +117,7 @@ class Nav extends BaseAdmin
         //渲染页面
         return $this->fetch();
     }
-
+    
     /**
      * 设置表格字段、表单字段和搜索条件
      * @return void
@@ -171,14 +171,14 @@ class Nav extends BaseAdmin
                     'templet' => 'switch',
                     'width' => 100,
                 ],
-
+            
             ],
             'tips' => '网站导航分类 需在项目配置文件/config/extra/nav.php中进行设置',
             'top_button' => [
                 [
                     'event' => 'add',
                 ],
-
+                
                 [
                     'event' => '',
                     'name' => '重置导航链接',
@@ -190,7 +190,7 @@ class Nav extends BaseAdmin
                 ],
             ],
         ];
-
+        
         // 定义表单字段
         $this->forms = [
             'fields' => [
@@ -280,13 +280,13 @@ class Nav extends BaseAdmin
                 ],
             ],
         ];
-
+        
         // 定义搜索条件
         $this->search = [
             'id#=#id', 'title#like#title', 'url#like#url', 'node#=#node', 'dir#=#dir', 'status#=#status',
         ];
     }
-
+    
     /**
      * @return void
      */
@@ -299,7 +299,7 @@ class Nav extends BaseAdmin
             $this->error($e->getMessage());
         }
     }
-
+    
     /**
      * 处理列表数据，构建树形结构
      * @param array $data
@@ -309,7 +309,7 @@ class Nav extends BaseAdmin
     {
         // 获取配置中的 dir 数据
         $menuDirs = $this->menuType;
-
+        
         // 确保 data['data'] 存在并且是一个数组
         if (isset($data['data']) && is_array($data['data'])) {
             foreach ($data['data'] as &$v) {
@@ -322,11 +322,11 @@ class Nav extends BaseAdmin
             }
             unset($v); // 解除引用
         }
-
+        
         // 构建树形结构
         $data['data'] = DataHelper::instance()->arrToTree($data['data']);
     }
-
+    
     /**
      * 保存前数据处理
      * @param $data
@@ -338,7 +338,7 @@ class Nav extends BaseAdmin
             $data['url'] = hurl($data['node'], $data['params'] ?: []);
         }
     }
-
+    
     /**
      * 保存后数据处理
      * @param $data

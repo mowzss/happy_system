@@ -5,7 +5,7 @@ namespace app\home\controller;
 
 use think\Response;
 use think\facade\Request;
-use mowzs\lib\helper\QrcodeHelper;
+use happy\admin\libs\helper\QrcodeHelper;
 use think\db\exception\DbException;
 use app\common\controllers\BaseHome;
 use think\db\exception\DataNotFoundException;

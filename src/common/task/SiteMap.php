@@ -3,8 +3,8 @@
 namespace app\common\task;
 
 use app\model\system\SystemModule;
-use mowzs\lib\extend\RuntimeExtend;
-use mowzs\lib\task\Task;
+use happy\admin\libs\extend\RuntimeExtend;
+use happy\admin\libs\task\Task;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
@@ -19,9 +19,9 @@ class SiteMap extends Task
      * @var bool
      */
     public bool $onOneServer = true;
-
+    
     public int $expiresAt = 36000;
-
+    
     /**
      * 生成sitemap
      * @return void

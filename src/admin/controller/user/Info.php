@@ -4,15 +4,15 @@ declare (strict_types=1);
 namespace app\admin\controller\user;
 
 use think\App;
-use mowzs\lib\Forms;
+use happy\admin\libs\Forms;
 use think\Exception;
 use app\model\user\UserAuth;
 use app\model\user\UserInfo;
 use app\model\user\UserGroup;
 use app\common\traits\CrudTrait;
-use mowzs\lib\helper\CodeHelper;
+use happy\admin\libs\helper\CodeHelper;
 use app\common\controllers\BaseAdmin;
-use mowzs\lib\Exception\LibsException;
+use happy\admin\libs\Exception\LibsException;
 
 /**
  * 会员信息
@@ -20,14 +20,14 @@ use mowzs\lib\Exception\LibsException;
 class Info extends BaseAdmin
 {
     use CrudTrait;
-
+    
     public function __construct(App $app, UserInfo $userInfo)
     {
         parent::__construct($app);
         $this->model = $userInfo;
         $this->setParams();
     }
-
+    
     protected function setParams(): void
     {
         $this->tables = [
@@ -73,7 +73,7 @@ class Info extends BaseAdmin
                 [
                     'field' => 'status',
                     'title' => '状态',
-                    'templet' => 'switch'
+                    'templet' => 'switch',
                 ],
                 [
                     'field' => 'create_time',
@@ -82,7 +82,7 @@ class Info extends BaseAdmin
                 ],
             ],
             'top_button' => [
-
+            
             ],
             'right_button' => [
                 [
@@ -94,8 +94,8 @@ class Info extends BaseAdmin
                 ],
                 ['event' => 'edit'],
                 ['event' => 'del'],
-            ]
-
+            ],
+        
         ];
         $this->forms = [
             'fields' => [
@@ -103,19 +103,19 @@ class Info extends BaseAdmin
                     'type' => 'text',
                     'name' => 'username',
                     'label' => '用户名',
-                    'required' => true
+                    'required' => true,
                 ],
                 [
                     'type' => 'text',
                     'name' => 'mobile',
                     'label' => '手机号',
-                    'required' => true
+                    'required' => true,
                 ],
                 [
                     'type' => 'text',
                     'name' => 'nickname',
                     'label' => '昵称',
-                    'required' => true
+                    'required' => true,
                 ],
                 [
                     'type' => 'select',
@@ -128,7 +128,7 @@ class Info extends BaseAdmin
                     'label' => '管理组',
                     'options' => $this->getUserAuthOptions(),
                 ],
-            ]
+            ],
         ];  // 定义搜索条件
         $this->search = [
             'id#=#id',
@@ -144,7 +144,7 @@ class Info extends BaseAdmin
             'update_time#between#update_time',
         ];
     }
-
+    
     /**
      * 处理列表数据
      * @param array $data
@@ -154,7 +154,7 @@ class Info extends BaseAdmin
     {
         // 获取所有用户组的名称映射
         $groupNames = $this->getUserGroupOptions();
-
+        
         // 确保 data['data'] 存在并且是一个数组
         if (isset($data['data']) && is_array($data['data'])) {
             foreach ($data['data'] as &$v) {
@@ -175,7 +175,7 @@ class Info extends BaseAdmin
             unset($v); // 解除引用
         }
     }
-
+    
     /**
      * 获取用户组选项
      * @return array
@@ -185,7 +185,7 @@ class Info extends BaseAdmin
         // 假设有一个 UserGroup 模型用于获取用户组信息
         return UserGroup::where('status', 1)->column('name', 'id');
     }
-
+    
     /**
      * 获取用户组选项
      * @return array
@@ -195,12 +195,12 @@ class Info extends BaseAdmin
         // 假设有一个 UserGroup 模型用于获取用户组信息
         return UserAuth::where('status', 1)->column('title', 'id');
     }
-
+    
     /**
      * 重置密码
      * @auth true
      * @return string
-     * @throws Exception|\mowzs\lib\Exception\FormsException
+     * @throws Exception|\happy\admin\libs\Exception\FormsException
      */
     public function password(): string
     {
@@ -216,26 +216,26 @@ class Info extends BaseAdmin
             // 获取新密码及其确认
             $password = $this->request->post('password');
             $password2 = $this->request->post('password2');
-
+            
             // 检查密码是否一致
             if ($password !== $password2) {
                 $this->error('两次输入的密码不一致！');
             }
-
+            
             // 检查密码长度
             if (strlen($password) < 8) {
                 $this->error('密码长度不能小于8位');
             }
-
+            
             // 检查密码是否包含字母和数字
             if (!preg_match('/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/', $password)) {
                 $this->error('密码需要同时包含字母和数字');
             }
-
+            
             // 更新用户密码（假设有一个方法来安全地哈希密码）
             $hashedPassword = password_hash(md5($password), PASSWORD_DEFAULT);
             $user_info->password = $hashedPassword;
-
+            
             // 保存更新到数据库
             if ($user_info->save()) {
                 $this->success('密码重置成功');
@@ -248,20 +248,20 @@ class Info extends BaseAdmin
                 'type' => 'text',
                 'name' => 'password',
                 'label' => '密码',
-                'required' => true
+                'required' => true,
             ], [
                 'type' => 'text',
                 'name' => 'password2',
                 'label' => '确认密码',
-                'required' => true
+                'required' => true,
             ], [
                 'type' => 'hidden',
                 'name' => 'id',
-                'value' => $id
-            ]
+                'value' => $id,
+            ],
         ]);
     }
-
+    
     /**
      * @param $data
      * @return void
@@ -281,6 +281,6 @@ class Info extends BaseAdmin
         if (empty($data['nickname'])) {
             $this->error('昵称不能为空');
         }
-
+        
     }
 }

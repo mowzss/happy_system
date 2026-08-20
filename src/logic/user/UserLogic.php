@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace app\logic\user;
 
 use app\model\user\UserInfo;
-use mowzs\lib\BaseLogic;
+use happy\admin\libs\BaseLogic;
 
 class UserLogic extends BaseLogic
 {
@@ -22,7 +22,7 @@ class UserLogic extends BaseLogic
         $data = UserInfo::with(['usergroup'])->findOrEmpty($uid)->toArray();
         return $this->hideField($data, $hide_field);
     }
-
+    
     /**
      * @param int|string $uid
      * @param false|string $field
@@ -36,7 +36,7 @@ class UserLogic extends BaseLogic
         }
         return $this->getUserInfoById($uid, $hide_field)[$field];
     }
-
+    
     /**
      * 隐藏字段
      * @param array $data
