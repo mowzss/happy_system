@@ -7,8 +7,8 @@ use think\App;
 use think\Exception;
 use app\model\user\UserAuth;
 use app\common\traits\CrudTrait;
-use happy\admin\libs\helper\NodeHelper;
 use app\common\controllers\BaseAdmin;
+use happy\admin\libs\helper\NodeHelper;
 
 /**
  * 权限组设置
@@ -22,14 +22,14 @@ class Auth extends BaseAdmin
      */
     protected mixed $nodes;
     /**
-     * @var UserAuth|array|mixed|\think\Model
+     * @var UserAuth
      */
     protected mixed $info;
     
-    public function __construct(App $app, UserAuth $userAuth)
+    public function __construct(App $app)
     {
         parent::__construct($app);
-        $this->model = $userAuth;
+        $this->model = new UserAuth();
         $this->setParams();
     }
     

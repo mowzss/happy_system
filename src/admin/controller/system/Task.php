@@ -25,6 +25,10 @@ class Task extends BaseAdmin
         'list' => 'desc',
     ];
     
+    /**
+     * @param SystemTasks $model
+     * @param App $app
+     */
     public function __construct(SystemTasks $model, App $app)
     {
         parent::__construct($app);
