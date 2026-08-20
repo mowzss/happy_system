@@ -2,13 +2,12 @@
 
 namespace app\logic\system;
 
-
 use think\facade\Cache;
 use happy\admin\libs\BaseLogic;
 use app\model\system\SystemConfig;
 use think\db\exception\DbException;
-use happy\admin\libs\Exception\LogicException;
 use think\db\exception\DataNotFoundException;
+use happy\admin\libs\Exception\LogicException;
 use think\db\exception\ModelNotFoundException;
 
 class ConfigLogic extends BaseLogic
@@ -159,7 +158,7 @@ class ConfigLogic extends BaseLogic
             // 如果只有名称，默认从 system 模块查找
             $module = 'system';
             $name = $parts[0];
-        } else if (!empty($parts)) {
+        } elseif (!empty($parts)) {
             // 如果提供了模块.名称的形式
             [$module, $name] = $parts;
         }
