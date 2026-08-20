@@ -5,13 +5,13 @@ namespace app\common\traits;
 
 use think\Model;
 use think\db\Query;
-use happy\admin\libs\Forms;
 use think\Exception;
+use happy\admin\libs\Forms;
 use app\common\util\CrudUtil;
 use think\db\exception\DbException;
 use think\model\contract\Modelable;
-use happy\admin\libs\Exception\FormsException;
 use think\db\exception\DataNotFoundException;
+use happy\admin\libs\Exception\FormsException;
 use think\db\exception\ModelNotFoundException;
 use think\template\exception\TemplateNotFoundException;
 
@@ -114,7 +114,7 @@ trait CrudTrait
             return $this->fetch();
         } catch (TemplateNotFoundException $exception) {
             //模板不存在时 尝试读取公用模板
-            return $this->fetch('common@/page_table');
+            return $this->fetch('common/page_table');
         }
         
     }
