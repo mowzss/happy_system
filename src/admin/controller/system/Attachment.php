@@ -4,8 +4,8 @@ declare (strict_types=1);
 namespace app\admin\controller\system;
 
 use think\App;
-use happy\admin\libs\Forms;
 use think\Exception;
+use happy\admin\libs\Forms;
 use think\facade\Filesystem;
 use app\common\traits\CrudTrait;
 use think\db\exception\DbException;
@@ -101,6 +101,9 @@ class Attachment extends BaseAdmin
      * 清理重复记录
      * @auth true
      * @return void
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
      */
     public function cleanDuplicates(): void
     {
@@ -110,6 +113,7 @@ class Attachment extends BaseAdmin
     
     /**
      * 上传文件
+     * @auth true
      * @return string
      * @throws Exception
      */
@@ -135,6 +139,7 @@ class Attachment extends BaseAdmin
     }
     
     /**
+     * 删除附件
      * @param string $ids
      * @return void
      * @throws DataNotFoundException

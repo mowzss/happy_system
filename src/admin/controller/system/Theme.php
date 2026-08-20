@@ -3,12 +3,15 @@ declare(strict_types=1);
 
 namespace app\admin\controller\system;
 
-use happy\admin\libs\helper\TemplateHelper;
 use app\common\controllers\BaseAdmin;
+use happy\admin\libs\helper\TemplateHelper;
 
 class Theme extends BaseAdmin
 {
-    protected $info;
+    /**
+     * @var array
+     */
+    protected array $info;
     
     protected array $types = [
         'home' => '网站',

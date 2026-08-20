@@ -4,6 +4,9 @@ declare (strict_types=1);
 namespace app\model\system;
 
 use think\Model;
+use think\db\exception\DbException;
+use think\db\exception\DataNotFoundException;
+use think\db\exception\ModelNotFoundException;
 
 class SystemAttachment extends Model
 {
@@ -11,6 +14,9 @@ class SystemAttachment extends Model
      * 删除具有相同uid和md5哈希值的冗余记录，只保留每组中最旧的一条记录。
      *
      * @return int 返回删除的记录数
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
      */
     public static function removeDuplicateUidMd5Records(): int
     {
