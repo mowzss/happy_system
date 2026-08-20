@@ -41,7 +41,7 @@ trait ViewTheme
         
         
         // 构建完整的模板路径
-        return 'view' . DIRECTORY_SEPARATOR . $this->getStylePath() . DIRECTORY_SEPARATOR . $theme;
+        return 'view' . DIRECTORY_SEPARATOR . $theme . DIRECTORY_SEPARATOR;
     }
     
     /**
@@ -55,10 +55,11 @@ trait ViewTheme
     {
         // 获取当前请求的设备类型
         $isMobile = $this->isMobile();
-        $controllerLayer = Env::get('CONTROLLER_LAYER');
+        $app_name = $this->app->http->getName();
+        
         
         // 使用与 getStylePath 相同的逻辑判断控制器层
-        if ($controllerLayer === 'admin') {
+        if ($app_name === 'admin') {
             $configKey = 'admin_style';
         } elseif ($this->request->layer(true) === 'user') {
             $configKey = $isMobile ? 'user_wap_style' : 'user_pc_style';
