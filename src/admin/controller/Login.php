@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace app\admin\controller\index;
+namespace app\admin\controller;
 
 use app\model\user\UserInfo;
-use happy\admin\libs\helper\AuthHelper;
 use app\common\controllers\BaseAdmin;
+use happy\admin\libs\helper\AuthHelper;
 
 /**
  * 登录入口

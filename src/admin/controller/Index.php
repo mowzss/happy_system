@@ -1,16 +1,16 @@
 <?php
 declare (strict_types=1);
 
-namespace app\admin\controller\index;
+namespace app\admin\controller;
 
-use happy\admin\libs\Run;
 use think\facade\Db;
 use think\response\Json;
+use happy\admin\libs\Run;
 use think\facade\Console;
 use app\model\system\SystemMenu;
 use think\db\exception\DbException;
-use happy\admin\libs\helper\ComposerHelper;
 use app\common\controllers\BaseAdmin;
+use happy\admin\libs\helper\ComposerHelper;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\ModelNotFoundException;
 
