@@ -23,6 +23,7 @@ class Links extends BaseAdmin
     protected function setParams(): void
     {
         $this->tables['tips'] = '分类及类型 需在项目配置文件/config/extra/links.php中进行设置';
+        $this->tables['title'] = '友情链接';
         $this->tables['fields'] = [
             [
                 'field' => 'id',

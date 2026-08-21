@@ -5,9 +5,9 @@ namespace app\admin\controller\system;
 
 use think\App;
 use app\model\system\SystemMenu;
-use happy\admin\libs\helper\DataHelper;
 use app\common\traits\CrudTrait;
 use app\common\controllers\BaseAdmin;
+use happy\admin\libs\helper\DataHelper;
 
 /**
  * 系统菜单
@@ -49,6 +49,7 @@ class Menu extends BaseAdmin
     protected function setParams(): void
     {
         $this->tables = [
+            'title' => $this->title,
             'fields' => [
                 [
                     'field' => 'id',

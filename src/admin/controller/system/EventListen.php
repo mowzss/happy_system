@@ -26,6 +26,7 @@ class EventListen extends BaseAdmin
     protected function setParams(): void
     {
         $this->tables = [
+            'title' => '事件监听列表',
             'fields' => [
                 [
                     'field' => 'id',

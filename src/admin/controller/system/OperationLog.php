@@ -22,6 +22,7 @@ class OperationLog extends BaseAdmin
 
     protected function setParams(): void
     {
+        $this->tables['title'] = '操作日志';
         // 定义表格字段
         $this->tables['fields'] = [
             [

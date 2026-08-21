@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace app\admin\controller;
+namespace app\admin\controller\index;
 
 use app\model\user\UserInfo;
 use app\common\controllers\BaseAdmin;

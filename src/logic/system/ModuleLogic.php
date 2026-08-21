@@ -6,10 +6,10 @@ use happy\admin\libs\BaseLogic;
 use app\common\util\SqlExecutor;
 use app\model\system\SystemModule;
 use think\db\exception\DbException;
-use happy\admin\libs\Exception\LogicException;
-use happy\admin\libs\helper\ModuleInstallHelper;
 use think\db\exception\DataNotFoundException;
+use happy\admin\libs\Exception\LogicException;
 use think\db\exception\ModelNotFoundException;
+use happy\admin\libs\helper\ModuleInstallHelper;
 
 class ModuleLogic extends BaseLogic
 {
@@ -93,7 +93,7 @@ class ModuleLogic extends BaseLogic
      */
     protected function getModuleFileInfo($module): mixed
     {
-        $path = $this->app->getAppPath() . 'common' . DIRECTORY_SEPARATOR . 'install' . DIRECTORY_SEPARATOR . $module;
+        $path = $this->app->getBasePath() . 'common' . DIRECTORY_SEPARATOR . 'install' . DIRECTORY_SEPARATOR . $module;
         $file = $path . DIRECTORY_SEPARATOR . 'info.php';
         if (file_exists($file)) {
             return include $file;

@@ -40,6 +40,7 @@ class ConfigGroup extends BaseAdmin
     protected function setParams(): void
     {
         $this->tables = [
+            'title' => '设置分组管理',
             //表格字段
             'fields' => [
                 [

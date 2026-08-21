@@ -26,6 +26,7 @@ class SpiderLogs extends BaseAdmin
     protected function setParams(): void
     {
         $this->tables = [
+            'title' => '蜘蛛日志',
             'fields' => [
                 [
                     'field' => 'id',

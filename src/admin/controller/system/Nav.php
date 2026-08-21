@@ -9,9 +9,9 @@ use happy\admin\libs\Forms;
 use app\common\util\CrudUtil;
 use app\logic\system\NavLogic;
 use app\model\system\SystemNav;
-use happy\admin\libs\helper\DataHelper;
 use app\common\traits\CrudTrait;
 use app\common\controllers\BaseAdmin;
+use happy\admin\libs\helper\DataHelper;
 use happy\admin\libs\Exception\LogicException;
 
 /**
@@ -126,6 +126,7 @@ class Nav extends BaseAdmin
     {
         // 定义表格字段
         $this->tables = [
+            'title' => $this->title,
             'fields' => [
                 [
                     'field' => 'id',

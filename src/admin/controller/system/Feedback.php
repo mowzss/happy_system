@@ -23,6 +23,7 @@ class Feedback extends BaseAdmin
     protected function setParams(): void
     {
         $this->tables['tips'] = '反馈类型 需在项目配置文件/config/extra/feedback.php中进行设置';
+        $this->tables['title'] = '举报/反馈';
         // 定义表格字段
         $this->tables['fields'] = [
             [

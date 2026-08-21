@@ -42,6 +42,7 @@ class Task extends BaseAdmin
     protected function setParams(): void
     {
         $this->tables = [
+            'title' => $this->title,
             'fields' => [
                 [
                     'field' => 'id',

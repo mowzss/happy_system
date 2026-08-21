@@ -22,6 +22,7 @@ class Event extends BaseAdmin
     protected function setParams(): void
     {
         $this->tables = [
+            'title' => '事件列表',
             //表格字段
             'fields' => [
                 [

@@ -31,6 +31,7 @@ class Module extends BaseAdmin
     protected function setParams(): void
     {
         $this->tables = [
+            'title' => '系统模块管理',
             'fields' => [
                 [
                     'field' => 'id',
@@ -61,9 +62,13 @@ class Module extends BaseAdmin
             'top_button' => [
                 [
                     'event' => 'add',
-                    'name' => '添加本地模块',
+                    'name' => '安装本地模块',
                 ],
-                ['event' => 'del'],
+                ['event' => 'del', 'name' => '卸载'],
+            ],
+            'right_button' => [
+                ['event' => 'edit', 'name' => '编辑'],
+                ['event' => 'del', 'name' => '卸载'],
             ],
         ];
         $this->forms = ['fields' => [

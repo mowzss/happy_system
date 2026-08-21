@@ -44,6 +44,7 @@ class Attachment extends BaseAdmin
             'document' => '文档',
         ];
         $this->tables = [
+            'title' => '附件管理',
             'fields' => [
                 [
                     'field' => 'id',
