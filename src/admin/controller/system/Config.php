@@ -32,6 +32,7 @@ class Config extends BaseAdmin
     protected function setParams(): void
     {
         $this->tables = [
+            'title' => '系统配置',
             'fields' => [
                 [
                     'field' => 'id',
