@@ -544,23 +544,23 @@ if (!function_exists('urls')) {
         $action = '';
         // 判断是否指定了模块
         if (count($pathInfo) >= 3) {
-            [$module, $controller, $action] = $pathInfo;
+            [$module, $controller, $action] = array_slice($pathInfo, 0, 3);
         } elseif (count($pathInfo) === 2) {
-            [$controller, $action] = $pathInfo;
+            [$controller, $action] = array_slice($pathInfo, 0, 2);
         } elseif (count($pathInfo) === 1) {
-            $action = $pathInfo[0];
+            $action = array_slice($pathInfo, 0, 1)[0];
         }
         // 如果没有指定模块，使用当前模块
         if (empty($module)) {
-            $module = request()->layer();
+            $module = request()->layer(true);
         }
         // 如果没有指定控制器，使用当前控制器
         if (empty($controller)) {
-            $controller = \think\helper\Str::snake(request()->controller(false, true));
+            $controller = \think\helper\Str::snake(request()->controller(true, true));
         }
         // 如果没有指定方法，使用当前方法
         if (empty($action)) {
-            $action = request()->action();
+            $action = request()->action(true);
         }
         // 构建最终的 URL
         $finalUrl = $module . '/' . $controller . '/' . $action;
