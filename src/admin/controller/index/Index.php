@@ -105,7 +105,7 @@ class Index extends BaseAdmin
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public function menu()
+    public function menu(): ?Json
     {
         if ($this->request->isAjax()) {
             $menu = SystemMenu::getMenuTree();
