@@ -527,7 +527,7 @@ if (!function_exists('hurl')) {
 if (!function_exists('urls')) {
     /**
      * 通用链接
-     * @param string $url
+     * @param string $uri_info
      * @param array|string $vars
      * @param bool $suffix
      * @param bool $domain
@@ -568,14 +568,14 @@ if (!function_exists('urls')) {
         if (is_string($vars)) {
             parse_str($vars, $vars);
         }
-        $url = \think\facade\Route::buildUrl($finalUrl, $vars)->suffix($suffix)->root($root)->domain($domain)->build();
+        $uri_info = \think\facade\Route::buildUrl($finalUrl, $vars)->suffix($suffix)->root($root)->domain($domain)->build();
         if (!empty($root)) {
             // 找到 $a 在 $url 中的位置
-            $pos = strpos($url, $root);
+            $pos = strpos($uri_info, $root);
             
             if ($pos !== false) {
                 // 截取 $a 之后的部分
-                $afterA = substr($url, $pos + strlen($root));
+                $afterA = substr($uri_info, $pos + strlen($root));
                 
                 // 查找第一个出现的 .php 位置
                 $phpPos = strpos($afterA, '.php');
@@ -597,7 +597,7 @@ if (!function_exists('urls')) {
                 }
             }
         }
-        return $url;
+        return $uri_info;
     }
 }
 
@@ -740,7 +740,7 @@ if (!function_exists('get_lay_table_id')) {
     {
         return 'table-' . md5(request()->url());
     }
-    
+
 }
 if (!function_exists('send_email')) {
     
