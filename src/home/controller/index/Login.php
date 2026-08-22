@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace app\home\controller;
+namespace app\home\controller\index;
 
 use app\model\user\UserInfo;
 use app\common\controllers\BaseHome;
@@ -38,7 +38,7 @@ class Login extends BaseHome
             $save_data = [
                 'id' => $user['id'],
                 'last_time' => time(),
-                'last_ip' => $this->request->ip()
+                'last_ip' => $this->request->ip(),
             ];
             if (password_needs_rehash($user['password'], PASSWORD_DEFAULT)) {
                 // 如果是这样，则创建新散列，替换旧散列

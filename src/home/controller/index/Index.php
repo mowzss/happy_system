@@ -2,7 +2,7 @@
 
 declare (strict_types=1);
 
-namespace app\home\controller;
+namespace app\home\controller\index;
 
 use app\common\controllers\BaseHome;
 
@@ -16,5 +16,5 @@ class Index extends BaseHome
     {
         return $this->fetch();
     }
-    
+
 }

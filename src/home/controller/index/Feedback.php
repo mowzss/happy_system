@@ -1,21 +1,18 @@
 <?php
 declare(strict_types=1);
 
-namespace app\home\controller;
+namespace app\home\controller\index;
 
 use app\common\controllers\BaseHome;
 
-class Reg extends BaseHome
+class Feedback extends BaseHome
 {
     /**
-     * 注册
+     * 举报反馈
      * @return string
      */
     public function index(): string
     {
-        if ($this->request->isPost()) {
-            $this->success('注册成功');
-        }
         return $this->fetch();
     }
 }

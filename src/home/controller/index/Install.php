@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace app\home\controller;
+namespace app\home\controller\index;
 
 use PDO;
 use think\facade\Db;
 use think\facade\Config;
 use think\response\Json;
-use happy\admin\libs\Controller;
 use think\facade\Request;
+use happy\admin\libs\Controller;
 use app\common\util\SqlExecutor;
 use think\db\exception\DbException;
 use app\common\traits\system\ViewTheme;
@@ -347,5 +347,5 @@ class Install extends Controller
         ]);
     }
     
-    
+
 }

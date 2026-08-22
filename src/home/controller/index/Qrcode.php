@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace app\home\controller;
+namespace app\home\controller\index;
 
 use think\Response;
 use think\facade\Request;
-use happy\admin\libs\helper\QrcodeHelper;
 use think\db\exception\DbException;
 use app\common\controllers\BaseHome;
+use happy\admin\libs\helper\QrcodeHelper;
 use think\db\exception\DataNotFoundException;
 
 // 用于处理 Logo
@@ -33,5 +33,5 @@ class Qrcode extends BaseHome
         }
         return Response::create(QrcodeHelper::getQrcode($url, $logoPath)->getString())->header(['Content-Type' => 'image/png']);
     }
-    
+
 }
