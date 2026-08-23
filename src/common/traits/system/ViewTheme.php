@@ -19,7 +19,7 @@ trait ViewTheme
      */
     protected function setView(): void
     {
-        $this->app->config->set(['view_path' => $this->getViewPath()], 'view');
+        $this->app->config->set(['view_dir_name' => $this->getViewPath()], 'view');
     }
     
     /**
