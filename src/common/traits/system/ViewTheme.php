@@ -39,7 +39,7 @@ trait ViewTheme
         }
         
         // 构建完整的模板路径
-        return $this->app->getRootPath() . 'view' . DIRECTORY_SEPARATOR . $style_path . DIRECTORY_SEPARATOR . $this->getTheme();
+        return 'view' . DIRECTORY_SEPARATOR . $style_path . DIRECTORY_SEPARATOR . $this->getTheme();
     }
     
     /**
@@ -78,7 +78,7 @@ trait ViewTheme
             $this->app->config->set(['cache_prefix' => 'pc_'], 'view');
         }
         
-        return $theme . DIRECTORY_SEPARATOR;
+        return $theme;
     }
     
     /**
