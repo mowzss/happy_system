@@ -327,14 +327,16 @@ if (!function_exists('format_view')) {
             // 超过 1 万，格式化为 "万"
             $value = $decimals ? round($int / 10000, 1) : round($int / 10000);
             return $value . 'w';
-        } elseif ($int >= 1000) {
+        }
+        
+        if ($int >= 1000) {
             // 超过 1 千，格式化为 "千"
             $value = $decimals ? round($int / 1000, 1) : round($int / 1000);
             return $value . 'k';
-        } else {
-            // 小于 1 千，直接返回原始数字
-            return (string)$int;
         }
+        
+        // 小于 1 千，直接返回原始数字
+        return (string)$int;
     }
 }
 if (!function_exists('format_time')) {
@@ -556,7 +558,7 @@ if (!function_exists('urls')) {
         }
         // 如果没有指定控制器，使用当前控制器
         if (empty($controller)) {
-            $controller = \think\helper\Str::snake(request()->controller(true, true));
+            $controller = \think\helper\Str::snake(request()->controller(false, true));
         }
         // 如果没有指定方法，使用当前方法
         if (empty($action)) {
