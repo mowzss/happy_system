@@ -59,5 +59,5 @@ class Login extends BaseAdmin
         }
         return $this->fetch();
     }
-    
+
 }

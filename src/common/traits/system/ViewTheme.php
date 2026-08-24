@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace app\common\traits\system;
 
+use think\facade\Env;
 use think\facade\Request;
 use think\db\exception\DbException;
 use think\db\exception\DataNotFoundException;
@@ -19,7 +20,7 @@ trait ViewTheme
      */
     protected function setView(): void
     {
-        $this->app->config->set(['view_dir_name' => $this->getViewPath()], 'view');
+        $this->app->config->set(['view_dir_name' => $this->getPath()], 'view');
     }
     
     /**
@@ -29,17 +30,18 @@ trait ViewTheme
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    protected function getViewPath(): string
+    protected function getPath(): string
     {
         if (!$this->app->config->get('happy.installed', false)) {
-            $style_path = 'install_style';
+            $theme = 'default';
         } else {
             // 根据控制器层和设备类型获取模板风格
-            $style_path = $this->getStylePath();
+            $theme = $this->getTheme();
         }
         
+        
         // 构建完整的模板路径
-        return 'view' . DIRECTORY_SEPARATOR . $style_path . DIRECTORY_SEPARATOR . $this->getTheme();
+        return 'view' . DIRECTORY_SEPARATOR . $this->getStylePath() . DIRECTORY_SEPARATOR . $theme;
     }
     
     /**
@@ -53,11 +55,10 @@ trait ViewTheme
     {
         // 获取当前请求的设备类型
         $isMobile = $this->isMobile();
-        $app_name = $this->app->http->getName();
-        
+        $controllerLayer = Env::get('CONTROLLER_LAYER');
         
         // 使用与 getStylePath 相同的逻辑判断控制器层
-        if ($app_name === 'admin') {
+        if ($controllerLayer === 'admin') {
             $configKey = 'admin_style';
         } elseif ($this->request->layer(true) === 'user') {
             $configKey = $isMobile ? 'user_wap_style' : 'user_pc_style';
@@ -128,10 +129,10 @@ trait ViewTheme
     protected function getStylePath(): string
     {
         // 使用现有逻辑判断控制器层
-        if ($this->app->http->getName() === 'admin') {
+        if (Env::get('CONTROLLER_LAYER') === 'admin') {
             return 'admin_style';
         }
-        if ($this->app->http->getName() === 'user') {
+        if ($this->request->layer(true) === 'user') {
             return 'user_style';
         }
         return 'home_style';
