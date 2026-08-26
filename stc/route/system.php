@@ -2,7 +2,11 @@
 
 use think\facade\Route;
 
-Route::rule('', 'index/index/index');
+Route::get('', 'index/index/index');
 Route::group('user', static function () {
-    Route::rule('', 'user.index/index');
+    Route::get('', 'user.index/index');
 });
+Route::get('static/:path', function (string $path) {
+    $filename = public_path() . $path;
+    return new \think\worker\response\File($filename);
+})->pattern(['path' => '.*\.\w+$']);
