@@ -14,8 +14,6 @@ class Index extends BaseHome
      */
     public function index(): string
     {
-        //php运行方式
-        var_dump(php_sapi_name());
         return $this->fetch();
     }
 
