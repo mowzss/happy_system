@@ -89,7 +89,7 @@ class Index extends BaseAdmin
             Run::setRun();
             Console::call('optimize:route');
             Console::call('optimize:schema');
-            Console::call('optimize:config');
+            
             $this->success('已切换线上模式');
         } else {
             Console::call('clear');
@@ -126,7 +126,7 @@ class Index extends BaseAdmin
         $this->app->cache->clear();
         Console::call('optimize:route');
         Console::call('optimize:schema');
-        Console::call('optimize:config');
+        
         $this->success('清理成功');
     }
     
