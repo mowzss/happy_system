@@ -69,12 +69,10 @@ if (!function_exists('url_with')) {
      * @param array $params
      * @return string
      */
-    function url_with(string $url = '', array $params = []): string
+    function url_with(string $url = '', array $params = [], $defaults = []): string
     {
-        // 获取当前请求的所有 GET 参数
         $currentParams = request()->rule()->getVars();
-        // 合并参数，新参数覆盖旧参数
-        $newParams = array_merge($currentParams, $params);
+        $newParams = array_merge($currentParams, $params) + $defaults;
         return urls($url, $newParams);
     }
 }
