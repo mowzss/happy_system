@@ -2,9 +2,9 @@
 
 namespace app\job\system;
 
-use app\model\system\SystemSpiderLogs;
-use think\facade\Cache;
 use think\queue\Job;
+use think\facade\Cache;
+use app\model\system\SystemSpiderLogs;
 
 // 使用Cache门面
 
@@ -13,10 +13,10 @@ use think\queue\Job;
  */
 class RecordSpiderLog
 {
-    private const TEMP_LOG_KEY_RAW = 'spider_logs_temp_batch'; // Redis List的原始键名
+    private const TEMP_LOG_KEY_RAW = 'spider_logs_temp_batch';                     // Redis List的原始键名
     private const TEMP_LOG_KEY_RAW_ERROR_NUM = 'spider_logs_temp_batch_error_num'; // 失败计数器
-    private const BATCH_SIZE_TRIGGER = 50; // 当缓存达到此数量时，触发批量插入
-
+    private const BATCH_SIZE_TRIGGER = 50;                                         // 当缓存达到此数量时，触发批量插入
+    
     /**
      * 获取带前缀的Redis键名
      * @return string
@@ -28,7 +28,7 @@ class RecordSpiderLog
         // 拼接前缀和原始键名
         return $prefix . self::TEMP_LOG_KEY_RAW;
     }
-
+    
     /**
      * @param Job $job
      * @param array $data
@@ -37,25 +37,27 @@ class RecordSpiderLog
     public function fire(Job $job, array $data): void
     {
         $prefixed_key = $this->getPrefixedKey();
-
+        
         try {
             // 将数据序列化后添加到Redis List的尾部
             $serialized_data = json_encode($data, JSON_UNESCAPED_UNICODE);
             Cache::store('redis')->handler()->rPush($prefixed_key, $serialized_data); // rPush 添加到列表末尾
-
+            
             // 获取列表当前长度
             $list_length_after_push = Cache::store('redis')->handler()->lLen($prefixed_key);
-
+            
             // 检查是否达到了批量处理的阈值
             if ($list_length_after_push >= self::BATCH_SIZE_TRIGGER) {
-
+                
                 // --- 触发批量处理 ---
                 $this->processBatchLogs();
+            } else {
+                trace("蜘蛛日志已添加到缓存，当前缓存数量：" . $list_length_after_push, 'info');
             }
-
+            
             // 成功后删除队列中的任务
             $job->delete();
-
+            
         } catch (\Exception $e) {
             if ($job->attempts() > 3) {
                 $job->delete(); // 尝试超过3次失败后删除任务
@@ -63,14 +65,14 @@ class RecordSpiderLog
             trace("记录蜘蛛日志到缓存失败：" . $e->getMessage(), 'error');
         }
     }
-
+    
     /**
      * 执行批量插入逻辑
      */
     private function processBatchLogs(): void
     {
         $prefixed_key = $this->getPrefixedKey();
-
+        
         // 获取所有暂存在Redis中的日志数据，并原子性地清除它们
         $get_and_clear_script = "
             local logs = redis.call('LRANGE', KEYS[1], 0, -1)
@@ -78,8 +80,10 @@ class RecordSpiderLog
             return logs
         ";
         $logsToInsertJsonArray = Cache::store('redis')->handler()->eval($get_and_clear_script, [$prefixed_key], 1);
-
+        
+        
         if (empty($logsToInsertJsonArray)) {
+            trace("没有待处理的蜘蛛日志数据", 'info');
             return; // 如果没有数据，直接返回
         }
         $model = new SystemSpiderLogs();
@@ -110,7 +114,7 @@ class RecordSpiderLog
                 trace("批量插入蜘蛛日志失败次数超过5次，已放弃重试：" . $e->getMessage(), 'error');
             }
             trace("批量插入蜘蛛日志失败：" . $e->getMessage(), 'error');
-
+            
         }
     }
 }
