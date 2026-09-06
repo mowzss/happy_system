@@ -102,6 +102,7 @@ class RecordSpiderLog
             Cache::delete(self::TEMP_LOG_KEY_RAW_ERROR_NUM);
             $model->commit(); // 提交事务
         } catch (\Exception $e) {
+            trace("批量插入蜘蛛日志失败：" . $e->getMessage(), 'error');
             $model->rollback(); // 回滚事务
             Cache::inc(self::TEMP_LOG_KEY_RAW_ERROR_NUM);
             if (Cache::get(self::TEMP_LOG_KEY_RAW_ERROR_NUM) < 5) {
@@ -113,7 +114,7 @@ class RecordSpiderLog
                 Cache::delete(self::TEMP_LOG_KEY_RAW_ERROR_NUM);
                 trace("批量插入蜘蛛日志失败次数超过5次，已放弃重试：" . $e->getMessage(), 'error');
             }
-            trace("批量插入蜘蛛日志失败：" . $e->getMessage(), 'error');
+            
             
         }
     }
