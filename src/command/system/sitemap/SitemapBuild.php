@@ -2,20 +2,20 @@
 
 namespace app\command\system\sitemap;
 
+use think\Exception;
+use think\Collection;
+use think\facade\Log;
+use think\console\Input;
+use think\console\Output;
+use think\console\Command;
+use think\console\input\Option;
+use think\console\input\Argument;
 use app\model\system\SystemSitemap;
+use think\db\exception\DbException;
 use happy\admin\libs\extend\RuntimeExtend;
 use happy\admin\libs\extend\SiteMapExtend;
-use think\Collection;
-use think\console\Command;
-use think\console\Input;
-use think\console\input\Argument;
-use think\console\input\Option;
-use think\console\Output;
 use think\db\exception\DataNotFoundException;
-use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
-use think\Exception;
-use think\facade\Log;
 
 class SitemapBuild extends Command
 {
@@ -85,19 +85,19 @@ class SitemapBuild extends Command
         $class = $input->getOption('class');
         $num = (int)$input->getOption('num');
         $domain = $input->getOption('domain');
-        if ($domain == 'pc') {
+        if ($domain === 'pc') {
             $this->domain = sys_config('site_domain');
         } else {
             $this->domain = sys_config('site_wap_domain', sys_config('site_domain'));
         }
         $this->setSitemap($module, $class, $domain);
-        if ($class == 'content') {
+        if ($class === 'content') {
             $this->buildContentMap($module, $type, $num, $class);
         }
-        if ($class == 'tag') {
+        if ($class === 'tag') {
             $this->buildTagMap($module, $type, $num, $class);
         }
-        if ($class == 'badlink') {
+        if ($class === 'badlink') {
             $this->buildBadlinkMap($module, $type, $num, $class);
         }
     }
@@ -111,16 +111,16 @@ class SitemapBuild extends Command
      */
     protected function setSitemap($module, $class, $domain): void
     {
-        if ($class == "content" || $class == "badlink") {
+        if ($class === "content" || $class === "badlink") {
             $this->table = strtolower($module) . '_content';
-        } elseif ($class == 'tag') {
+        } elseif ($class === 'tag') {
             $this->table = strtolower($module) . '_tag';
         }
         $this->config = [
             'path' => $this->app->getRootPath() . 'public' . DIRECTORY_SEPARATOR . 'sitemap' . DIRECTORY_SEPARATOR . $module . DIRECTORY_SEPARATOR,
             'pathurl' => $this->domain . '/sitemap/' . $module . '/',
         ];
-        if ($domain != 'pc') {
+        if ($domain !== 'pc') {
             $this->config = [
                 'path' => $this->app->getRootPath() . 'public' . DIRECTORY_SEPARATOR . 'sitemap' . DIRECTORY_SEPARATOR . $module . '_m' . DIRECTORY_SEPARATOR,
                 'pathurl' => $this->domain . '/sitemap/' . $module . '_m/',
@@ -144,15 +144,14 @@ class SitemapBuild extends Command
             (int)ceil($this->app->db->name($this->table)->where($this->where)->count() / $num),
             0,
         ];
-        $domain = $this->domain;
         $this->app->db->name($this->table)
             ->where($this->where)
             ->field('id,create_time')
-            ->chunk($num, function (Collection $data) use (&$count, $total, $module, $type, $class, $domain) {
+            ->chunk($num, function (Collection $data) use (&$count, $total, $module, $type, $class) {
                 $count++;
                 $sitemap = new SiteMapExtend($this->config);
                 foreach ($data->toArray() as $value) {
-                    $url = $domain . urls($module . '/content/index', ['id' => $value['id']]);
+                    $url = $this->domain . urls($module . '/details/index', ['id' => $value['id']]);
                     $sitemap->addItem($url, format_datetime($value['create_time'] ?? time(), 'Y-m-d'));
                 }
                 $this->extracted($sitemap, $type, $class, $count, $module, $total);
@@ -234,12 +233,12 @@ class SitemapBuild extends Command
     private function buildBadlinkMap(string $module, string $type = 'xml', int $num = 10000, string $class = 'badlink'): void
     {
         [$total, $count] = [(int)ceil($this->app->db->name($this->table)->whereOr($this->delWhere)->count() / $num), 0];
-        $data = $this->app->db->name($this->table)->field('id,url,create_time')->whereOr($this->delWhere)->field('id,create_time')->select()->toArray();
+        $data = $this->app->db->name($this->table)->field('id,create_time')->whereOr($this->delWhere)->field('id,create_time')->select()->toArray();
         while ($total > $count) {
             $count++;
             $sitemap = new SiteMapExtend($this->config);
             foreach ($data as $value) {
-                $url = $this->domain . $value['url'];
+                $url = $this->domain . urls($module . '/details/index', ['id' => $value['id']]);
                 $sitemap->addItem($url, format_datetime($value['create_time'], 'Y-m-d H:i:s'));
             }
             $this->extracted($sitemap, $type, $class, $count, $module, $total);

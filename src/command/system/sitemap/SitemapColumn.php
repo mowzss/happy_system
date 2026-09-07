@@ -2,20 +2,20 @@
 
 namespace app\command\system\sitemap;
 
-use app\logic\system\ModuleLogic;
-use app\model\system\SystemSitemap;
-use happy\admin\libs\extend\RuntimeExtend;
-use happy\admin\libs\extend\SiteMapExtend;
-use think\console\Command;
-use think\console\Input;
-use think\console\input\Argument;
-use think\console\input\Option;
-use think\console\Output;
-use think\db\exception\DataNotFoundException;
-use think\db\exception\DbException;
-use think\db\exception\ModelNotFoundException;
 use think\Exception;
 use think\facade\Log;
+use think\console\Input;
+use think\console\Output;
+use think\console\Command;
+use think\console\input\Option;
+use app\logic\system\ModuleLogic;
+use think\console\input\Argument;
+use app\model\system\SystemSitemap;
+use think\db\exception\DbException;
+use happy\admin\libs\extend\RuntimeExtend;
+use happy\admin\libs\extend\SiteMapExtend;
+use think\db\exception\DataNotFoundException;
+use think\db\exception\ModelNotFoundException;
 
 class SitemapColumn extends Command
 {
@@ -63,7 +63,7 @@ class SitemapColumn extends Command
         //参数处理
         $module = ModuleLogic::instance()->getSitemapModule();
         $domain = $input->getOption('domain');
-        if ($domain == 'pc') {
+        if ($domain === 'pc') {
             $this->domain = sys_config('site_domain');
         } else {
             $this->domain = sys_config('site_wap_domain', sys_config('site_domain'));
@@ -75,8 +75,7 @@ class SitemapColumn extends Command
                 $table = "{$key}_column";
                 $data = $this->app->db->name($table)->where($this->where)->field('id')->select();
                 foreach ($data->toArray() as $value) {
-                    //                    $url = "{$this->domain}/{$key}/list_{$value['id']}.html";
-                    $url = $this->domain . urls("{$key}/column/index", ['id' => $value['id']]);
+                    $url = $this->domain . urls("{$key}/columns/index", ['id' => $value['id']]);
                     $sitemap->addItem($url, date('Y-m-d', time()));
                 }
             }
@@ -100,7 +99,7 @@ class SitemapColumn extends Command
             'path' => $this->app->getRootPath() . 'public' . DIRECTORY_SEPARATOR . 'sitemap' . DIRECTORY_SEPARATOR . 'column' . DIRECTORY_SEPARATOR,
             'pathurl' => $this->domain . '/sitemap/column/',
         ];
-        if ($domain != 'pc') {
+        if ($domain !== 'pc') {
             $this->config = [
                 'path' => $this->app->getRootPath() . 'public' . DIRECTORY_SEPARATOR . 'sitemap' . DIRECTORY_SEPARATOR . 'column_m' . DIRECTORY_SEPARATOR,
                 'pathurl' => $this->domain . '/sitemap/column_m/',

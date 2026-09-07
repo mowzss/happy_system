@@ -2,16 +2,16 @@
 
 namespace app\command\system\xuns;
 
+use think\facade\Log;
+use think\console\Input;
+use think\console\Output;
+use think\console\Command;
+use think\console\input\Argument;
+use think\db\exception\DbException;
 use app\logic\search\XunSearchLogic;
 use happy\admin\libs\extend\RuntimeExtend;
-use think\console\Command;
-use think\console\Input;
-use think\console\input\Argument;
-use think\console\Output;
 use think\db\exception\DataNotFoundException;
-use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
-use think\facade\Log;
 
 class XunsAdd extends Command
 {
@@ -78,7 +78,7 @@ class XunsAdd extends Command
                     'images' => $data['images'],
                     'create_time' => $data['create_time'],
                     'status' => 1,
-                    'url' => hurl($module . '/content/index', ['id' => $data['id']]),
+                    'url' => hurl($module . '/details/index', ['id' => $data['id']]),
                 ]);
                 if (empty($value['extend'])) {
                     $up_data['extend'][$this->upJsonField] = 1;
