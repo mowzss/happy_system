@@ -2,9 +2,9 @@
 
 namespace app\job\system;
 
-use happy\admin\libs\extend\push\BaiduPush;
-use think\facade\Log;
 use think\queue\Job;
+use think\facade\Log;
+use happy\admin\libs\extend\push\BaiduPush;
 
 class BaiduPushJob
 {
@@ -38,7 +38,7 @@ class BaiduPushJob
                 
                 if ($attempts < $maxAttempts) {
                     // 可选择延迟重试，比如指数退避
-                    $delaySeconds = pow(2, $attempts); // 2, 4, 8 秒
+                    $delaySeconds = 2 ** $attempts; // 2, 4, 8 秒
                     $job->release($delaySeconds);
                 } else {
                     // 超过最大重试次数，记录日志并删除任务
