@@ -35,7 +35,7 @@ class U2026091001
                 'extend' => null,
                 'list' => '0',
                 'module' => 'system',
-                'status' => '0',
+                'status' => '1',
             ],
         ]);
     }
