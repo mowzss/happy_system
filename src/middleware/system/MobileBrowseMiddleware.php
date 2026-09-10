@@ -36,7 +36,7 @@ class MobileBrowseMiddleware
      */
     public function handle($request, \Closure $next): mixed
     {
-        if (!empty((int)sys_config('is_wap_domain', 0)) && !empty(sys_config('is_wap_domain_dump', 0)) && !empty(sys_config('is_wap_domain_dump', 0))) {
+        if (!empty((int)sys_config('is_wap_domain', 0)) && !empty(sys_config('is_wap_domain_dump', 0)) && !empty(sys_config('is_wap_dump_type', 0))) {
             if ($this->app->request->isMobile() && format_url(sys_config('site_wap_domain'), 'host') !== $this->app->request->host()) {
                 return redirect(sys_config('site_wap_domain') . $this->app->request->url(), 301);
             }
