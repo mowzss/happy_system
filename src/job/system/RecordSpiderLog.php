@@ -3,6 +3,7 @@
 namespace app\job\system;
 
 use think\queue\Job;
+use think\facade\Log;
 use think\facade\Cache;
 use app\model\system\SystemSpiderLogs;
 
@@ -24,7 +25,7 @@ class RecordSpiderLog
     private function getPrefixedKey(): string
     {
         // 获取当前配置的缓存前缀
-        $prefix = Cache::getStoreConfig('redis', 'prefix', ''); // 默认为空字符串
+        $prefix = (string)config('cache.stores.redis.prefix'); // 默认为空字符串
         // 拼接前缀和原始键名
         return $prefix . self::TEMP_LOG_KEY_RAW;
     }
@@ -40,7 +41,7 @@ class RecordSpiderLog
         
         try {
             // 将数据序列化后添加到Redis List的尾部
-            $serialized_data = json_encode($data, JSON_UNESCAPED_UNICODE);
+            $serialized_data = json_encode($data, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
             Cache::store('redis')->handler()->rPush($prefixed_key, $serialized_data); // rPush 添加到列表末尾
             
             // 获取列表当前长度
@@ -51,8 +52,6 @@ class RecordSpiderLog
                 
                 // --- 触发批量处理 ---
                 $this->processBatchLogs();
-            } else {
-                trace("蜘蛛日志已添加到缓存，当前缓存数量：" . $list_length_after_push, 'info');
             }
             
             // 成功后删除队列中的任务
@@ -62,7 +61,7 @@ class RecordSpiderLog
             if ($job->attempts() > 3) {
                 $job->delete(); // 尝试超过3次失败后删除任务
             }
-            trace("记录蜘蛛日志到缓存失败：" . $e->getMessage(), 'error');
+            Log::error("记录蜘蛛日志到缓存失败：" . $e->getMessage(), 'error');
         }
     }
     
@@ -83,7 +82,7 @@ class RecordSpiderLog
         
         
         if (empty($logsToInsertJsonArray)) {
-            trace("没有待处理的蜘蛛日志数据", 'info');
+            Log::error("没有待处理的蜘蛛日志数据", 'info');
             return; // 如果没有数据，直接返回
         }
         $model = new SystemSpiderLogs();
@@ -102,7 +101,7 @@ class RecordSpiderLog
             Cache::delete(self::TEMP_LOG_KEY_RAW_ERROR_NUM);
             $model->commit(); // 提交事务
         } catch (\Exception $e) {
-            trace("批量插入蜘蛛日志失败：" . $e->getMessage(), 'error');
+            Log::error("批量插入蜘蛛日志失败：" . $e->getMessage(), 'error');
             $model->rollback(); // 回滚事务
             Cache::inc(self::TEMP_LOG_KEY_RAW_ERROR_NUM);
             if (Cache::get(self::TEMP_LOG_KEY_RAW_ERROR_NUM) < 5) {
@@ -112,7 +111,7 @@ class RecordSpiderLog
                 }
             } else {
                 Cache::delete(self::TEMP_LOG_KEY_RAW_ERROR_NUM);
-                trace("批量插入蜘蛛日志失败次数超过5次，已放弃重试：" . $e->getMessage(), 'error');
+                Log::error("批量插入蜘蛛日志失败次数超过5次，已放弃重试：" . $e->getMessage(), 'error');
             }
             
             
