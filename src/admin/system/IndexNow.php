@@ -70,9 +70,9 @@ class IndexNow extends BaseAdmin
         //渲染页面
         try {
             return $this->fetch();
-        } catch (TemplateNotFoundException $exception) {
+        } catch (TemplateNotFoundException) {
             //模板不存在时 尝试读取公用模板
-            return $this->fetch('common/setting');
+            return $this->fetch('common@/setting');
         }
     }
     
