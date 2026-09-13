@@ -5,8 +5,6 @@ namespace app\service;
 
 use think\facade\Queue;
 use app\job\system\RecordSpiderLog;
-use app\command\system\xuns\XunsAdd;
-use app\command\system\xuns\XunsClean;
 use app\command\system\spider\ClearLogs;
 use app\command\system\nav\NavRestNodeUrl;
 use app\command\system\spider\DailyReport;
@@ -63,8 +61,6 @@ class CommonService extends \think\Service
             SitemapIndex::class,
             IndexNowPush::class,
             IndexNowClean::class,
-            XunsAdd::class,
-            XunsClean::class,
             ClearLogs::class,
             DailyReport::class,
             HourlyReport::class,
