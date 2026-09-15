@@ -4,11 +4,12 @@ declare (strict_types=1);
 namespace app\common\util;
 
 use HTMLPurifier;
+use think\Exception;
 use think\facade\Log;
 use HTMLPurifier_Config;
-use happy\admin\libs\baidu\AipNlp;
 use app\logic\system\ConfigLogic;
 use mowzs\cms\logic\TagBaseLogic;
+use happy\admin\libs\baidu\AipNlp;
 use think\db\exception\DbException;
 use mowzs\cms\logic\FieldBaseLogic;
 use think\db\exception\DataNotFoundException;
@@ -93,7 +94,7 @@ class ContentSaveFilterUtil extends UtilBase
     }
     
     /**
-     * 钩子总检测
+     * 检测功能是否开启
      * @return bool
      */
     protected function cheek(): bool
@@ -107,15 +108,6 @@ class ContentSaveFilterUtil extends UtilBase
         if ($this->isPuriferHtml()) {
             return true;
         }
-        //        if ($this->cheek_search()) {
-        //            return true;
-        //        }
-        //        if ($this->cheek_push_baidu()) {
-        //            return true;
-        //        }
-        //        if ($this->cheek_push_bing()) {
-        //            return true;
-        //        }
         return false;
     }
     
@@ -124,7 +116,7 @@ class ContentSaveFilterUtil extends UtilBase
      * @param string $content
      * @return string
      */
-    public function puriferContent(string $content): string
+    public function purifierContent(string $content): string
     {
         $config = HTMLPurifier_Config::createDefault();
         //设置允许出现的html标签
@@ -142,7 +134,7 @@ class ContentSaveFilterUtil extends UtilBase
      * 处理数据
      * @param $info
      * @return array
-     * @throws DbException
+     * @throws Exception
      */
     public function setProcessingData($info): array
     {
@@ -154,7 +146,7 @@ class ContentSaveFilterUtil extends UtilBase
             if (!empty($info['content'])) {
                 //过滤内容
                 if ($this->isPuriferHtml()) {
-                    $update['content'] = $info['content'] = $this->puriferContent($info['content']);
+                    $update['content'] = $info['content'] = $this->purifierContent($info['content']);
                 }
                 $pattern = "/<img[^>]*src=[\'\"]((?:https?:)?\/\/[^\s\'\"]+\.(?:gif|jpg|png|jpeg|webp))[\'\"][^>]*>/i";
                 preg_match_all($pattern, $info['content'], $images);
@@ -212,7 +204,7 @@ class ContentSaveFilterUtil extends UtilBase
     /**
      * @param $data
      * @return mixed
-     * @throws \think\Exception
+     * @throws Exception
      */
     protected function setTag($data): mixed
     {
