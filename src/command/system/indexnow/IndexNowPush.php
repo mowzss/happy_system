@@ -2,16 +2,16 @@
 
 namespace app\command\system\indexnow;
 
-use happy\admin\libs\extend\RuntimeExtend;
-use think\console\Command;
-use think\console\Input;
-use think\console\input\Argument;
-use think\console\input\Option;
-use think\console\Output;
-use think\db\exception\DataNotFoundException;
-use think\db\exception\DbException;
-use think\db\exception\ModelNotFoundException;
 use think\facade\Log;
+use think\console\Input;
+use think\console\Output;
+use think\console\Command;
+use think\console\input\Option;
+use think\console\input\Argument;
+use think\db\exception\DbException;
+use happy\admin\libs\extend\RuntimeExtend;
+use think\db\exception\DataNotFoundException;
+use think\db\exception\ModelNotFoundException;
 
 class IndexNowPush extends Command
 {
@@ -139,11 +139,11 @@ class IndexNowPush extends Command
      * @return array|string[]
      */
     
-    private function createContentUrl(string $module, $data)
+    private function createContentUrl(string $module, $data): array
     {
         $urls = [];
         foreach ($data as $value) {
-            $urls[] = $this->domain . urls($module . '/content/index', ['id' => $value['id']]);
+            $urls[] = $this->domain . urls($module . '/details/index', ['id' => $value['id']]);
         }
         return $urls;
     }
