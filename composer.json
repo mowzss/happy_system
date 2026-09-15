@@ -32,6 +32,7 @@
         "app/middleware": "src/middleware",
         "app/common.php": "src/common.php",
         "app/command": "src/command",
+        "app/ExceptionHandle.php": "src/ExceptionHandle.php",
         "public/admin.php": "stc/public/admin.php",
         "public/index.php": "stc/public/index.php",
         "public/api.php": "stc/public/api.php",
