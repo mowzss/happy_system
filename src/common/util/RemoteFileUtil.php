@@ -5,10 +5,10 @@ namespace app\common\util;
 
 use think\facade\Log;
 use think\facade\Filesystem;
-use happy\admin\libs\helper\MimeHelper;
 use app\logic\system\ConfigLogic;
 use app\model\system\SystemAttachment;
 use think\exception\ValidateException;
+use happy\admin\libs\helper\MimeHelper;
 use happy\admin\libs\Exception\ModuleException;
 
 class RemoteFileUtil
@@ -51,6 +51,15 @@ class RemoteFileUtil
     {
         $tmpFile = null; // 用于存储临时文件路径以便最后清理
         try {
+            $url = trim($url);
+            if (str_starts_with($url, '//')) {
+                // 优先使用当前请求协议，否则默认 http
+                $scheme = request()->isSsl() ? 'https:' : 'http:';
+                $url = $scheme . $url;
+            } elseif (!preg_match('/^https?:\/\//i', $url)) {
+                // 如果连 // 都没有，属于非法远程URL，直接拒绝或补全
+                throw new ModuleException('无效的远程文件URL，必须以 http://、https:// 或 // 开头');
+            }
             // 使用 cURL 获取远程文件内容
             $ch = curl_init($url);
             if (!$ch) {
