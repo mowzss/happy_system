@@ -1,5 +1,5 @@
 {
-  "name": "mowzs/system",
+  "name": "mowzs/happy-admin-system",
   "description": "系统核心模块",
   "type": "happy-module",
   "authors": [
@@ -9,9 +9,9 @@
     }
   ],
   "require": {
-    "php": ">=8.0.0",
-    "mowzs/lib": "dev-master",
-    "mowzs/happy-module-installer": "dev-master"
+    "php": ">=8.2.0",
+    "mowzs/happy-admin-lib": "dev-master",
+    "mowzs/happy-admin-installer": "dev-master"
   },
   "extra": {
     "think": {
