@@ -2,12 +2,12 @@
 
 namespace app\common\task;
 
-use happy\admin\libs\extend\RuntimeExtend;
-use happy\admin\libs\task\Task;
-use think\db\exception\DataNotFoundException;
-use think\db\exception\DbException;
-use think\facade\Console;
 use think\facade\Log;
+use think\facade\Console;
+use happy\admin\libs\task\Task;
+use think\db\exception\DbException;
+use happy\admin\libs\extend\RuntimeExtend;
+use think\db\exception\DataNotFoundException;
 
 class IndexNow extends Task
 {
@@ -22,6 +22,7 @@ class IndexNow extends Task
     /**
      *
      * @return void
+     * @throws \Throwable
      */
     public function handle(): void
     {
@@ -34,6 +35,9 @@ class IndexNow extends Task
                 $models = explode(',', sys_config('p_index_now.open_module'));
                 foreach ($models as $model) {
                     Console::call('indexnow:push', [$model]);
+                    if ((int)sys_config('is_wap_domain') === 1) {
+                        Console::call('indexnow:push', [$model, '--domain wap']);
+                    }
                     $this->app->log->log('task', $model . '模块推送索引成功');
                     sleep(5);
                 }
