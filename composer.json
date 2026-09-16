@@ -10,7 +10,7 @@
   ],
   "require": {
     "php": ">=8.2.0",
-    "mowzs/happy-admin-lib": "dev-master",
+    "mowzs/happy-admin-libs": "dev-master",
     "mowzs/happy-admin-installer": "dev-master"
   },
   "extra": {
