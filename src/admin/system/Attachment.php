@@ -49,13 +49,14 @@ class Attachment extends BaseAdmin
                 [
                     'field' => 'id',
                     'title' => 'ID',
-                    'width' => 80,
+                    'width' => 100,
                     'sort' => true,
                 ],
                 [
                     'field' => 'name',
                     'title' => '文件名',
                     'align' => 'content',
+                    'width' => 220,
                 ], [
                     'field' => 'url',
                     'title' => '链接地址',
@@ -64,18 +65,22 @@ class Attachment extends BaseAdmin
                     'field' => 'mime',
                     'title' => '文件类型',
                     'align' => 'content',
+                    'width' => 120,
                 ], [
                     'field' => 'ext',
-                    'title' => '文件后缀',
+                    'title' => '后缀',
                     'align' => 'content',
+                    'width' => 80,
                 ], [
                     'field' => 'size',
-                    'title' => '文件大小',
+                    'title' => '大小',
                     'align' => 'content',
+                    'width' => 120,
                 ], [
                     'field' => 'driver',
-                    'title' => '存储驱动',
+                    'title' => '驱动',
                     'align' => 'content',
+                    'width' => 80,
                 ],
             ],
             'top_button' => [
