@@ -5,21 +5,15 @@ namespace app\home\index;
 
 use think\Response;
 use think\facade\Request;
-use think\db\exception\DbException;
 use app\common\controllers\BaseHome;
 use happy\admin\libs\helper\QrcodeHelper;
-use think\db\exception\DataNotFoundException;
 
 // 用于处理 Logo
 
 class Qrcode extends BaseHome
 {
     /**
-     * @param $info
      * @return Response
-     * @throws DataNotFoundException
-     * @throws DbException
-     * @throws \think\db\exception\ModelNotFoundException
      */
     public function index(): Response
     {
