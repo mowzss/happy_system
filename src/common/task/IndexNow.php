@@ -36,7 +36,7 @@ class IndexNow extends Task
                 foreach ($models as $model) {
                     Console::call('indexnow:push', [$model]);
                     if ((int)sys_config('is_wap_domain') === 1) {
-                        Console::call('indexnow:push', [$model, '--domain wap']);
+                        Console::call('indexnow:push', [$model, '--domain=wap']);
                     }
                     $this->app->log->log('task', $model . '模块推送索引成功');
                     sleep(5);
