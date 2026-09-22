@@ -32,16 +32,16 @@ class Index extends BaseApi
             $data = $this->request->post();
             // 只保留允许更新的字段
             $updateData = array_intersect_key($data, array_flip($this->isUpdateField));
-
+            
             // 如果没有可更新字段，直接返回错误
             if (empty($updateData)) {
                 $this->json([], 400, '无可更新字段');
             }
-
+            
             // 实例化模型并尝试更新
             $userModel = new \app\model\user\UserInfo();
             $user = $userModel->findOrEmpty($this->uid);
-
+            
             if ($user->isEmpty()) {
                 $this->json([], 400, '用户不存在');
             }
@@ -53,7 +53,7 @@ class Index extends BaseApi
             $this->json(['msg' => '更新成功']);
         }
     }
-
+    
     /**
      * 可更新字段
      * @var array|string[]

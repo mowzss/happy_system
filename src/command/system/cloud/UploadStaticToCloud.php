@@ -11,6 +11,7 @@ use think\facade\Filesystem;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 use think\console\input\Option;
+use app\logic\system\ConfigLogic;
 use app\model\system\SystemConfig;
 
 class UploadStaticToCloud extends Command
@@ -24,7 +25,7 @@ class UploadStaticToCloud extends Command
             ->addOption('only-update-version', null, Option::VALUE_OPTIONAL, '仅更新静态资源版本号，不执行文件上传')
             ->setDescription('使用 think-filesystem 上传静态文件到云存储（OSS/COS/本地等）');
     }
-
+    
     /**
      * @param Input $input
      * @param Output $output
@@ -35,18 +36,18 @@ class UploadStaticToCloud extends Command
     {
         // 检查是否设置了只更新版本号的选项
         $onlyUpdateVersion = $input->hasOption('only-update-version') && $input->getOption('only-update-version');
-
+        
         if ($onlyUpdateVersion) {
             $output->info('🔄 仅执行版本号更新操作...');
             $this->update_static_version($output);
             $output->info('✅ 版本号更新完成！');
             return 0;
         }
-
+        
         $localPath = public_path() . sys_config('static_local_path');
         $disk = sys_config('static_upload', 'local');
         $prefix = sys_config('static_prefix');
-
+        
         if (!is_dir($localPath)) {
             $output->error("❌ 本地路径不存在: {$localPath}");
             return 1;
@@ -63,7 +64,7 @@ class UploadStaticToCloud extends Command
             $output->error("❌ 无法加载磁盘 [{$disk}]，请检查 存储驱动配置信息");
             return 1;
         }
-
+        
         // 扫描所有文件
         $files = $this->getAllFiles($localPath);
         if (empty($files)) {
@@ -71,20 +72,20 @@ class UploadStaticToCloud extends Command
             $this->update_static_version($output);
             return 0;
         }
-
+        
         $output->info("📁 本地路径: {$localPath}");
         $output->info("☁️ 目标磁盘: {$disk}");
         $output->info("📂 远程前缀: " . ($prefix ?: '(根目录)'));
         $output->info("📤 共 " . count($files) . " 个文件，开始上传...");
-
+        
         $success = 0;
         $fail = 0;
-
+        
         foreach ($files as $file) {
             /** @var SplFileInfo $file */
             $relativePath = str_replace(DIRECTORY_SEPARATOR, '/', substr($file->getPathname(), strlen($localPath) + 1));
             $remotePath = $prefix ? ($prefix . '/' . $relativePath) : $relativePath;
-
+            
             try {
                 // 使用 Flysystem 统一 API 上传
                 $fs->writeStream($remotePath, fopen($file->getPathname(), 'r'));
@@ -100,7 +101,7 @@ class UploadStaticToCloud extends Command
         $this->update_static_version($output);
         return $fail > 0 ? 1 : 0;
     }
-
+    
     private function getAllFiles(string $dir): array
     {
         $files = [];
@@ -108,7 +109,7 @@ class UploadStaticToCloud extends Command
             new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS),
             RecursiveIteratorIterator::LEAVES_ONLY
         );
-
+        
         foreach ($iterator as $file) {
             if ($file->isFile()) {
                 $files[] = $file;
@@ -116,7 +117,7 @@ class UploadStaticToCloud extends Command
         }
         return $files;
     }
-
+    
     /**
      * 更新静态资源版本号
      * @param Output $output
@@ -126,6 +127,7 @@ class UploadStaticToCloud extends Command
     {
         $systemConfig = new SystemConfig();
         if ($systemConfig->where('name', 'static_version')->update(['value' => date('y.md.isH')])) {
+            ConfigLogic::clearConfigCache();
             $output->info("✅ 更新静态资源版本成功！");
         }
     }

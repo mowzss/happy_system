@@ -5,6 +5,7 @@ namespace app\admin\system;
 
 use think\App;
 use app\common\traits\CrudTrait;
+use app\logic\system\ConfigLogic;
 use app\model\system\SystemModule;
 use app\model\system\SystemConfig;
 use app\common\controllers\BaseAdmin;
@@ -185,5 +186,14 @@ class Config extends BaseAdmin
         if (!empty($data['group_id'])) {
             $data['module'] = $this->group_model->where(['id' => $data['group_id']])->value('module');
         }
+    }
+    
+    /**
+     * 保存后置处理
+     * @return void
+     */
+    protected function _save_result(): void
+    {
+        ConfigLogic::clearConfigCache();
     }
 }

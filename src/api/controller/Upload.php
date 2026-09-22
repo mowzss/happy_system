@@ -11,7 +11,7 @@ use app\model\system\SystemAttachment;
 class Upload extends BaseApi
 {
     use UploadTraits;
-
+    
     /**
      * 保存文件
      * @login true
@@ -21,23 +21,23 @@ class Upload extends BaseApi
     {
         // 获取表单上传文件
         $file = $this->app->request->file('file');
-
+        
         if (empty($file)) {
             $this->json([], 400, '请选择要上传的文件');
         }
-
+        
         // 验证文件
         try {
             $this->validateFile($file);
         } catch (\Exception $e) {
             $this->json([], 400, $e->getMessage());
         }
-
+        
         // 使用Filesystem facade 处理文件上传
         $disk = Filesystem::disk($this->storage_driver); // 可以根据配置切换到其他存储驱动
         $filename = $file->getOriginalName();
         $path = $disk->putFile('/', $file, 'md5');
-
+        
         if ($path) {
             // 成功上传后 获取上传信息
             $data = [
@@ -54,7 +54,7 @@ class Upload extends BaseApi
                 'create_time' => time(),
                 'update_time' => time(),
             ];
-
+            
             // 如果是图片文件，获取宽度和高度
             if (in_array($data['mime'], ['image/jpeg', 'image/png', 'image/gif'])) {
                 [$width, $height] = getimagesize($file->getPathname());

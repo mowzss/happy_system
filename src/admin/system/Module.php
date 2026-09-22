@@ -15,16 +15,16 @@ use app\common\controllers\BaseAdmin;
 class Module extends BaseAdmin
 {
     use CrudTrait;
-
+    
     protected array $modules;
-
+    
     public function __construct(App $app, SystemModule $module)
     {
         parent::__construct($app);
         $this->model = $module;
         $this->setParams();
     }
-
+    
     /**
      * @return void
      */
@@ -58,7 +58,7 @@ class Module extends BaseAdmin
                     'title' => '创建时间',
                 ],
             ],
-
+            
             'top_button' => [
                 [
                     'event' => 'add',
@@ -92,7 +92,7 @@ class Module extends BaseAdmin
         ]];
         $this->search = ['id#=#id', 'title#=#title', 'dir#=#module', 'status#=#status', 'create_time#between#create_time', 'update_time#between#update_time'];
     }
-
+    
     /**
      * 添加本地模块
      * @return string
@@ -112,7 +112,7 @@ class Module extends BaseAdmin
             }
             $this->success('安装成功!');
         }
-
+        
         return $this->fetch();
     }
 }

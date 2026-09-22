@@ -13,6 +13,7 @@ use app\common\controllers\BaseAdmin;
 use app\model\system\SystemConfigGroup;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\ModelNotFoundException;
+use happy\admin\libs\Exception\FormsException;
 
 /**
  * 系统参数设置
@@ -29,10 +30,6 @@ class Setting extends BaseAdmin
      * @var SystemConfigGroup
      */
     protected SystemConfigGroup $groupModel;
-    /**
-     * @var
-     */
-    protected $list;
     
     public function __construct(App $app, SystemConfig $config, SystemConfigGroup $configGroup)
     {
@@ -47,7 +44,7 @@ class Setting extends BaseAdmin
      * @return string
      * @throws DataNotFoundException
      * @throws DbException
-     * @throws ModelNotFoundException
+     * @throws ModelNotFoundException|\happy\admin\libs\Exception\LogicException
      */
     public function index(): string
     {
@@ -74,11 +71,10 @@ class Setting extends BaseAdmin
                 $this->error('保存失败');
             }
         }
-        $this->list = $this->groupModel->where([
+        $this->assign('list', $this->groupModel->where([
             'sys_show' => 1,
             'status' => 1,
-        ])->select();
-        
+        ])->select());
         return $this->fetch();
     }
     
@@ -89,6 +85,7 @@ class Setting extends BaseAdmin
      * @return string|void
      * @throws DataNotFoundException
      * @throws DbException
+     * @throws FormsException
      * @throws ModelNotFoundException
      * @throws \think\Exception
      */

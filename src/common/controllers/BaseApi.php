@@ -3,9 +3,9 @@ declare (strict_types=1);
 
 namespace app\common\controllers;
 
-use happy\admin\libs\Controller;
 use think\App;
 use yzh52521\Jwt\Util\JWTUtil;
+use happy\admin\libs\Controller;
 
 class BaseApi extends Controller
 {
