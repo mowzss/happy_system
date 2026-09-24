@@ -23,7 +23,7 @@ class Http
      * @param string $url
      * @param array $options ['timeout', 'headers', 'query']
      * @return array ['code', 'headers', 'body']
-     * @throws \Exception
+     * @throws Exception
      */
     public static function get(string $url, array $options = []): array
     {
@@ -41,7 +41,7 @@ class Http
      * @param array $data 表单数据
      * @param array $options
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     public static function post(string $url, array $data = [], array $options = []): array
     {
@@ -57,12 +57,12 @@ class Http
      * @param string $url
      * @param array $options
      * @return array ['code', 'headers', 'body']
-     * @throws \Exception
+     * @throws Exception
      */
     public static function request(string $method, string $url, array $options = []): array
     {
         if (!extension_loaded('curl')) {
-            throw new \Exception('cURL extension is required.');
+            throw new Exception('cURL extension is required.');
         }
         
         $timeout = $options['timeout'] ?? self::$defaults['timeout'];

@@ -2,22 +2,32 @@
 
 namespace think\oauth\driver;
 
-use think\oauth\contract\DriverInterface;
+use think\Exception;
 use think\oauth\Http;
+use think\oauth\contract\DriverInterface;
 
 class QqWeb implements DriverInterface
 {
     protected array $config;
-
+    
+    /**
+     * @param array $config
+     */
     public function __construct(array $config)
     {
         if (empty($config['appid']) || empty($config['appkey']) || empty($config['redirect_uri'])) {
             throw new \InvalidArgumentException('QqWeb driver requires "appid", "appkey", and "redirect_uri".');
         }
-
+        
         $this->config = $config;
     }
-
+    
+    /**
+     * Get user info by code
+     * @param string $code
+     * @return array
+     * @throws \Exception
+     */
     public function getUserInfo(string $code): array
     {
         // Step 1: code → access_token
@@ -32,54 +42,54 @@ class QqWeb implements DriverInterface
             ],
             'timeout' => $this->config['timeout'] ?? 10,
         ];
-
+        
         try {
             $result = Http::get($tokenUrl, $tokenOptions);
             parse_str($result['response'], $tokenData);
-        } catch (\Exception $e) {
-            throw new \Exception('获取 QQ access_token 失败: ' . $e->getMessage(), 0, $e);
+        } catch (Exception $e) {
+            throw new Exception('获取 QQ access_token 失败: ' . $e->getMessage(), 0, $e);
         }
-
+        
         if (!isset($tokenData['access_token'])) {
-            throw new \Exception('QQ 返回无效 access_token 响应: ' . $result['response']);
+            throw new Exception('QQ 返回无效 access_token 响应: ' . $result['response']);
         }
-
+        
         $accessToken = $tokenData['access_token'];
-
+        
         // Step 2: access_token → openid + unionid（关键：加 unionid=1）
         $openIdUrl = 'https://graph.qq.com/oauth2.0/me?' . http_build_query([
                 'access_token' => $accessToken,
                 'unionid' => 1, // ← 必须显式请求 unionid
             ]);
-
+        
         try {
             $result = Http::get($openIdUrl, ['timeout' => $this->config['timeout'] ?? 10]);
             $content = trim($result['response']);
-        } catch (\Exception $e) {
-            throw new \Exception('获取 QQ openid/unionid 失败: ' . $e->getMessage(), 0, $e);
+        } catch (Exception $e) {
+            throw new Exception('获取 QQ openid/unionid 失败: ' . $e->getMessage(), 0, $e);
         }
-
+        
         // 解析 callback({...}) 格式
         if (preg_match('/callback\(\s*(\{.*\})\s*\)/', $content, $matches)) {
             $jsonStr = $matches[1];
         } elseif (preg_match('/^\{.*\}$/', $content)) {
             $jsonStr = $content;
         } else {
-            throw new \Exception('无法解析 QQ openid 响应: ' . $content);
+            throw new Exception('无法解析 QQ openid 响应: ' . $content);
         }
-
-        $openIdData = json_decode($jsonStr, true);
+        
+        $openIdData = json_decode($jsonStr, true, 512, JSON_THROW_ON_ERROR);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new \Exception('JSON 解析失败: ' . json_last_error_msg());
+            throw new Exception('JSON 解析失败: ' . json_last_error_msg());
         }
-
+        
         if (!isset($openIdData['openid'])) {
-            throw new \Exception('QQ 未返回 openid: ' . $jsonStr);
+            throw new Exception('QQ 未返回 openid: ' . $jsonStr);
         }
-
+        
         $openid = $openIdData['openid'];
         $unionid = $openIdData['unionid'] ?? ''; // 可能为空（未满足条件）
-
+        
         // Step 3: 获取用户基本信息
         $userInfoUrl = 'https://graph.qq.com/user/get_user_info';
         $userOptions = [
@@ -90,18 +100,18 @@ class QqWeb implements DriverInterface
             ],
             'timeout' => $this->config['timeout'] ?? 10,
         ];
-
+        
         try {
             $result = Http::get($userInfoUrl, $userOptions);
-            $userInfo = json_decode($result['response'], true);
-        } catch (\Exception $e) {
-            throw new \Exception('获取 QQ 用户信息失败: ' . $e->getMessage(), 0, $e);
+            $userInfo = json_decode($result['response'], true, 512, JSON_THROW_ON_ERROR);
+        } catch (Exception $e) {
+            throw new Exception('获取 QQ 用户信息失败: ' . $e->getMessage(), 0, $e);
         }
-
-        if (($userInfo['ret'] ?? -1) != 0) {
-            throw new \Exception('QQ 用户信息接口错误: ' . ($userInfo['msg'] ?? 'unknown'));
+        
+        if ((int)($userInfo['ret'] ?? -1) !== 0) {
+            throw new Exception('QQ 用户信息接口错误: ' . ($userInfo['msg'] ?? 'unknown'));
         }
-
+        
         return [
             'openid' => $openid,
             'unionid' => $unionid, // ← 新增 unionid
