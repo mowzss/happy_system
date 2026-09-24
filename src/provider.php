@@ -1,9 +1,5 @@
 <?php
-
-use think\Paginator;
-use think\exception\Handle;
-
 return [
-    Paginator::class => \happy\admin\libs\Page::class,
-    Handle::class => \app\ExceptionHandle::class,
+    "think\Paginator" => "\\happy\\admin\\libs\\Page",
+    'think\exception\Handle' => "\\app\\ExceptionHandle",
 ];

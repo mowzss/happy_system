@@ -49,9 +49,8 @@ class ExceptionHandle extends Handle
             'file' => $exception->getFile(),           // 报错文件路径
             'line' => $exception->getLine(),           // 报错行号
         ];
-        
         // 使用 error 级别记录，将上下文作为第二个参数传入
-        Log::error($exception->getMessage(), $context);
+        Log::error($exception->getMessage() . implode(PHP_EOL, $context));
     }
     
     /**
