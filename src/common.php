@@ -527,7 +527,7 @@ if (!function_exists('hurl')) {
 if (!function_exists('urls')) {
     /**
      * 通用链接
-     * @param string $uri_info
+     * @param string $url
      * @param array|string $vars
      * @param bool $suffix
      * @param bool $domain
@@ -740,7 +740,7 @@ if (!function_exists('get_lay_table_id')) {
     {
         return 'table-' . md5(request()->url());
     }
-
+    
 }
 if (!function_exists('send_email')) {
     
