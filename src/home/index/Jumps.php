@@ -15,14 +15,14 @@ class Jumps extends BaseHome
         if (!$this->request->isAjax()) {
             $this->error('请求方法错误');
         }
-        $url = $this->request->post('url');
-        if (empty($url)) {
-            $this->error('参数错误');
+        $route = $this->request->post('route');
+        if (empty($route)) {
+            $this->error('URL参数错误');
         }
         $vars = $this->request->post('vars/a');
         if (!empty($vars) && !is_array($vars)) {
-            $this->error('参数错误');
+            $this->error('VARS参数错误');
         }
-        $this->success('ok', urls($url, $vars));
+        $this->success('ok', urls($route, $vars));
     }
 }
