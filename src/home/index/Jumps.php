@@ -17,7 +17,7 @@ class Jumps extends BaseHome
         }
         $route = $this->request->post('route');
         if (empty($route)) {
-            $this->error('URL参数错误');
+            $this->error('ROUTE参数错误');
         }
         $vars = $this->request->post('vars/a');
         if (!empty($vars) && !is_array($vars)) {
