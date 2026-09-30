@@ -4,6 +4,7 @@ declare (strict_types=1);
 namespace app\common\controllers;
 
 use think\App;
+use think\facade\View;
 
 class BaseHome extends Base
 {
@@ -29,5 +30,19 @@ class BaseHome extends Base
         } catch (\Exception $e) {
             $this->app->log->error($e->getMessage(), $e->getTrace());
         }
+    }
+    
+    protected function fetch(string $template = '', array $vars = []): string
+    {
+        if ($this->request->isAjax()) {
+            $baseTemplate = empty($template) ? $this->request->action(true) : $template;
+            $ajaxTemplate = $baseTemplate . '_ajax';
+            
+            if (View::exists($ajaxTemplate)) {
+                return parent::fetch($ajaxTemplate, $vars);
+            }
+        }
+        
+        return parent::fetch($template, $vars);
     }
 }
