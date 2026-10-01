@@ -45,6 +45,11 @@ class SpiderLogs extends BaseAdmin
                     'align' => 'content',
                     'width' => 110,
                 ], [
+                    'field' => 'device',
+                    'title' => '设备信息',
+                    'align' => 'content',
+                    'width' => 110,
+                ], [
                     'field' => 'url',
                     'title' => '抓取页面',
                     'align' => 'left',
@@ -60,6 +65,11 @@ class SpiderLogs extends BaseAdmin
                 ], [
                     'field' => 'user_agent',
                     'title' => 'UA',
+                    'align' => 'left',
+                
+                ], [
+                    'field' => 'referer',
+                    'title' => 'Referer',
                     'align' => 'left',
                 
                 ], [
@@ -95,9 +105,22 @@ class SpiderLogs extends BaseAdmin
                 'options' => ModuleLogic::instance()->getModuleAll(),
                 'required' => true,
             ], [
+                'type' => 'select',
+                'name' => 'device',
+                'label' => '设备信息',
+                'options' => [
+                    '1' => 'PC',
+                    '2' => '手机',
+                ],
+                'required' => true,
+            ], [
                 'type' => 'text',
                 'name' => 'url',
                 'label' => '链接地址',
+            ], [
+                'type' => 'text',
+                'name' => 'referer',
+                'label' => 'Referer',
             ], [
                 'type' => 'text',
                 'name' => 'ip',
@@ -109,7 +132,7 @@ class SpiderLogs extends BaseAdmin
             ],
         ]];
         $this->search = [
-            'id#=#id', 'name#like#name', 'module#=#module', 'url#like#url', 'ip#like#ip', 'user_agent#like#user_agent', 'create_time#between#create_time',
+            'id#=#id', 'name#like#name', 'module#=#module', 'device#=#device', 'url#like#url', 'ip#like#ip', 'referer#like#referer', 'user_agent#like#user_agent', 'create_time#between#create_time',
         ];
     }
     
@@ -127,9 +150,10 @@ class SpiderLogs extends BaseAdmin
             } catch (\Exception $e) {
                 $vo['isp'] = '未知';
             }
+            $vo['device'] = (int)$vo['device'] === 1 ? 'PC' : '手机';
             $vo['module'] = ModuleLogic::instance()->getModuleNameByDir($vo['module']);
             $vo['url'] = $vo['domain'] . $vo['url'];
         }
     }
-    
+
 }
