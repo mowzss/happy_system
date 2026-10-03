@@ -93,7 +93,7 @@ class CommonService extends \think\Service
                     'module' => $this->app->request->layer(),
                     'domain' => $this->app->request->domain(),
                     'referer' => $this->app->request->header('referer'),
-                    'device' => $this->app->request->isMobile(),
+                    'device' => $this->app->request->isMobile() ? 2 : 1,
                     'user_agent' => $userAgent,
                     'create_time' => time(),
                 ];
