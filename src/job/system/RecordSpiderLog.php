@@ -1,5 +1,6 @@
 <?php
 
+
 namespace app\job\system;
 
 use think\queue\Job;
@@ -17,18 +18,6 @@ class RecordSpiderLog
     private const TEMP_LOG_KEY_RAW = 'spider_logs_temp_batch';                     // Redis List的原始键名
     private const TEMP_LOG_KEY_RAW_ERROR_NUM = 'spider_logs_temp_batch_error_num'; // 失败计数器
     private const BATCH_SIZE_TRIGGER = 50;                                         // 当缓存达到此数量时，触发批量插入
-    
-    /**
-     * 获取带前缀的Redis键名
-     * @return string
-     */
-    private function getPrefixedKey(): string
-    {
-        // 获取当前配置的缓存前缀
-        $prefix = (string)config('cache.stores.redis.prefix'); // 默认为空字符串
-        // 拼接前缀和原始键名
-        return $prefix . self::TEMP_LOG_KEY_RAW;
-    }
     
     /**
      * @param Job $job
@@ -63,6 +52,18 @@ class RecordSpiderLog
             }
             Log::error("记录蜘蛛日志到缓存失败：" . $e->getMessage(), 'error');
         }
+    }
+    
+    /**
+     * 获取带前缀的Redis键名
+     * @return string
+     */
+    private function getPrefixedKey(): string
+    {
+        // 获取当前配置的缓存前缀
+        $prefix = (string)config('cache.stores.redis.prefix'); // 默认为空字符串
+        // 拼接前缀和原始键名
+        return $prefix . self::TEMP_LOG_KEY_RAW;
     }
     
     /**

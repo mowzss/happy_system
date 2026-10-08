@@ -1,5 +1,6 @@
 <?php
 
+
 namespace app\command\system\nav;
 
 use think\console\Command;

@@ -1,5 +1,6 @@
 <?php
 
+
 namespace app\command\system\sitemap;
 
 use think\Exception;

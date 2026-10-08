@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+
 namespace app\admin\system;
 
 use think\App;
@@ -12,14 +13,14 @@ use app\model\system\SystemOperationLog;
 class OperationLog extends BaseAdmin
 {
     use CrudTrait;
-
+    
     public function __construct(App $app)
     {
         parent::__construct($app);
         $this->model = new SystemOperationLog();
         $this->setParams();
     }
-
+    
     protected function setParams(): void
     {
         $this->tables['title'] = '操作日志';
@@ -59,11 +60,11 @@ class OperationLog extends BaseAdmin
                 'sort' => true,
             ],
             'top_button' => [
-                'event' => 'del'
+                'event' => 'del',
             ],
             'right_button' => [
-                'event' => 'del'
-            ]
+                'event' => 'del',
+            ],
         ];
         $this->forms['fields'] = [];
         // 定义搜索条件
@@ -74,7 +75,7 @@ class OperationLog extends BaseAdmin
             'create_time#between#create_time',
         ];
     }
-
+    
     /**
      * 处理列表数据
      * @param array $data
@@ -86,13 +87,13 @@ class OperationLog extends BaseAdmin
         if (isset($data['data']) && is_array($data['data'])) {
             // 提取当前分页数据中的所有 uid
             $userIds = array_unique(array_column($data['data'], 'uid'));
-
+            
             // 如果有 uid，查询对应的用户名
             if (!empty($userIds)) {
                 // 使用 whereIn 查询相关的用户信息
                 $userNames = UserInfo::whereIn('id', $userIds)
                     ->column('username', 'id');
-
+                
                 // 将用户名绑定到日志数据中
                 foreach ($data['data'] as &$v) {
                     $v['username'] = $userNames[$v['uid']] . '(id：' . $v['uid'] . ')' ?? '未知用户';

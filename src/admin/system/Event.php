@@ -1,6 +1,7 @@
 <?php
 declare (strict_types=1);
 
+
 namespace app\admin\system;
 
 use think\App;
@@ -11,14 +12,14 @@ use app\common\controllers\BaseAdmin;
 class Event extends BaseAdmin
 {
     use CrudTrait;
-
+    
     public function __construct(App $app, SystemEvent $systemEvent)
     {
         parent::__construct($app);
         $this->setParams();
         $this->model = $systemEvent;
     }
-
+    
     protected function setParams(): void
     {
         $this->tables = [
@@ -42,26 +43,26 @@ class Event extends BaseAdmin
                 ], [
                     'field' => 'list',
                     'title' => '排序',
-                    'edit' => 'text'
+                    'edit' => 'text',
                 ],
                 [
                     'field' => 'status',
                     'title' => '状态',
-                    'templet' => 'switch'
+                    'templet' => 'switch',
                 ],
             ],
             //表格 表头按钮
             'top_button' => [
-
+            
             ],
-
+            
             //表格行按钮
             'right_button' => [
-
+            
             ],
         ];
         $this->search = [
-            'id#=#id', 'name#like#title', 'status#=#status'
+            'id#=#id', 'name#like#title', 'status#=#status',
         ];
         $this->forms = [
             'fields' => [
@@ -69,17 +70,17 @@ class Event extends BaseAdmin
                     'type' => 'text',
                     'name' => 'name',
                     'label' => '事件名称',
-                    'required' => true
+                    'required' => true,
                 ], [
                     'type' => 'textarea',
                     'name' => 'info',
-                    'label' => '事件描述'
+                    'label' => '事件描述',
                 ], [
                     'type' => 'textarea',
                     'name' => 'params_info',
-                    'label' => '参数描述'
-                ]
-            ]
+                    'label' => '参数描述',
+                ],
+            ],
         ];
     }
 }

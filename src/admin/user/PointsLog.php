@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+
 namespace app\admin\user;
 
 use think\App;
@@ -15,14 +16,14 @@ use app\common\controllers\BaseAdmin;
 class PointsLog extends BaseAdmin
 {
     use CrudTrait;
-
+    
     public function __construct(App $app)
     {
         parent::__construct($app);
         $this->model = new UserPointsLog();
         $this->setParams();
     }
-
+    
     protected function setParams(): void
     {
         // 定义表格字段
@@ -60,7 +61,7 @@ class PointsLog extends BaseAdmin
                 'sort' => true,
             ],
         ];
-
+        
         // 定义表单字段
         $this->forms['fields'] = [
             [
@@ -94,7 +95,7 @@ class PointsLog extends BaseAdmin
                 'readonly' => true,
             ],
         ];
-
+        
         // 定义搜索条件
         $this->search = [
             'id#=#id',
@@ -104,7 +105,7 @@ class PointsLog extends BaseAdmin
             'create_time#between#create_time',
         ];
     }
-
+    
     /**
      * 处理列表数据
      * @param array $data
@@ -116,13 +117,13 @@ class PointsLog extends BaseAdmin
         if (isset($data['data']) && is_array($data['data'])) {
             // 提取当前分页数据中的所有 uid
             $userIds = array_unique(array_column($data['data'], 'uid'));
-
+            
             // 如果有 uid，查询对应的用户名
             if (!empty($userIds)) {
                 // 使用 whereIn 查询相关的用户信息
                 $userNames = UserInfo::whereIn('id', $userIds)
                     ->column('username', 'id');
-
+                
                 // 将用户名绑定到日志数据中
                 foreach ($data['data'] as &$v) {
                     $v['username'] = $userNames[$v['uid']] . '(id：' . $v['uid'] . ')' ?? '未知用户';

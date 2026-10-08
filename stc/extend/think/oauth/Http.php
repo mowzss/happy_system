@@ -1,5 +1,6 @@
 <?php
 
+
 namespace think\oauth;
 
 use think\Exception;
@@ -32,22 +33,6 @@ class Http
         }
         
         return self::request('GET', $url, $options);
-    }
-    
-    /**
-     * POST 请求（application/x-www-form-urlencoded）
-     *
-     * @param string $url
-     * @param array $data 表单数据
-     * @param array $options
-     * @return array
-     * @throws Exception
-     */
-    public static function post(string $url, array $data = [], array $options = []): array
-    {
-        $options['body'] = http_build_query($data);
-        $options['headers']['Content-Type'] = 'application/x-www-form-urlencoded';
-        return self::request('POST', $url, $options);
     }
     
     /**
@@ -132,5 +117,21 @@ class Http
             $msg .= ", HTTP status: {$httpCode}";
         }
         throw new Exception($msg);
+    }
+    
+    /**
+     * POST 请求（application/x-www-form-urlencoded）
+     *
+     * @param string $url
+     * @param array $data 表单数据
+     * @param array $options
+     * @return array
+     * @throws Exception
+     */
+    public static function post(string $url, array $data = [], array $options = []): array
+    {
+        $options['body'] = http_build_query($data);
+        $options['headers']['Content-Type'] = 'application/x-www-form-urlencoded';
+        return self::request('POST', $url, $options);
     }
 }

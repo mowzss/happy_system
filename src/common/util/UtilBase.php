@@ -1,6 +1,7 @@
 <?php
 declare (strict_types=1);
 
+
 namespace app\common\util;
 
 use think\App;
@@ -8,14 +9,14 @@ use think\Container;
 
 class UtilBase
 {
+    protected static array $instances = [];
+    
+    // 静态存储类的实例
     /**
      * @var App
      */
     protected App $app;
-
-    // 静态存储类的实例
-    protected static array $instances = [];
-
+    
     /**
      * @param App|null $app
      */
@@ -24,22 +25,26 @@ class UtilBase
         $this->app = $app ?? app();
         $this->initialize();
     }
-
+    
     /**
      * 初始化
      * @return void
      */
-    protected function initialize(): void {}
-
-    /**
-     * 获取当前时间戳
-     * @return int
-     */
-    public function getCurrentTimestamp(): int
+    protected function initialize(): void
     {
-        return time();
     }
-
+    
+    /**
+     * 静态实例对象
+     * @param array $var 实例参数
+     * @param boolean $new 创建新实例
+     * @return UtilBase
+     */
+    public static function instance(array $var = [], bool $new = false): static
+    {
+        return Container::getInstance()->make(static::class, $var, $new);
+    }
+    
     /**
      * 格式化日期时间
      * @param $timestamp
@@ -51,15 +56,13 @@ class UtilBase
         $timestamp = $timestamp ?? $this->getCurrentTimestamp();
         return date($format, $timestamp);
     }
-
+    
     /**
-     * 静态实例对象
-     * @param array $var 实例参数
-     * @param boolean $new 创建新实例
-     * @return UtilBase
+     * 获取当前时间戳
+     * @return int
      */
-    public static function instance(array $var = [], bool $new = false): static
+    public function getCurrentTimestamp(): int
     {
-        return Container::getInstance()->make(static::class, $var, $new);
+        return time();
     }
 }

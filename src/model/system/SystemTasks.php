@@ -1,9 +1,10 @@
 <?php
 
+
 namespace app\model\system;
 
-use happy\admin\libs\Model;
 use think\db\Query;
+use happy\admin\libs\Model;
 
 class SystemTasks extends Model
 {
@@ -21,5 +22,5 @@ class SystemTasks extends Model
             ->order('list', 'asc')
             ->column('id,title,exptime,task,data', 'id');
     }
-    
+
 }

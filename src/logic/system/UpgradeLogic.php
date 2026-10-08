@@ -1,5 +1,6 @@
 <?php
 
+
 namespace app\logic\system;
 
 use think\Exception;
@@ -86,7 +87,7 @@ class UpgradeLogic extends BaseLogic
         
         // 对每个模块内的文件按 filename 升序排序（关键！）
         foreach ($allFilesData as $module => &$files) {
-            usort($files, fn($a, $b) => strcmp($a['filename'], $b['filename']));
+            usort($files, fn ($a, $b) => strcmp($a['filename'], $b['filename']));
         }
         unset($files); // 解除引用
         

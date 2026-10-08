@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+
 namespace app\admin\system;
 
 use think\App;
@@ -11,7 +12,7 @@ use app\common\controllers\BaseAdmin;
 class Links extends BaseAdmin
 {
     use CrudTrait;
-
+    
     public function __construct(App $app)
     {
         parent::__construct($app);
@@ -19,7 +20,7 @@ class Links extends BaseAdmin
         $this->app->config->load('extra/links', 'links');
         $this->setParams();
     }
-
+    
     protected function setParams(): void
     {
         $this->tables['tips'] = '分类及类型 需在项目配置文件/config/extra/links.php中进行设置';
@@ -56,19 +57,19 @@ class Links extends BaseAdmin
             [
                 'field' => 'list',
                 'title' => '排序',
-                'edit' => 'text'
+                'edit' => 'text',
             ], [
                 'field' => 'is_long',
                 'title' => '长期有效',
                 'templet' => 'switch',
                 'switch' => [
                     'name' => '是|否',
-                    'value' => '1|0'
+                    'value' => '1|0',
                 ],
             ], [
                 'field' => 'status',
                 'title' => '状态',
-                'templet' => 'switch'
+                'templet' => 'switch',
             ], [
                 'field' => 'create_time',
                 'title' => '创建时间',
@@ -114,10 +115,10 @@ class Links extends BaseAdmin
             ],
         ];
         $this->search = [
-            'id#=#id', 'title#like#title', 'url#like#url', 'type#=#type', 'cid#=#cid', 'is_long#=#is_long', 'status#=#status', 'start_time#between#start_time', 'end_time#between#end_time', 'create_time#between#create_time', 'update_time#between#update_time'
+            'id#=#id', 'title#like#title', 'url#like#url', 'type#=#type', 'cid#=#cid', 'is_long#=#is_long', 'status#=#status', 'start_time#between#start_time', 'end_time#between#end_time', 'create_time#between#create_time', 'update_time#between#update_time',
         ];
     }
-
+    
     /**
      * 处理列表数据
      * @param array $data
@@ -129,7 +130,7 @@ class Links extends BaseAdmin
         $linksConfig = $this->app->config->get('links', []);
         $columns = $linksConfig['column'] ?? [];
         $types = $linksConfig['type'] ?? [];
-
+        
         // 确保 data['data'] 存在并且是一个数组
         if (isset($data['data']) && is_array($data['data'])) {
             foreach ($data['data'] as &$v) {
@@ -139,7 +140,7 @@ class Links extends BaseAdmin
                 } else {
                     $v['column_name'] = '未知位置'; // 默认值，当 cid 未找到时
                 }
-
+                
                 // 根据 type 设置 type_name
                 if (isset($v['type']) && isset($types[$v['type']])) {
                     $v['type_name'] = $types[$v['type']];
@@ -150,7 +151,7 @@ class Links extends BaseAdmin
             unset($v); // 解除引用
         }
     }
-
+    
     /**
      * 保存前数据处理
      * @param $data
@@ -165,7 +166,7 @@ class Links extends BaseAdmin
             $data['end_time'] = date('Y-m-d H:i:s');
         }
     }
-
+    
     /**
      * 保存后数据处理
      * @return void
@@ -174,7 +175,7 @@ class Links extends BaseAdmin
     {
         $this->app->cache->tag('system_links_all_site')->clear();
     }
-
+    
     /**
      * 快速编辑后数据处理
      * @return void

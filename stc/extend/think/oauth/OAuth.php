@@ -1,11 +1,12 @@
 <?php
 
+
 namespace think\oauth;
 
 use InvalidArgumentException;
-use think\oauth\contract\DriverInterface;
 use think\oauth\driver\QqWeb;
 use think\oauth\driver\WechatMini;
+use think\oauth\contract\DriverInterface;
 
 class OAuth
 {
@@ -13,7 +14,7 @@ class OAuth
      * @var DriverInterface
      */
     protected DriverInterface $driver;
-
+    
     /**
      * 支持的驱动映射（可扩展）
      *
@@ -23,7 +24,7 @@ class OAuth
         'wechat_mini' => WechatMini::class,
         'qq_web' => QqWeb::class,
     ];
-
+    
     /**
      * 构造函数
      *
@@ -36,16 +37,16 @@ class OAuth
         if (!isset($this->drivers[$name])) {
             throw new InvalidArgumentException("Unsupported OAuth driver: {$name}");
         }
-
+        
         $driverClass = $this->drivers[$name];
-
+        
         if (!class_exists($driverClass)) {
             throw new InvalidArgumentException("OAuth driver class not found: {$driverClass}");
         }
-
+        
         $this->driver = new $driverClass($config);
     }
-
+    
     /**
      * 获取用户信息（统一入口）
      *

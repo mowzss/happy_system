@@ -1,12 +1,13 @@
 <?php
 
+
 namespace app\logic\system;
 
+use happy\admin\libs\BaseLogic;
+use think\db\exception\DbException;
 use app\model\system\SystemSpiderDate;
 use app\model\system\SystemSpiderHourly;
-use happy\admin\libs\BaseLogic;
 use think\db\exception\DataNotFoundException;
-use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
 
 class SpiderLogic extends BaseLogic
@@ -131,7 +132,7 @@ class SpiderLogic extends BaseLogic
         
         if (empty($allNames)) {
             $result = [
-                'hours' => array_map(fn($h) => sprintf('%02d:00', $h), range(0, 23)),
+                'hours' => array_map(fn ($h) => sprintf('%02d:00', $h), range(0, 23)),
                 'spiderData' => [],
             ];
             
@@ -248,7 +249,9 @@ class SpiderLogic extends BaseLogic
             // 找到对应的 index
             $index = array_search($date, $historyDates);
             
-            if ($index === false) continue;
+            if ($index === false) {
+                continue;
+            }
             
             if (!isset($spiderTrend[$name])) {
                 $spiderTrend[$name] = array_fill(0, $days, 0);

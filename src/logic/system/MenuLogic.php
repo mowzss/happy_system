@@ -1,10 +1,11 @@
 <?php
 declare(strict_types=1);
 
+
 namespace app\logic\system;
 
-use app\model\system\SystemMenu;
 use think\Exception;
+use app\model\system\SystemMenu;
 
 class MenuLogic
 {
@@ -23,10 +24,10 @@ class MenuLogic
         } else {
             $parent = 0;
         }
-
+        
         $this->insertMenus($menus, $parent);
     }
-
+    
     /**
      * 插入菜单数据。
      *
@@ -37,7 +38,7 @@ class MenuLogic
      */
     public function insertMenus(array $menus, string|int $pid = 0): void
     {
-
+        
         foreach ($menus as $menu) {
             // 处理顶级菜单
             $parentId = $this->insertMenu($menu, $pid);
@@ -47,7 +48,7 @@ class MenuLogic
             }
         }
     }
-
+    
     /**
      * 插入单个菜单项。
      *
@@ -69,7 +70,7 @@ class MenuLogic
             'list' => $menu['list'] ?? 0,
             'status' => $menu['status'] ?? 1,
         ];
-
+        
         try {
             return (new \app\model\system\SystemMenu)->Insert($data, true);
         } catch (\Exception $e) {

@@ -1,6 +1,7 @@
 <?php
 declare (strict_types=1);
 
+
 namespace app\admin\system;
 
 use think\App;
@@ -17,8 +18,8 @@ use think\db\exception\ModelNotFoundException;
 class Icon extends BaseAdmin
 {
     use CrudTrait;
-
-
+    
+    
     protected string $title = '图标管理';
     /**
      * @var
@@ -28,14 +29,112 @@ class Icon extends BaseAdmin
      * @var array|mixed
      */
     protected mixed $field;
-
+    
     public function __construct(App $app, SystemIcon $systemIcon)
     {
         parent::__construct($app);
         $this->model = $systemIcon;
         $this->setParams();
     }
-
+    
+    protected function setParams(): void
+    {
+        $this->tables = [
+            'title' => $this->title,
+            'fields' => [
+                [
+                    'field' => 'id',
+                    'title' => 'ID',
+                    'width' => 80,
+                    'sort' => true,
+                ],
+                [
+                    'field' => 'name',
+                    'title' => 'icon 名称',
+                    'edit' => 'text',
+                    'align' => 'content',
+                ], [
+                    'field' => 'prefix',
+                    'title' => 'icon 前缀',
+                    'edit' => 'text',
+                    'align' => 'content',
+                ], [
+                    'field' => 'path',
+                    'title' => '路径',
+                    'edit' => 'text',
+                    'align' => 'content',
+                ], [
+                    'field' => 'url',
+                    'title' => '访问路径',
+                    'edit' => 'text',
+                ], [
+                    'field' => 'list',
+                    'title' => '排序',
+                    'edit' => 'text',
+                    'sort' => true,
+                ], [
+                    'field' => 'is_show',
+                    'title' => '是否引用',
+                    'templet' => 'switch',
+                ], [
+                    'field' => 'status',
+                    'title' => '状态',
+                    'templet' => 'switch',
+                ], [
+                    'field' => 'create_time',
+                    'title' => '创建时间',
+                ],
+            ],
+            'top_button' => [
+            
+            ],
+            'right_button' => [
+            
+            ],
+        
+        ];
+        $this->forms = [
+            'fields' => [
+                [
+                    'type' => 'text',
+                    'name' => 'title',
+                    'label' => '名称',
+                    'required' => true,
+                ], [
+                    'type' => 'text',
+                    'name' => 'name',
+                    'label' => 'icon类名',
+                    'required' => true,
+                ], [
+                    'type' => 'text',
+                    'name' => 'prefix',
+                    'label' => 'icon前缀',
+                    'required' => true,
+                ], [
+                    'type' => 'text',
+                    'name' => 'path',
+                    'label' => '路径',
+                    'required' => true,
+                    'help' => '路径需包含且从public开始填写',
+                ], [
+                    'type' => 'text',
+                    'name' => 'url',
+                    'label' => '前端地址',
+                    'required' => true,
+                ], [
+                    'type' => 'radio',
+                    'name' => 'is_show',
+                    'label' => '是否引用',
+                    'options' => [
+                        '1' => '显示', '0' => '隐藏',
+                    ],
+                    'help' => '如layui本就在后台页面中使用，则无需选择显示，如在其他应用端使用为便于后台显示图标效果，则建议选择显示',
+                    'required' => true,
+                ],
+            ],
+        ];
+    }
+    
     /**
      * 获取全部ICON图标
      * @return string
@@ -67,103 +166,5 @@ class Icon extends BaseAdmin
         });
         $this->field = $this->request->param('field', 'icon');
         return $this->fetch();
-    }
-
-    protected function setParams(): void
-    {
-        $this->tables = [
-            'title' => $this->title,
-            'fields' => [
-                [
-                    'field' => 'id',
-                    'title' => 'ID',
-                    'width' => 80,
-                    'sort' => true,
-                ],
-                [
-                    'field' => 'name',
-                    'title' => 'icon 名称',
-                    'edit' => 'text',
-                    'align' => 'content'
-                ], [
-                    'field' => 'prefix',
-                    'title' => 'icon 前缀',
-                    'edit' => 'text',
-                    'align' => 'content'
-                ], [
-                    'field' => 'path',
-                    'title' => '路径',
-                    'edit' => 'text',
-                    'align' => 'content'
-                ], [
-                    'field' => 'url',
-                    'title' => '访问路径',
-                    'edit' => 'text',
-                ], [
-                    'field' => 'list',
-                    'title' => '排序',
-                    'edit' => 'text',
-                    'sort' => true,
-                ], [
-                    'field' => 'is_show',
-                    'title' => '是否引用',
-                    'templet' => 'switch'
-                ], [
-                    'field' => 'status',
-                    'title' => '状态',
-                    'templet' => 'switch'
-                ], [
-                    'field' => 'create_time',
-                    'title' => '创建时间',
-                ],
-            ],
-            'top_button' => [
-
-            ],
-            'right_button' => [
-
-            ]
-
-        ];
-        $this->forms = [
-            'fields' => [
-                [
-                    'type' => 'text',
-                    'name' => 'title',
-                    'label' => '名称',
-                    'required' => true
-                ], [
-                    'type' => 'text',
-                    'name' => 'name',
-                    'label' => 'icon类名',
-                    'required' => true
-                ], [
-                    'type' => 'text',
-                    'name' => 'prefix',
-                    'label' => 'icon前缀',
-                    'required' => true
-                ], [
-                    'type' => 'text',
-                    'name' => 'path',
-                    'label' => '路径',
-                    'required' => true,
-                    'help' => '路径需包含且从public开始填写'
-                ], [
-                    'type' => 'text',
-                    'name' => 'url',
-                    'label' => '前端地址',
-                    'required' => true
-                ], [
-                    'type' => 'radio',
-                    'name' => 'is_show',
-                    'label' => '是否引用',
-                    'options' => [
-                        '1' => '显示', '0' => '隐藏'
-                    ],
-                    'help' => '如layui本就在后台页面中使用，则无需选择显示，如在其他应用端使用为便于后台显示图标效果，则建议选择显示',
-                    'required' => true
-                ]
-            ]
-        ];
     }
 }

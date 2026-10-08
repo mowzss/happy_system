@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+
 namespace app\admin\user;
 
 use think\App;
@@ -14,14 +15,14 @@ use app\common\controllers\BaseAdmin;
 class Group extends BaseAdmin
 {
     use CrudTrait;
-
+    
     public function __construct(App $app)
     {
         parent::__construct($app);
         $this->model = new UserGroup();
         $this->setParams();
     }
-
+    
     protected function setParams(): void
     {
         // 定义表格字段
@@ -44,7 +45,7 @@ class Group extends BaseAdmin
             [
                 'field' => 'status',
                 'title' => '状态',
-                'templet' => 'switch'
+                'templet' => 'switch',
             ],
             [
                 'field' => 'create_time',
@@ -59,7 +60,7 @@ class Group extends BaseAdmin
                 'sort' => true,
             ],
         ];
-
+        
         // 定义表单字段
         $this->forms['fields'] = [
             [
@@ -81,7 +82,7 @@ class Group extends BaseAdmin
                 'label' => '升级有效期(天)',
             ],
         ];
-
+        
         // 定义搜索条件
         $this->search = [
             'id#=#id',

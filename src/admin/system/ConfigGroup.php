@@ -1,6 +1,7 @@
 <?php
 declare (strict_types=1);
 
+
 namespace app\admin\system;
 
 use think\App;
@@ -15,28 +16,16 @@ use app\model\system\SystemConfigGroup;
 class ConfigGroup extends BaseAdmin
 {
     use CrudTrait;
-
+    
     protected SystemModule $module;
-
+    
     public function __construct(App $app, SystemConfigGroup $model)
     {
         parent::__construct($app);
         $this->model = $model;
         $this->setParams();
     }
-
-    /**
-     * 处理列表数据
-     * @param $data
-     * @return void
-     */
-    protected function _index_list_filter(&$data): void
-    {
-        foreach ($data['data'] as &$v) {
-            $v['module_name'] = SystemModule::where('dir', $v['module'])->value('title') ?: $v['module'];
-        }
-    }
-
+    
     protected function setParams(): void
     {
         $this->tables = [
@@ -71,9 +60,9 @@ class ConfigGroup extends BaseAdmin
             ],
             //表格 表头按钮
             'top_button' => [
-
+            
             ],
-
+            
             //表格行按钮
             'right_button' => [
                 [
@@ -112,5 +101,17 @@ class ConfigGroup extends BaseAdmin
                 ],
             ],
         ];
+    }
+    
+    /**
+     * 处理列表数据
+     * @param $data
+     * @return void
+     */
+    protected function _index_list_filter(&$data): void
+    {
+        foreach ($data['data'] as &$v) {
+            $v['module_name'] = SystemModule::where('dir', $v['module'])->value('title') ?: $v['module'];
+        }
     }
 }

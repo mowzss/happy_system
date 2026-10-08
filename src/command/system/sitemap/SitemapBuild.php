@@ -1,5 +1,6 @@
 <?php
 
+
 namespace app\command\system\sitemap;
 
 use think\Exception;
@@ -160,35 +161,6 @@ class SitemapBuild extends Command
     }
     
     /**
-     * 生成SiteMap
-     * @param SiteMapExtend $sitemap
-     * @param string $type
-     * @param string $table
-     * @param int $count
-     * @param string $module
-     * @param int $total
-     * @return void
-     */
-    private function extracted(SiteMapExtend $sitemap, string $type, string $table, int $count, string $module, int $total): void
-    {
-        $in_data = [
-            'url' => $sitemap->generated($type, $table . '_' . $count),
-            'type' => $type,
-            'module' => $module,
-            'class' => $table,
-            'domain' => $this->domain,
-        ];
-        if ($count == 1) {
-            SystemSitemap::where('type', $type)->where('class', $table)->where(
-                'domain',
-                $this->domain
-            )->where('module', $module)->delete();
-        }
-        SystemSitemap::create($in_data);
-        $this->output->info("第[" . $count . "]条生成成功");
-    }
-    
-    /**
      * 生成TAG地图
      * @param string $module 模块
      * @param string $type sitemap类型 xml txt html
@@ -244,5 +216,34 @@ class SitemapBuild extends Command
             $this->extracted($sitemap, $type, $class, $count, $module, $total);
         }
         $this->output->info("本次共计生成 {$total} 条sitemap。");
+    }
+    
+    /**
+     * 生成SiteMap
+     * @param SiteMapExtend $sitemap
+     * @param string $type
+     * @param string $table
+     * @param int $count
+     * @param string $module
+     * @param int $total
+     * @return void
+     */
+    private function extracted(SiteMapExtend $sitemap, string $type, string $table, int $count, string $module, int $total): void
+    {
+        $in_data = [
+            'url' => $sitemap->generated($type, $table . '_' . $count),
+            'type' => $type,
+            'module' => $module,
+            'class' => $table,
+            'domain' => $this->domain,
+        ];
+        if ($count == 1) {
+            SystemSitemap::where('type', $type)->where('class', $table)->where(
+                'domain',
+                $this->domain
+            )->where('module', $module)->delete();
+        }
+        SystemSitemap::create($in_data);
+        $this->output->info("第[" . $count . "]条生成成功");
     }
 }

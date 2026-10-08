@@ -1,6 +1,7 @@
 <?php
 declare (strict_types=1);
 
+
 namespace app\admin\index;
 
 use think\facade\Db;

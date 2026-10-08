@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+
 namespace app\logic\user;
 
 use app\model\user\UserInfo;
@@ -8,6 +9,20 @@ use happy\admin\libs\BaseLogic;
 
 class UserLogic extends BaseLogic
 {
+    /**
+     * @param int|string $uid
+     * @param false|string $field
+     * @param array $hide_field
+     * @return array|mixed
+     */
+    public function getUserField(int|string $uid, false|string $field = false, array $hide_field = []): mixed
+    {
+        if (empty($field)) {
+            return $this->getUserInfoById($uid, $hide_field);
+        }
+        return $this->getUserInfoById($uid, $hide_field)[$field];
+    }
+    
     /**
      * 获取用户信息
      * @param $uid
@@ -21,20 +36,6 @@ class UserLogic extends BaseLogic
         }
         $data = UserInfo::with(['usergroup'])->findOrEmpty($uid)->toArray();
         return $this->hideField($data, $hide_field);
-    }
-    
-    /**
-     * @param int|string $uid
-     * @param false|string $field
-     * @param array $hide_field
-     * @return array|mixed
-     */
-    public function getUserField(int|string $uid, false|string $field = false, array $hide_field = []): mixed
-    {
-        if (empty($field)) {
-            return $this->getUserInfoById($uid, $hide_field);
-        }
-        return $this->getUserInfoById($uid, $hide_field)[$field];
     }
     
     /**

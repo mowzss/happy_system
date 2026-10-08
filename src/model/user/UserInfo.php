@@ -1,21 +1,13 @@
 <?php
 declare (strict_types=1);
 
+
 namespace app\model\user;
 
 use happy\admin\libs\Model;
 
 class UserInfo extends Model
 {
-    /**
-     * @param $value
-     * @return false|string
-     */
-    public function getLastTimeAttr($value): bool|string
-    {
-        return date('Y-m-d H:i:s', $value ?: 0);
-    }
-    
     /**
      * 查询后处理
      * @param $model
@@ -28,6 +20,15 @@ class UserInfo extends Model
         }
         $model['home_url'] = urls('user/index/home', ['id' => $model['id']]);
         return $model;
+    }
+    
+    /**
+     * @param $value
+     * @return false|string
+     */
+    public function getLastTimeAttr($value): bool|string
+    {
+        return date('Y-m-d H:i:s', $value ?: 0);
     }
     
     /**

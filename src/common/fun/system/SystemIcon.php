@@ -1,9 +1,10 @@
 <?php
 
+
 namespace app\common\fun\system;
 
-use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
+use think\db\exception\DataNotFoundException;
 use think\db\exception\ModelNotFoundException;
 
 class SystemIcon

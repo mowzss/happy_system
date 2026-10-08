@@ -1,15 +1,16 @@
 <?php
 
+
 namespace app\command\system\sitemap;
 
+use think\facade\Log;
+use think\console\Input;
+use think\console\Output;
+use think\console\Command;
+use think\console\input\Option;
 use app\model\system\SystemSitemap;
 use happy\admin\libs\extend\RuntimeExtend;
 use happy\admin\libs\extend\SitemapIndexExtend;
-use think\console\Command;
-use think\console\Input;
-use think\console\input\Option;
-use think\console\Output;
-use think\facade\Log;
 
 class SitemapIndex extends Command
 {

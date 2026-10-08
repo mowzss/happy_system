@@ -10,8 +10,8 @@
 // +----------------------------------------------------------------------
 
 // [ 应用入口文件 ]
-namespace think;
 
+namespace think;
 
 use happy\admin\libs\Run;
 

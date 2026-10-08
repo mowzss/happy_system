@@ -1,5 +1,6 @@
 <?php
 
+
 namespace app\common\upgrade\system;
 
 use think\Exception;

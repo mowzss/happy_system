@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+
 namespace app\common\traits\system;
 
 use think\facade\Env;
@@ -83,20 +84,19 @@ trait ViewTheme
     }
     
     /**
-     * 获取默认的模板风格
-     * @param string $configKey
+     * 获取模板风格路径
      * @return string
      */
-    protected function getDefaultTheme(string $configKey): string
+    protected function getStylePath(): string
     {
-        return match ($configKey) {
-            'admin_style' => 'default',
-            'user_wap_style' => 'wap_default',
-            'user_pc_style' => 'default',
-            'home_wap_style' => 'wap_default',
-            'home_pc_style' => 'default',
-            default => 'default'
-        };
+        // 使用现有逻辑判断控制器层
+        if (Env::get('CONTROLLER_LAYER') === 'admin') {
+            return 'admin_style';
+        }
+        if ($this->request->layer(true) === 'user') {
+            return 'user_style';
+        }
+        return 'home_style';
     }
     
     /**
@@ -123,18 +123,19 @@ trait ViewTheme
     }
     
     /**
-     * 获取模板风格路径
+     * 获取默认的模板风格
+     * @param string $configKey
      * @return string
      */
-    protected function getStylePath(): string
+    protected function getDefaultTheme(string $configKey): string
     {
-        // 使用现有逻辑判断控制器层
-        if (Env::get('CONTROLLER_LAYER') === 'admin') {
-            return 'admin_style';
-        }
-        if ($this->request->layer(true) === 'user') {
-            return 'user_style';
-        }
-        return 'home_style';
+        return match ($configKey) {
+            'admin_style' => 'default',
+            'user_wap_style' => 'wap_default',
+            'user_pc_style' => 'default',
+            'home_wap_style' => 'wap_default',
+            'home_pc_style' => 'default',
+            default => 'default'
+        };
     }
 }

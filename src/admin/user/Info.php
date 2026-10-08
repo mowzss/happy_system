@@ -1,6 +1,7 @@
 <?php
 declare (strict_types=1);
 
+
 namespace app\admin\user;
 
 use think\App;
@@ -146,37 +147,6 @@ class Info extends BaseAdmin
     }
     
     /**
-     * 处理列表数据
-     * @param array $data
-     * @return void
-     */
-    protected function _index_list_filter(array &$data): void
-    {
-        // 获取所有用户组的名称映射
-        $groupNames = $this->getUserGroupOptions();
-        
-        // 确保 data['data'] 存在并且是一个数组
-        if (isset($data['data']) && is_array($data['data'])) {
-            foreach ($data['data'] as &$v) {
-                // 设置用户组名称
-                if (!empty($v['group_id']) && isset($groupNames[$v['group_id']])) {
-                    $v['group_name'] = $groupNames[$v['group_id']];
-                } else {
-                    $v['group_name'] = '未知用户组';
-                }
-                if (!empty($v['last_ip'])) {
-                    try {
-                        $v['ip_isp'] = (new \Ip2Region)->simple($v['last_ip']);
-                    } catch (\Exception $e) {
-                        $v['ip_isp'] = '未知';
-                    }
-                }
-            }
-            unset($v); // 解除引用
-        }
-    }
-    
-    /**
      * 获取用户组选项
      * @return array
      */
@@ -260,6 +230,37 @@ class Info extends BaseAdmin
                 'value' => $id,
             ],
         ]);
+    }
+    
+    /**
+     * 处理列表数据
+     * @param array $data
+     * @return void
+     */
+    protected function _index_list_filter(array &$data): void
+    {
+        // 获取所有用户组的名称映射
+        $groupNames = $this->getUserGroupOptions();
+        
+        // 确保 data['data'] 存在并且是一个数组
+        if (isset($data['data']) && is_array($data['data'])) {
+            foreach ($data['data'] as &$v) {
+                // 设置用户组名称
+                if (!empty($v['group_id']) && isset($groupNames[$v['group_id']])) {
+                    $v['group_name'] = $groupNames[$v['group_id']];
+                } else {
+                    $v['group_name'] = '未知用户组';
+                }
+                if (!empty($v['last_ip'])) {
+                    try {
+                        $v['ip_isp'] = (new \Ip2Region)->simple($v['last_ip']);
+                    } catch (\Exception $e) {
+                        $v['ip_isp'] = '未知';
+                    }
+                }
+            }
+            unset($v); // 解除引用
+        }
     }
     
     /**

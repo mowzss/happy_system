@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+
 namespace app\admin\index;
 
 use app\model\user\UserInfo;
@@ -59,5 +60,5 @@ class Login extends BaseAdmin
         }
         return $this->fetch();
     }
-    
+
 }

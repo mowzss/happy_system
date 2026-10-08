@@ -1,5 +1,6 @@
 <?php
 
+
 namespace app\home\index;
 
 use app\common\controllers\BaseHome;

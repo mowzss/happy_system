@@ -1,6 +1,7 @@
 <?php
 declare (strict_types=1);
 
+
 namespace app\admin\system;
 
 use think\App;
@@ -147,21 +148,6 @@ class Config extends BaseAdmin
     }
     
     /**
-     * 获取分组信息
-     * @param string|int $group_id
-     * @return string
-     */
-    protected function getConfigGroupInfo(string|int $group_id = 0): string
-    {
-        $data = SystemConfigGroup::field('title,id,module')->findOrEmpty($group_id);
-        if (!$data->isEmpty()) {
-            $module_title = SystemModule::where('dir', $data['module'])->value('title') ?: '未知';
-            return $data['title'] . '[' . $module_title . ']';
-        }
-        return '未知';
-    }
-    
-    /**
      * 列表数据回调
      * @param $data
      * @return void
@@ -174,6 +160,21 @@ class Config extends BaseAdmin
             $item['group_name'] = $this->getConfigGroupInfo($item['group_id']);
             $item['type_name'] = $forms[$item['type']] ?? '未定义类型';
         }
+    }
+    
+    /**
+     * 获取分组信息
+     * @param string|int $group_id
+     * @return string
+     */
+    protected function getConfigGroupInfo(string|int $group_id = 0): string
+    {
+        $data = SystemConfigGroup::field('title,id,module')->findOrEmpty($group_id);
+        if (!$data->isEmpty()) {
+            $module_title = SystemModule::where('dir', $data['module'])->value('title') ?: '未知';
+            return $data['title'] . '[' . $module_title . ']';
+        }
+        return '未知';
     }
     
     /**

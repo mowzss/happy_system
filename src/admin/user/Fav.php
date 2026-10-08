@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+
 namespace app\admin\user;
 
 use think\App;
@@ -18,14 +19,14 @@ use think\db\exception\ModelNotFoundException;
 class Fav extends BaseAdmin
 {
     use CrudTrait;
-
+    
     public function __construct(App $app)
     {
         parent::__construct($app);
         $this->model = new UserFav();
         $this->setParams();
     }
-
+    
     protected function setParams(): void
     {
         // 定义表格字段
@@ -65,10 +66,10 @@ class Fav extends BaseAdmin
             [
                 'field' => 'status',
                 'title' => '状态',
-                'templet' => 'switch'
+                'templet' => 'switch',
             ],
         ];
-
+        
         // 定义表单字段
         $this->forms['fields'] = [
             [
@@ -117,7 +118,7 @@ class Fav extends BaseAdmin
                 'options' => [1 => '正常', 0 => '已删除'],
             ],
         ];
-
+        
         // 定义搜索条件
         $this->search = [
             'id#=#id',
@@ -130,7 +131,7 @@ class Fav extends BaseAdmin
             'status#=#status',
         ];
     }
-
+    
     /**
      * 处理列表数据
      * @param array $data
@@ -155,7 +156,7 @@ class Fav extends BaseAdmin
             unset($v); // 解除引用
         }
     }
-
+    
     /**
      * 根据用户ID获取用户信息
      * @param int $userId

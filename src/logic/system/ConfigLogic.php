@@ -1,5 +1,6 @@
 <?php
 
+
 namespace app\logic\system;
 
 use think\facade\Cache;
@@ -12,6 +13,57 @@ use think\db\exception\ModelNotFoundException;
 
 class ConfigLogic extends BaseLogic
 {
+    
+    /**
+     * @param $gid
+     * @return array
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function getListByGroup($gid): array
+    {
+        return SystemConfig::where('group_id', $gid)->where(['status' => 1])->order(['list' => 'desc', 'id' => 'asc'])->select()->each(function ($item) {
+            $item['label'] = $item['title'];
+        })->toArray();
+    }
+    
+    /**
+     * 保存配置项
+     *
+     * @param array $data 提交的数据
+     * @return bool
+     * @throws LogicException
+     */
+    public function saveConfig(array $data): bool
+    {
+        try {
+            // 使用 \think\db::transaction() 包裹事务逻辑
+            return $this->transaction(function () use ($data) {
+                // 清理重复的配置项
+                $this->clearDuplicates();
+                
+                // 遍历提交的数据并保存
+                foreach ($data as $key => $value) {
+                    if ($key === 'group_id') {
+                        continue;  // 跳过 group_id，因为它不是配置项的 name
+                    }
+                    
+                    // 查找是否存在该 name 的配置项
+                    $config = SystemConfig::where(['name' => $key, 'group_id' => $data['group_id']])->findOrEmpty();
+                    // 如果存在，更新现有记录
+                    if (!$config->isEmpty()) {
+                        $config->save(['value' => $value]);
+                    }
+                }
+                $this->clearConfigCache();     //清理缓存
+                $this->loadAllConfigsToCache();//加载缓存
+                return true;
+            });
+        } catch (\Exception $e) {
+            throw new LogicException('保存配置失败: ' . $e->getMessage());
+        }
+    }
     
     /**
      * 清理重复的配置项
@@ -27,6 +79,38 @@ class ConfigLogic extends BaseLogic
         $this->clearByField('module');
         // 2. 按 group_id 分组清理
         $this->clearByField('group_id');
+    }
+    
+    /**
+     * 清除配置缓存，用于当配置发生变更时调用
+     * @return void
+     */
+    public static function clearConfigCache(): void
+    {
+        Cache::delete('all_system_configs');
+    }
+    
+    /**
+     * 将所有配置项加载到缓存中
+     * @return mixed
+     * @throws \Throwable
+     */
+    public function loadAllConfigsToCache(): mixed
+    {
+        // 构建缓存键
+        $cacheKey = 'all_system_configs';
+        // 如果缓存中没有，则从数据库加载并设置缓存
+        return Cache::remember($cacheKey, function () {
+            $configs = SystemConfig::field('name, module, value')
+                ->select()
+                ->toArray();
+            // 转换为所需的结构
+            $formattedConfigs = [];
+            foreach ($configs as $config) {
+                $formattedConfigs[$config['module']][$config['name']] = $config['value'];
+            }
+            return $formattedConfigs;
+        }, 7200);
     }
     
     /**
@@ -81,58 +165,6 @@ class ConfigLogic extends BaseLogic
     }
     
     /**
-     * @param $gid
-     * @return array
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\DbException
-     * @throws \think\db\exception\ModelNotFoundException
-     */
-    public function getListByGroup($gid): array
-    {
-        return SystemConfig::where('group_id', $gid)->where(['status' => 1])->order(['list' => 'desc', 'id' => 'asc'])->select()->each(function ($item) {
-            $item['label'] = $item['title'];
-        })->toArray();
-    }
-    
-    /**
-     * 保存配置项
-     *
-     * @param array $data 提交的数据
-     * @return bool
-     * @throws LogicException
-     */
-    public function saveConfig(array $data): bool
-    {
-        try {
-            // 使用 \think\db::transaction() 包裹事务逻辑
-            return $this->transaction(function () use ($data) {
-                // 清理重复的配置项
-                $this->clearDuplicates();
-                
-                // 遍历提交的数据并保存
-                foreach ($data as $key => $value) {
-                    if ($key === 'group_id') {
-                        continue;  // 跳过 group_id，因为它不是配置项的 name
-                    }
-                    
-                    // 查找是否存在该 name 的配置项
-                    $config = SystemConfig::where(['name' => $key, 'group_id' => $data['group_id']])->findOrEmpty();
-                    // 如果存在，更新现有记录
-                    if (!$config->isEmpty()) {
-                        $config->save(['value' => $value]);
-                    }
-                }
-                $this->clearConfigCache();     //清理缓存
-                $this->loadAllConfigsToCache();//加载缓存
-                return true;
-            });
-        } catch (\Exception $e) {
-            throw new LogicException('保存配置失败: ' . $e->getMessage());
-        }
-    }
-    
-    
-    /**
      * 根据名称获取配置值，名称可以是单个名称或 "module.name" 的形式
      * 如果 name 为空，则返回所有配置数据
      * @param string|null $name 配置名称或 "module.name" 或 null
@@ -165,37 +197,5 @@ class ConfigLogic extends BaseLogic
         
         // 尝试从缓存中获取特定模块和名称的配置值
         return $allConfigs[$module][$name] ?? $default;
-    }
-    
-    /**
-     * 将所有配置项加载到缓存中
-     * @return mixed
-     * @throws \Throwable
-     */
-    public function loadAllConfigsToCache(): mixed
-    {
-        // 构建缓存键
-        $cacheKey = 'all_system_configs';
-        // 如果缓存中没有，则从数据库加载并设置缓存
-        return Cache::remember($cacheKey, function () {
-            $configs = SystemConfig::field('name, module, value')
-                ->select()
-                ->toArray();
-            // 转换为所需的结构
-            $formattedConfigs = [];
-            foreach ($configs as $config) {
-                $formattedConfigs[$config['module']][$config['name']] = $config['value'];
-            }
-            return $formattedConfigs;
-        }, 7200);
-    }
-    
-    /**
-     * 清除配置缓存，用于当配置发生变更时调用
-     * @return void
-     */
-    public static function clearConfigCache(): void
-    {
-        Cache::delete('all_system_configs');
     }
 }

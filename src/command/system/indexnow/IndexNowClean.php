@@ -1,12 +1,13 @@
 <?php
 
+
 namespace app\command\system\indexnow;
 
-use think\console\Command;
 use think\console\Input;
 use think\console\Output;
-use think\db\exception\DataNotFoundException;
+use think\console\Command;
 use think\db\exception\DbException;
+use think\db\exception\DataNotFoundException;
 use think\db\exception\ModelNotFoundException;
 
 class IndexNowClean extends Command
@@ -19,7 +20,7 @@ class IndexNowClean extends Command
      * @var string
      */
     protected string $upJsonField = 'index_now';
-
+    
     /**
      * 配置消息指令
      */
@@ -27,8 +28,8 @@ class IndexNowClean extends Command
     {
         $this->setName('indexnow:clean');
     }
-
-
+    
+    
     /**
      * @param Input $input
      * @param Output $output
@@ -53,8 +54,8 @@ class IndexNowClean extends Command
                 })->update($up_data);
                 $output->info("模块:{$module} 模型:{$model['title']} 模型id:{$model['id']} 状态修改成功");
             }
-
+            
         }
-
+        
     }
 }

@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+
 namespace app\admin\system;
 
 use think\App;
@@ -11,7 +12,7 @@ use app\common\controllers\BaseAdmin;
 class Feedback extends BaseAdmin
 {
     use CrudTrait;
-
+    
     public function __construct(App $app)
     {
         parent::__construct($app);
@@ -19,7 +20,7 @@ class Feedback extends BaseAdmin
         $this->app->config->load('extra/feedback', 'feedback'); // 加载反馈配置
         $this->setParams();
     }
-
+    
     protected function setParams(): void
     {
         $this->tables['tips'] = '反馈类型 需在项目配置文件/config/extra/feedback.php中进行设置';
@@ -54,7 +55,7 @@ class Feedback extends BaseAdmin
             [
                 'field' => 'status',
                 'title' => '状态',
-                'templet' => 'switch'
+                'templet' => 'switch',
             ],
             [
                 'field' => 'create_time',
@@ -74,7 +75,7 @@ class Feedback extends BaseAdmin
                 'type' => 'textarea',
             ],
         ];
-
+        
         // 定义表单字段
         $this->forms['fields'] = [
             [
@@ -86,7 +87,7 @@ class Feedback extends BaseAdmin
                 'type' => 'text',
                 'name' => 'contact_info',
                 'label' => '联系方式',
-                'help' => '联系方式 (如邮箱、电话等)'
+                'help' => '联系方式 (如邮箱、电话等)',
             ],
             [
                 'type' => 'select',
@@ -115,7 +116,7 @@ class Feedback extends BaseAdmin
                 'label' => '处理时间',
             ],
         ];
-
+        
         // 定义搜索条件
         $this->search = [
             'id#=#id',
@@ -128,7 +129,7 @@ class Feedback extends BaseAdmin
             'contact_info#like#contact_info',
         ];
     }
-
+    
     /**
      * 处理列表数据
      * @param array $data
@@ -139,7 +140,7 @@ class Feedback extends BaseAdmin
         // 获取配置中的反馈类别
         $feedbackConfig = $this->app->config->get('feedback', []);
         $categories = $feedbackConfig['category'] ?? [];
-
+        
         // 确保 data['data'] 存在并且是一个数组
         if (isset($data['data']) && is_array($data['data'])) {
             foreach ($data['data'] as &$v) {
@@ -149,7 +150,7 @@ class Feedback extends BaseAdmin
                 } else {
                     $v['category_name'] = '未知类别'; // 默认值，当 category 未找到时
                 }
-
+                
                 // 如果有处理人ID，设置处理人的信息（假设有一个获取用户信息的方法）
             }
             unset($v); // 解除引用

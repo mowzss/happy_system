@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+
 namespace app\home\index;
 
 use PDO;
@@ -347,5 +348,5 @@ class Install extends Controller
         ]);
     }
     
-    
+
 }

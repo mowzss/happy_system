@@ -1,5 +1,6 @@
 <?php
 
+
 namespace think\oauth\driver;
 
 use think\Exception;

@@ -1,5 +1,6 @@
 <?php
 
+
 namespace app\command\system\indexnow;
 
 use think\facade\Log;
@@ -108,6 +109,22 @@ class IndexNowPush extends Command
     }
     
     /**
+     * 创建内容链接
+     * @param string $module
+     * @param $data
+     * @return array|string[]
+     */
+    
+    private function createContentUrl(string $module, $data): array
+    {
+        $urls = [];
+        foreach ($data as $value) {
+            $urls[] = $this->domain . urls($module . '/details/index', ['id' => $value['id']]);
+        }
+        return $urls;
+    }
+    
+    /**
      * 更新记录
      * @param $data
      * @param string $content_table
@@ -130,21 +147,5 @@ class IndexNowPush extends Command
                 ->update($up_data);
             $this->output->info("正在更新数据库记录--[{$value['id']}]成功");
         }
-    }
-    
-    /**
-     * 创建内容链接
-     * @param string $module
-     * @param $data
-     * @return array|string[]
-     */
-    
-    private function createContentUrl(string $module, $data): array
-    {
-        $urls = [];
-        foreach ($data as $value) {
-            $urls[] = $this->domain . urls($module . '/details/index', ['id' => $value['id']]);
-        }
-        return $urls;
     }
 }

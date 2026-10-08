@@ -1,5 +1,6 @@
 <?php
 
+
 namespace app\admin\system;
 
 use think\App;
@@ -11,7 +12,7 @@ use app\common\controllers\BaseAdmin;
 class Sitemap extends BaseAdmin
 {
     use CrudTrait;
-
+    
     /**
      * @var string
      */
@@ -21,7 +22,7 @@ class Sitemap extends BaseAdmin
      * @var array
      */
     protected array $default_order = [
-        'create_time' => 'desc'
+        'create_time' => 'desc',
     ];
     /**
      * @var array|string[]
@@ -30,26 +31,26 @@ class Sitemap extends BaseAdmin
         'content' => '内容',
         'column' => '栏目',
         'tag' => '标签',
-        'sitemap' => '索引'
+        'sitemap' => '索引',
     ];
     protected array $type_name = [
-        'xml' => 'XML地图', 'txt' => 'TXT地图', 'html' => 'HTML地图', 'index_xml' => 'XML索引'
+        'xml' => 'XML地图', 'txt' => 'TXT地图', 'html' => 'HTML地图', 'index_xml' => 'XML索引',
     ];
     /**
      * 模块列表
      * @var array
      */
     protected array $modules;
-
+    
     public function __construct(SystemSitemap $model, App $app)
     {
         parent::__construct($app);
         $this->model = $model;
         $this->modules = (new SystemModule())->column('title', 'dir');
         $this->setParams();
-
+        
     }
-
+    
     /**
      * @return void
      */
@@ -68,7 +69,7 @@ class Sitemap extends BaseAdmin
                     'field' => 'module',
                     'title' => '模块',
                     'width' => 160,
-                    'align' => 'content'
+                    'align' => 'content',
                 ], [
                     'field' => 'class',
                     'title' => '数据源',
@@ -81,24 +82,24 @@ class Sitemap extends BaseAdmin
                     'field' => 'type',
                     'title' => '类型',
                     'width' => 120,
-
+                
                 ], [
                     'field' => 'create_time',
                     'title' => '生成时间',
                     'width' => 160,
-
-                ]
+                
+                ],
             ],
             'top_button' => [
-                ['event' => 'del']
-
+                ['event' => 'del'],
+            
             ],
             'right_button' => [
-                ['event' => 'del']
-            ]
-
+                ['event' => 'del'],
+            ],
+        
         ];
-
+        
         $this->forms = [
             'fields' => [
                 [
@@ -106,7 +107,7 @@ class Sitemap extends BaseAdmin
                     'name' => 'module',
                     'label' => '模块',
                     'options' => $this->modules,
-                    'required' => true
+                    'required' => true,
                 ], [
                     'type' => 'select',
                     'name' => 'class',
@@ -119,14 +120,14 @@ class Sitemap extends BaseAdmin
                     'label' => '类型',
                     'options' => $this->type_name,
                     'required' => true,
-                ]
-            ]
+                ],
+            ],
         ];
         $this->search = [
-            'id#=#id', 'module#like#name', 'class#=#class', 'type#=#type', 'create_time#between#create_time'
+            'id#=#id', 'module#like#name', 'class#=#class', 'type#=#type', 'create_time#between#create_time',
         ];
     }
-
+    
     /**
      * 处理列表数据
      * @param $data
@@ -134,7 +135,7 @@ class Sitemap extends BaseAdmin
      */
     protected function _index_list_filter(&$data): void
     {
-
+        
         foreach ($data['data'] as &$vo) {
             $vo['class'] = $this->class_name[$vo['class']] ?? '未知数据';
             $vo['type'] = $this->type_name[$vo['type']] ?? '未知类型';
@@ -145,6 +146,6 @@ class Sitemap extends BaseAdmin
             }
         }
     }
-
+    
 
 }

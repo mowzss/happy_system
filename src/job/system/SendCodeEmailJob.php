@@ -1,10 +1,10 @@
 <?php
 
+
 namespace app\job\system;
 
-
-use app\common\util\SendMailUtil;
 use think\queue\Job;
+use app\common\util\SendMailUtil;
 
 class SendCodeEmailJob
 {
@@ -24,11 +24,11 @@ class SendCodeEmailJob
             $job->delete();
             $job->failed(throw new \Exception('Invalid data passed to SendCodeEmailJob.'));
         }
-
+        
         try {
             // 初始化邮件工具类
             $mailUtil = new SendMailUtil();
-
+            
             // 发送验证码邮件
             if ($mailUtil->sendVerificationCode($data['email'], $data['code'], $data['subject'] ?? '注意查收！您申请的验证码')) {
                 $job->delete(); // 如果发送成功，删除任务
@@ -46,7 +46,7 @@ class SendCodeEmailJob
             } else {
                 $job->release(5); // 延迟5秒重试
             }
-
+            
         }
     }
 }

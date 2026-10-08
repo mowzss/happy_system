@@ -1,14 +1,15 @@
 <?php
 declare(strict_types=1);
 
+
 namespace app\logic\system;
 
-use app\model\system\SystemLinks;
-use happy\admin\libs\BaseLogic;
-use think\db\exception\DataNotFoundException;
-use think\db\exception\DbException;
-use think\db\exception\ModelNotFoundException;
 use think\db\Query;
+use happy\admin\libs\BaseLogic;
+use app\model\system\SystemLinks;
+use think\db\exception\DbException;
+use think\db\exception\DataNotFoundException;
+use think\db\exception\ModelNotFoundException;
 
 class LinksLogic extends BaseLogic
 {

@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+
 namespace app\service;
 
 use think\facade\Queue;
@@ -30,26 +31,6 @@ class CommonService extends \think\Service
     }
     
     /**
-     * 注册中间件
-     * @return void
-     */
-    private function registerMiddleware(): void
-    {
-        $this->app->middleware->add(MobileBrowseMiddleware::class);
-    }
-    
-    /**
-     * 注册事件
-     * @return void
-     */
-    private function registerEvent(): void
-    {
-        $this->app->event->listen('HomeControllerInit', function () {
-            $this->registerSpidersLog();
-        });
-    }
-    
-    /**
      * 注册命令行
      * @return void
      */
@@ -67,6 +48,26 @@ class CommonService extends \think\Service
             UploadStaticToCloud::class,
             NavRestNodeUrl::class,
         ]);
+    }
+    
+    /**
+     * 注册事件
+     * @return void
+     */
+    private function registerEvent(): void
+    {
+        $this->app->event->listen('HomeControllerInit', function () {
+            $this->registerSpidersLog();
+        });
+    }
+    
+    /**
+     * 注册中间件
+     * @return void
+     */
+    private function registerMiddleware(): void
+    {
+        $this->app->middleware->add(MobileBrowseMiddleware::class);
     }
     
     /**

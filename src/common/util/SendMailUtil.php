@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+
 namespace app\common\util;
 
 use think\Exception;
@@ -22,16 +23,16 @@ class SendMailUtil
     protected string $body = '';
     protected bool $isHtml = false;
     protected array $attachments = [];
-
+    
     public function __construct()
     {
         // 初始化配置
         $this->getConfig();
-
+        
         // 初始化 PHPMailer
         $this->mail = new PHPMailer(true);
     }
-
+    
     /**
      * 获取邮件服务器配置.
      *
@@ -56,7 +57,7 @@ class SendMailUtil
             throw new MailException('获取邮件服务器配置失败:' . $e->getMessage());
         }
     }
-
+    
     /**
      * 设置发件人信息.
      *
@@ -70,7 +71,7 @@ class SendMailUtil
         $this->fromName = $name ?? $this->fromName;
         return $this;
     }
-
+    
     /**
      * 添加收件人.
      *
@@ -89,7 +90,7 @@ class SendMailUtil
         }
         return $this;
     }
-
+    
     /**
      * 设置邮件主题.
      *
@@ -101,7 +102,7 @@ class SendMailUtil
         $this->subject = $subject;
         return $this;
     }
-
+    
     /**
      * 设置邮件正文.
      *
@@ -115,7 +116,7 @@ class SendMailUtil
         $this->isHtml = $isHtml;
         return $this;
     }
-
+    
     /**
      * 添加附件.
      *
@@ -128,7 +129,7 @@ class SendMailUtil
         $this->attachments[] = ['path' => $path, 'name' => $name];
         return $this;
     }
-
+    
     /**
      * 发送验证码邮件.
      *
@@ -143,10 +144,10 @@ class SendMailUtil
         $this->setSubject($subject)
             ->addTo($email)
             ->setBody("您的验证码是: $code", false);
-
+        
         return $this->send();
     }
-
+    
     /**
      * 发送邮件.
      *
@@ -164,30 +165,30 @@ class SendMailUtil
             $this->mail->Password = $this->config['password'];
             $this->mail->SMTPSecure = $this->config['smtp_secure'];
             $this->mail->Port = $this->config['port'];
-
+            
             // 发件人
             $this->mail->setFrom($this->fromEmail, $this->fromName);
-
+            
             // 收件人
             foreach ($this->toEmails as $recipient) {
                 $this->mail->addAddress($recipient['email'], $recipient['name']);
             }
-
+            
             // 主题
             $this->mail->Subject = $this->subject;
-
+            
             // 正文
             $this->mail->isHTML($this->isHtml);
             $this->mail->Body = $this->body;
-
+            
             // 附件
             foreach ($this->attachments as $attachment) {
                 $this->mail->addAttachment($attachment['path'], $attachment['name']);
             }
-
+            
             // 清除所有收件人、附件等
             $this->clear();
-
+            
             return $this->mail->send();
         } catch (MailException $e) {
             Log::error('邮件发送失败:' . $e->getMessage());
@@ -195,7 +196,7 @@ class SendMailUtil
             throw new Exception($e->getMessage(), $e->getCode(), $e->getPrevious());
         }
     }
-
+    
     /**
      * 清除当前实例中的所有收件人、附件等.
      */

@@ -1,5 +1,6 @@
 <?php
 // [ 应用入口文件 ]
+
 namespace think;
 
 use happy\admin\libs\Run;

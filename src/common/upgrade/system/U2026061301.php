@@ -1,5 +1,6 @@
 <?php
 
+
 namespace app\common\upgrade\system;
 
 use app\model\system\SystemConfig;
@@ -33,7 +34,7 @@ class U2026061301
                 'options' => '',
                 'help' => '填写域名，需要包含http://或https:// 无需/结尾',
                 'value' => '',
-                'extend' => NULL,
+                'extend' => null,
                 'list' => '0',
                 'module' => 'system',
                 'status' => '1',
@@ -45,7 +46,7 @@ class U2026061301
                 'options' => '0|否' . PHP_EOL . '1|是',
                 'help' => '是否使用手机版独立域名访问',
                 'value' => '0',
-                'extend' => NULL,
+                'extend' => null,
                 'list' => '0',
                 'module' => 'system',
                 'status' => '1',
@@ -57,7 +58,7 @@ class U2026061301
                 'options' => '0|否' . PHP_EOL . '1|是',
                 'help' => '开启重定向后，pc端访问手机版域名时，将自动重定向到pc端域名',
                 'value' => '0',
-                'extend' => NULL,
+                'extend' => null,
                 'list' => '0',
                 'module' => 'system',
                 'status' => '1',
@@ -65,5 +66,5 @@ class U2026061301
         ]);
     }
     
-    
+
 }

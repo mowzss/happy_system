@@ -1,6 +1,7 @@
 <?php
 declare (strict_types=1);
 
+
 namespace app\common\traits;
 
 use think\Model;
@@ -120,21 +121,11 @@ trait CrudTrait
     }
     
     /**
-     * 绑定get
-     * @return array
+     * @return bool
      */
-    protected function bulidWhere(): array
+    protected function isLayTable(): bool
     {
-        $get = $this->request->param();
-        $where = [];
-        foreach ($this->search as $config) {
-            // 拆分配置字符串
-            [$fields, $operator, $paramKey] = explode('#', $config);
-            if (isset($get[$paramKey])) {
-                $where[$paramKey] = $get[$paramKey];
-            }
-        }
-        return $where;
+        return $this->request->isAjax() && ($this->request->param('out') == 'json' || $this->request->header('out') == 'json');
     }
     
     /**
@@ -187,6 +178,130 @@ trait CrudTrait
         }
         // 返回修改后的模型实例
         return $model;
+    }
+    
+    /**
+     * 设置列表的排序规则
+     *
+     * @param Query|Model $query 查询构建器对象
+     * @param array $params 请求参数
+     * @return Query|Model
+     */
+    protected function setListOrder(Query|Model $query, array $params): Model|Query
+    {
+        // 获取排序参数
+        $orderField = $params['_order'] ?? 'id';                                // 默认按 list 排序
+        $orderBy = strtolower($params['_by'] ?? '') === 'asc' ? 'asc' : 'desc'; // 默认降序
+        
+        // 设置默认排序
+        $defaultOrder = $this->default_order ?? ['id' => 'desc'];
+        
+        // 如果提供了自定义排序，则覆盖默认排序
+        if (!empty($orderField)) {
+            $defaultOrder = [$orderField => $orderBy];
+        }
+        // 应用排序
+        return $query->order($defaultOrder);
+    }
+    
+    /**
+     * 获取搜索字段
+     * @return array
+     */
+    protected function getSearchFields(): array
+    {
+        $searchFields = [];
+        $formFields = $this->forms['fields'];
+        $searchConfig = $this->search;
+        
+        // 创建一个映射，用于快速查找表单字段
+        $fieldMap = array_column($formFields, null, 'name');
+        
+        // 动态添加缺失的字段，并存储在一个单独的数组中
+        $dynamicFields = [];
+        
+        // 动态添加 status 字段
+        if (!isset($fieldMap['status'])) {
+            $dynamicFields['status'] = [
+                'type' => 'select',
+                'name' => 'status',
+                'label' => '状态',
+                'options' => [1 => '正常', 0 => '待审'],
+            ];
+        }
+        if (!isset($fieldMap['id'])) {
+            $dynamicFields['id'] = [
+                'type' => 'text',
+                'name' => 'id',
+                'label' => 'ID',
+            ];
+        }
+        
+        // 动态添加 create_time 字段
+        if (!isset($fieldMap['create_time'])) {
+            $dynamicFields['create_time'] = [
+                'type' => 'daterange',
+                'name' => 'create_time',
+                'label' => '创建时间',
+            ];
+        }
+        
+        // 动态添加 update_time 字段
+        if (!isset($fieldMap['update_time'])) {
+            $dynamicFields['update_time'] = [
+                'type' => 'daterange',
+                'name' => 'update_time',
+                'label' => '更新时间',
+            ];
+        }
+        
+        // 合并动态字段到 fieldMap 中
+        $fieldMap = array_merge($fieldMap, $dynamicFields);
+        foreach ($searchConfig as $config) {
+            // 拆分配置字符串
+            [$fields, $operator, $paramKey] = explode('#', $config);
+            
+            // 如果是多个字段使用 | 分隔符进行分割
+            $fieldList = explode('|', $fields);
+            foreach ($fieldList as $field) {
+                if (isset($fieldMap[$field])) {
+                    // 复制表单字段并移除 required 属性
+                    $searchField = $fieldMap[$field];
+                    $searchField['name'] = $paramKey;
+                    if (in_array($searchField['type'], ['radio', 'checkbox'])) {
+                        $searchField['type'] = 'select';
+                    }
+                    if (in_array($searchField['type'], ['hidden']) && is_array($searchField['options'])) {
+                        $searchField['type'] = 'select';
+                    }
+                    unset($searchField['required']);
+                    if (in_array($searchField['type'], ['datetime', 'date'])) {
+                        $searchField['type'] = 'daterange';
+                    }
+                    // 添加到搜索字段列表
+                    $searchFields[] = $searchField;
+                }
+            }
+        }
+        return $searchFields;
+    }
+    
+    /**
+     * 绑定get
+     * @return array
+     */
+    protected function bulidWhere(): array
+    {
+        $get = $this->request->param();
+        $where = [];
+        foreach ($this->search as $config) {
+            // 拆分配置字符串
+            [$fields, $operator, $paramKey] = explode('#', $config);
+            if (isset($get[$paramKey])) {
+                $where[$paramKey] = $get[$paramKey];
+            }
+        }
+        return $where;
     }
     
     /**
@@ -381,38 +496,6 @@ trait CrudTrait
     }
     
     /**
-     * @return bool
-     */
-    protected function isLayTable(): bool
-    {
-        return $this->request->isAjax() && ($this->request->param('out') == 'json' || $this->request->header('out') == 'json');
-    }
-    
-    /**
-     * 设置列表的排序规则
-     *
-     * @param Query|Model $query 查询构建器对象
-     * @param array $params 请求参数
-     * @return Query|Model
-     */
-    protected function setListOrder(Query|Model $query, array $params): Model|Query
-    {
-        // 获取排序参数
-        $orderField = $params['_order'] ?? 'id';                                // 默认按 list 排序
-        $orderBy = strtolower($params['_by'] ?? '') === 'asc' ? 'asc' : 'desc'; // 默认降序
-        
-        // 设置默认排序
-        $defaultOrder = $this->default_order ?? ['id' => 'desc'];
-        
-        // 如果提供了自定义排序，则覆盖默认排序
-        if (!empty($orderField)) {
-            $defaultOrder = [$orderField => $orderBy];
-        }
-        // 应用排序
-        return $query->order($defaultOrder);
-    }
-    
-    /**
      * 合并数据 name索引
      * @param array $existing_fields
      * @param array $new_fields
@@ -440,88 +523,6 @@ trait CrudTrait
         }
         
         return $existing_fields;
-    }
-    
-    /**
-     * 获取搜索字段
-     * @return array
-     */
-    protected function getSearchFields(): array
-    {
-        $searchFields = [];
-        $formFields = $this->forms['fields'];
-        $searchConfig = $this->search;
-        
-        // 创建一个映射，用于快速查找表单字段
-        $fieldMap = array_column($formFields, null, 'name');
-        
-        // 动态添加缺失的字段，并存储在一个单独的数组中
-        $dynamicFields = [];
-        
-        // 动态添加 status 字段
-        if (!isset($fieldMap['status'])) {
-            $dynamicFields['status'] = [
-                'type' => 'select',
-                'name' => 'status',
-                'label' => '状态',
-                'options' => [1 => '正常', 0 => '待审'],
-            ];
-        }
-        if (!isset($fieldMap['id'])) {
-            $dynamicFields['id'] = [
-                'type' => 'text',
-                'name' => 'id',
-                'label' => 'ID',
-            ];
-        }
-        
-        // 动态添加 create_time 字段
-        if (!isset($fieldMap['create_time'])) {
-            $dynamicFields['create_time'] = [
-                'type' => 'daterange',
-                'name' => 'create_time',
-                'label' => '创建时间',
-            ];
-        }
-        
-        // 动态添加 update_time 字段
-        if (!isset($fieldMap['update_time'])) {
-            $dynamicFields['update_time'] = [
-                'type' => 'daterange',
-                'name' => 'update_time',
-                'label' => '更新时间',
-            ];
-        }
-        
-        // 合并动态字段到 fieldMap 中
-        $fieldMap = array_merge($fieldMap, $dynamicFields);
-        foreach ($searchConfig as $config) {
-            // 拆分配置字符串
-            [$fields, $operator, $paramKey] = explode('#', $config);
-            
-            // 如果是多个字段使用 | 分隔符进行分割
-            $fieldList = explode('|', $fields);
-            foreach ($fieldList as $field) {
-                if (isset($fieldMap[$field])) {
-                    // 复制表单字段并移除 required 属性
-                    $searchField = $fieldMap[$field];
-                    $searchField['name'] = $paramKey;
-                    if (in_array($searchField['type'], ['radio', 'checkbox'])) {
-                        $searchField['type'] = 'select';
-                    }
-                    if (in_array($searchField['type'], ['hidden']) && is_array($searchField['options'])) {
-                        $searchField['type'] = 'select';
-                    }
-                    unset($searchField['required']);
-                    if (in_array($searchField['type'], ['datetime', 'date'])) {
-                        $searchField['type'] = 'daterange';
-                    }
-                    // 添加到搜索字段列表
-                    $searchFields[] = $searchField;
-                }
-            }
-        }
-        return $searchFields;
     }
     
     /**

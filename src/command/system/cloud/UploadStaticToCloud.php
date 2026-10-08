@@ -1,5 +1,6 @@
 <?php
 
+
 namespace app\command\system\cloud;
 
 
@@ -102,6 +103,20 @@ class UploadStaticToCloud extends Command
         return $fail > 0 ? 1 : 0;
     }
     
+    /**
+     * 更新静态资源版本号
+     * @param Output $output
+     * @return void
+     */
+    private function update_static_version(Output $output): void
+    {
+        $systemConfig = new SystemConfig();
+        if ($systemConfig->where('name', 'static_version')->update(['value' => date('y.md.isH')])) {
+            ConfigLogic::clearConfigCache();
+            $output->info("✅ 更新静态资源版本成功！");
+        }
+    }
+    
     private function getAllFiles(string $dir): array
     {
         $files = [];
@@ -116,19 +131,5 @@ class UploadStaticToCloud extends Command
             }
         }
         return $files;
-    }
-    
-    /**
-     * 更新静态资源版本号
-     * @param Output $output
-     * @return void
-     */
-    private function update_static_version(Output $output): void
-    {
-        $systemConfig = new SystemConfig();
-        if ($systemConfig->where('name', 'static_version')->update(['value' => date('y.md.isH')])) {
-            ConfigLogic::clearConfigCache();
-            $output->info("✅ 更新静态资源版本成功！");
-        }
     }
 }

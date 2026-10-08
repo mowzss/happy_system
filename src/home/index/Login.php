@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+
 namespace app\home\index;
 
 use app\model\user\UserInfo;

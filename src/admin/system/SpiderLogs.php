@@ -1,5 +1,6 @@
 <?php
 
+
 namespace app\admin\system;
 
 use think\App;
@@ -155,5 +156,5 @@ class SpiderLogs extends BaseAdmin
             $vo['url'] = $vo['domain'] . $vo['url'];
         }
     }
-
+    
 }

@@ -1,6 +1,7 @@
 <?php
 declare (strict_types=1);
 
+
 namespace app\common\controllers;
 
 use happy\admin\libs\Controller;

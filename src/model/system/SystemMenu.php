@@ -1,13 +1,14 @@
 <?php
 declare (strict_types=1);
 
+
 namespace app\model\system;
 
+use happy\admin\libs\Model;
+use think\db\exception\DbException;
 use happy\admin\libs\helper\AuthHelper;
 use happy\admin\libs\helper\DataHelper;
-use happy\admin\libs\Model;
 use think\db\exception\DataNotFoundException;
-use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
 
 class SystemMenu extends Model
