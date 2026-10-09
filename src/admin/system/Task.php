@@ -8,6 +8,7 @@ use Cron\CronExpression;
 use app\common\traits\CrudTrait;
 use app\model\system\SystemTasks;
 use app\common\controllers\BaseAdmin;
+use happy\admin\libs\Exception\LibsException;
 
 class Task extends BaseAdmin
 {
@@ -103,6 +104,7 @@ class Task extends BaseAdmin
                     'type' => 'cron',
                     'name' => 'exptime',
                     'label' => 'cron 表达式',
+                    
                     'options' => '',
                     'required' => true,
                     'help' => 'cron表达式，不支持 秒级执行',
@@ -121,18 +123,6 @@ class Task extends BaseAdmin
         $this->search = [
             'id#=#id', 'title#like#name', 'task#=#task', 'status#=#status', 'last_time#between#last_time', 'next_time#between#next_time', 'create_time#between#create_time', 'update_time#between#update_time',
         ];
-    }
-    
-    /**
-     * 处理列表数据
-     * @param $data
-     * @return void
-     */
-    protected function _index_list_filter(&$data): void
-    {
-        foreach ($data['data'] as &$vo) {
-            $vo['exptime_info'] = (new \happy\admin\libs\helper\CronExpressionParserHelper)->parse($vo['exptime']);
-        }
     }
     
     /**
@@ -167,5 +157,21 @@ class Task extends BaseAdmin
         }
         $this->success('运行结果', $nextRuns);
         
+    }
+    
+    /**
+     * 处理列表数据
+     * @param $data
+     * @return void
+     */
+    protected function _index_list_filter(&$data): void
+    {
+        foreach ($data['data'] as &$vo) {
+            try {
+                $vo['exptime_info'] = \happy\admin\libs\helper\CronParserHelper::parse($vo['exptime']);
+            } catch (LibsException $e) {
+                $vo['exptime_info'] = $e->getMessage();
+            }
+        }
     }
 }
