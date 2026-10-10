@@ -14,18 +14,18 @@ use think\db\exception\ModelNotFoundException;
 
 class SiteMap extends Task
 {
-    protected array $sitemap_class = ['content', 'tag'];
     /**
      * 单线程
      * @var bool
      */
     public bool $onOneServer = true;
-    
     public int $expiresAt = 36000;
+    protected array $sitemap_class = ['content', 'tag'];
     
     /**
      * 生成sitemap
      * @return void
+     * @throws \Throwable
      */
     public function handle(): void
     {
