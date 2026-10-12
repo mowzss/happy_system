@@ -75,7 +75,6 @@ class CrudUtil
                 $html .= "<button class=\"{$className}\" {$eventAttr} {$typeAttr}{$extraAttrs}>{$name}</button>";
             }
         }
-        
         return $html;
     }
     
