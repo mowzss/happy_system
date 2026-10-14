@@ -39,7 +39,9 @@ class QqWeb implements DriverInterface
                 'client_id' => $this->config['appid'],
                 'client_secret' => $this->config['appkey'],
                 'code' => $code,
-                'redirect_uri' => urlencode($this->config['redirect_uri']),
+                // 不要手动 urlencode：Http::get 内部用 http_build_query 会统一编码，
+                // 这里再编码一次会造成双重编码，导致 QQ 校验 redirect_uri 不一致
+                'redirect_uri' => $this->config['redirect_uri'],
             ],
             'timeout' => $this->config['timeout'] ?? 10,
         ];
