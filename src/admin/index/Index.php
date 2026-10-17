@@ -127,7 +127,7 @@ class Index extends BaseAdmin
         $this->app->cache->clear();
         Console::call('optimize:route');
         Console::call('optimize:schema');
-        
+        Run::setRun();
         $this->success('清理成功');
     }
     
