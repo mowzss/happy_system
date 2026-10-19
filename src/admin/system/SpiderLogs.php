@@ -67,17 +67,18 @@ class SpiderLogs extends BaseAdmin
                     'field' => 'user_agent',
                     'title' => 'UA',
                     'align' => 'left',
-                
+                    'sort' => true,
                 ], [
                     'field' => 'referer',
                     'title' => 'Referer',
                     'align' => 'left',
+                    'sort' => true,
                 
                 ], [
                     'field' => 'create_time',
                     'title' => '记录时间',
                     'width' => 160,
-                
+                    'sort' => true,
                 ],
             ],
             'top_button' => [
