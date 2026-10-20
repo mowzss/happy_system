@@ -58,27 +58,32 @@ class Task extends BaseAdmin
                 [
                     'field' => 'title',
                     'title' => '任务名称',
-                    'align' => 'content',
+                    'edit' => 'text',
+                    'width' => 140,
                 ], [
                     'field' => 'exptime',
                     'title' => 'cron表达式',
+                    'width' => 140,
                 ], [
                     'field' => 'exptime_info',
                     'title' => '运行周期',
+                    'width' => 140,
                 ], [
                     'field' => 'task',
                     'title' => '任务类/命令',
                     'edit' => 'text',
                 ], [
                     'field' => 'last_time',
-                    'title' => '最后执行',
+                    'title' => '最后执行', 'width' => 160,
                 ], [
                     'field' => 'next_time',
-                    'title' => '下次执行',
+                    'title' => '下次执行', 'width' => 160,
                 ],
                 [
-                    'field' => 'output_msg',
-                    'title' => '输出信息',
+                    'field' => 'count',
+                    'title' => '执行次数',
+                    'width' => 120,
+                    'sort' => true,
                 ],
                 [
                     'field' => 'list',
@@ -95,7 +100,7 @@ class Task extends BaseAdmin
             
             ],
             'right_button' => [
-                ['event' => 'execute', 'title' => '执行', 'icon' => 'layui-icon-play', 'class' => 'layui-btn-xs layui-btn-normal'],
+                //['event' => '', 'type' => 'data-open', 'name' => '执行', 'icon' => 'layui-icon-play', 'class' => 'layui-btn-xs layui-btn-normal'],
                 ['event' => 'edit'],
                 ['event' => 'del'],
             ],
@@ -128,10 +133,17 @@ class Task extends BaseAdmin
                     'label' => '任务参数',
                 ],
                 [
-                    'type' => 'hidden',
+                    'type' => 'datetime',
                     'name' => 'next_time',
                     'label' => '下次执行时间',
-                    'default' => date('Y-m-d H:i:s'),
+                    'value' => date('Y-m-d H:i:s'),
+                ],
+                [
+                    'type' => 'textarea',
+                    'name' => 'output_msg',
+                    'label' => '输出信息',
+                    'disabled' => true,
+                    'value' => '新增状态或当前任务没有执行记录的输出信息',
                 ],
             ],
         ];
