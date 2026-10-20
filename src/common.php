@@ -783,18 +783,12 @@ if (!function_exists('table_exists')) {
      */
     function table_exists(string $tableName, ?string $connection = null): bool
     {
-        try {
-            $db = \think\facade\Db::connect($connection);
-            
-            $config = $db->getConfig();
-            $prefix = $config['prefix'] ?? '';
-            $fullTableName = $prefix . $tableName;
-            $result = $db->query("SHOW TABLES LIKE ?", [$fullTableName]);
-            // 如果结果不为空，则表示表存在
-            return !empty($result);
-        } catch (\Exception $e) {
-            // 捕获异常并返回 false
-            return false;
-        }
+        $db = (new \think\Db)->connect($connection);
+        $config = $db->getConfig();
+        $prefix = $config['prefix'] ?? '';
+        $fullTableName = $prefix . $tableName;
+        $result = $db->query("SHOW TABLES LIKE ?", [$fullTableName]);
+        // 如果结果不为空，则表示表存在
+        return !empty($result);
     }
 }
