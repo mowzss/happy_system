@@ -1,13 +1,16 @@
 <?php
 
+declare (strict_types=1);
 
 namespace app\admin\system;
 
 use think\App;
 use Cron\CronExpression;
+use think\facade\Console;
 use app\common\traits\CrudTrait;
 use app\model\system\SystemTasks;
 use app\common\controllers\BaseAdmin;
+use happy\admin\libs\task\Task as Tasks;
 use happy\admin\libs\Exception\LibsException;
 
 class Task extends BaseAdmin
@@ -74,6 +77,10 @@ class Task extends BaseAdmin
                     'title' => '下次执行',
                 ],
                 [
+                    'field' => 'output_msg',
+                    'title' => '输出信息',
+                ],
+                [
                     'field' => 'list',
                     'title' => '排序',
                     'edit' => 'text',
@@ -88,7 +95,9 @@ class Task extends BaseAdmin
             
             ],
             'right_button' => [
-            
+                ['event' => 'execute', 'title' => '执行', 'icon' => 'layui-icon-play', 'class' => 'layui-btn-xs layui-btn-normal'],
+                ['event' => 'edit'],
+                ['event' => 'del'],
             ],
         
         ];
@@ -118,11 +127,75 @@ class Task extends BaseAdmin
                     'name' => 'data',
                     'label' => '任务参数',
                 ],
+                [
+                    'type' => 'hidden',
+                    'name' => 'next_time',
+                    'label' => '下次执行时间',
+                    'default' => date('Y-m-d H:i:s'),
+                ],
             ],
         ];
         $this->search = [
             'id#=#id', 'title#like#name', 'task#=#task', 'status#=#status', 'last_time#between#last_time', 'next_time#between#next_time', 'create_time#between#create_time', 'update_time#between#update_time',
         ];
+    }
+    
+    /**
+     * 手动执行任务
+     * @return void
+     */
+    public function execute(): void
+    {
+        if (!$this->request->isPost()) {
+            $this->error('请求方式错误');
+        }
+        $id = $this->request->param('id');
+        if (empty($id)) {
+            $this->error('任务ID不能为空');
+        }
+        
+        $taskInfo = $this->model->findOrEmpty($id);
+        if ($taskInfo->isEmpty()) {
+            $this->error('任务不存在');
+        }
+        $taskInfo = $taskInfo->toArray();
+        
+        try {
+            $taskClass = $taskInfo['task'];
+            
+            // 判断是任务类还是命令
+            if (class_exists($taskClass) && is_subclass_of($taskClass, Tasks::class)) {
+                /** @var Tasks $task */
+                $task = $this->app->invokeClass($taskClass, [$taskInfo]);
+                $result = $task->run('manual');
+            } else {
+                // 命令行任务
+                $command = explode(' ', $taskClass);
+                $outputContent = Console::call($command[0], array_slice($command, 1))->fetch();
+                $result = [
+                    'status' => 'success',
+                    'message' => '命令执行完成',
+                    'output' => $outputContent,
+                    'cost_time' => 0,
+                ];
+            }
+            
+            // 更新输出信息到数据库
+            if (!empty($result['output'])) {
+                // 截取前 1000 字符，避免过长
+                $outputMsg = mb_substr($result['output'], 0, 1000);
+                $this->model->where('id', $id)->update(['output_msg' => $outputMsg]);
+            }
+            
+            if ($result['status'] === 'success') {
+                $this->success('任务执行成功', $result);
+            } else {
+                $this->error('任务执行: ' . $result['message'], $result);
+            }
+        } catch (\Throwable $e) {
+            $this->model->where('id', $id)->update(['output_msg' => '执行失败: ' . $e->getMessage()]);
+            $this->error('任务执行失败: ' . $e->getMessage());
+        }
     }
     
     /**
