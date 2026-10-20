@@ -4,6 +4,7 @@
  * 私有助手函数引入
  */
 
+use think\facade\Db;
 use app\logic\system\NavLogic;
 use app\logic\system\LinksLogic;
 use app\logic\system\ConfigLogic;
@@ -783,12 +784,17 @@ if (!function_exists('table_exists')) {
      */
     function table_exists(string $tableName, ?string $connection = null): bool
     {
-        $db = (new \think\Db)->connect($connection);
+        $db = Db::connect($connection);
         $config = $db->getConfig();
         $prefix = $config['prefix'] ?? '';
         $fullTableName = $prefix . $tableName;
-        $result = $db->query("SHOW TABLES LIKE ?", [$fullTableName]);
-        // 如果结果不为空，则表示表存在
+        
+        // SHOW TABLES LIKE 后面是字符串模式，必须用单引号
+        // 转义单引号防止SQL注入
+        $safeTableName = str_replace("'", "''", $fullTableName);
+        
+        $result = $db->query("SHOW TABLES LIKE '{$safeTableName}'");
+        
         return !empty($result);
     }
 }
