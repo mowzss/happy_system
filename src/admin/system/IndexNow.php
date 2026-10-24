@@ -100,4 +100,12 @@ class IndexNow extends BaseAdmin
         }
         $this->error('暂无设置表单信息');
     }
+    
+    public function push()
+    {
+        if ($this->request->isPost()) {
+            $data = $this->request->post();
+        }
+        $this->fetch();
+    }
 }
