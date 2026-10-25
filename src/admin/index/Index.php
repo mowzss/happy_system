@@ -63,6 +63,7 @@ class Index extends BaseAdmin
             'fileinfo' => extension_loaded('fileinfo') ? 'on' : 'off',
             'openssl' => extension_loaded('openssl') ? 'on' : 'off',
             'gd' => extension_loaded('gd') ? 'on' : 'off',
+            'redis' => extension_loaded('redis') ? 'on' : 'off',
         ];
         try {
             $happyModules = ComposerHelper::getPackagesByType();
@@ -90,7 +91,6 @@ class Index extends BaseAdmin
             Run::setRun();
             Console::call('optimize:route');
             Console::call('optimize:schema');
-            
             $this->success('已切换线上模式');
         } else {
             Console::call('clear');
