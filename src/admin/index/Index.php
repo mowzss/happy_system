@@ -123,7 +123,6 @@ class Index extends BaseAdmin
      */
     public function clean(): void
     {
-        Console::call('clear');
         $this->app->cache->clear();
         Console::call('optimize:route');
         Console::call('optimize:schema');
