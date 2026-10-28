@@ -20,7 +20,7 @@ class SiteMap extends Task
      */
     public bool $onOneServer = true;
     public int $expiresAt = 36000;
-    protected array $sitemap_class = ['content', 'tag'];
+    protected array $sitemap_class = ['content'];
     
     /**
      * 生成sitemap
