@@ -780,7 +780,7 @@ if (!function_exists('table_exists')) {
      *
      * @param string $tableName 数据库表名（不带前缀）
      * @param string|null $connection 数据库连接名称（可选）
-     * @return bool
+     * @return bool 表是否存在 存在返回true，不存在返回false
      */
     function table_exists(string $tableName, ?string $connection = null): bool
     {

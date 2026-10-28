@@ -882,7 +882,7 @@ LOCK TABLES `ha_system_tasks` WRITE;
 /*!40000 ALTER TABLE `ha_system_tasks`
     DISABLE KEYS */;
 INSERT INTO `ha_system_tasks`
-VALUES (1, 'indexNow推送', '46 */4 * * *', '\\app\\common\\task\\IndexNow', NULL, 0, 0, NULL, NULL, 1, NULL, 1776861707,
+VALUES (1, 'indexNow推送', '46 */4 * * *', '\\mowzs\\cms\\task\\IndexNow', NULL, 0, 0, NULL, NULL, 1, NULL, 1776861707,
         1776861707);
 /*!40000 ALTER TABLE `ha_system_tasks`
     ENABLE KEYS */;
