@@ -39,7 +39,8 @@
         ".env.home": "stc/.env.home",
         ".env.api": "stc/.env.api",
         "app/service/CommonService.php": "src/service/CommonService.php",
-        "extend/think/oauth": "stc/extend/think/oauth"
+        "extend/think/oauth": "stc/extend/think/oauth",
+        "route/system.php": "stc/route/system.php"
       },
       "copy": {
         "app/provider.php": "src/provider.php",
