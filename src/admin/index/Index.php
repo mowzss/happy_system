@@ -4,16 +4,16 @@ declare (strict_types=1);
 
 namespace app\admin\index;
 
+use app\common\controllers\BaseAdmin;
+use app\model\system\SystemMenu;
+use happy\admin\libs\helper\ComposerHelper;
+use happy\admin\libs\Run;
+use think\db\exception\DataNotFoundException;
+use think\db\exception\DbException;
+use think\db\exception\ModelNotFoundException;
+use think\facade\Console;
 use think\facade\Db;
 use think\response\Json;
-use happy\admin\libs\Run;
-use think\facade\Console;
-use app\model\system\SystemMenu;
-use think\db\exception\DbException;
-use app\common\controllers\BaseAdmin;
-use happy\admin\libs\helper\ComposerHelper;
-use think\db\exception\DataNotFoundException;
-use think\db\exception\ModelNotFoundException;
 
 /**
  * 管理后台首页
@@ -126,9 +126,28 @@ class Index extends BaseAdmin
         $this->app->cache->clear();
         Console::call('optimize:route');
         Console::call('optimize:schema');
+        $path = $this->app->config->get('view.cache_path') ?: $this->app->getRuntimePath() . 'temp';
+        Console::call('clear', ['--path' => $path]);
         Run::setRun();
         $this->success('清理成功');
     }
+
+    /**
+     * 清理模板缓存（runtime/temp 下的编译模板）
+     * @auth true
+     * @return void
+     */
+    public function cleanTemp(): void
+    {
+        $path = $this->app->config->get('view.cache_path') ?: $this->app->getRuntimePath() . 'temp';
+        Console::call('clear', ['--path' => $path]);
+        // 清理 opcode 缓存，确保新模板立即生效
+        if (function_exists('opcache_reset')) {
+            opcache_reset();
+        }
+        $this->success('模板缓存清理成功');
+    }
+
     
     /**
      * 安全退出
