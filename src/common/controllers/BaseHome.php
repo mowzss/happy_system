@@ -33,6 +33,28 @@ class BaseHome extends Base
         }
     }
     
+    /**
+     * 标准化页面 TDK：统一并入 $info 的 seo_title / seo_keywords / seo_description 三个字段
+     * - seo_title 不含品牌词（品牌词由布局 head_title_suffix 块统一输出）
+     * - 回退链：seo_title -> title；seo_keywords -> keywords -> seo_title；seo_description -> description -> content 摘要 -> seo_title
+     * @param array $info
+     * @return array
+     */
+    protected function normalizeSeoInfo(array $info): array
+    {
+        if (empty($info)) {
+            return $info;
+        }
+        $info['seo_title'] = trim((string)($info['seo_title'] ?? '')) ?: trim((string)($info['title'] ?? ''));
+        $info['seo_keywords'] = trim((string)($info['seo_keywords'] ?? '')) ?: trim((string)($info['keywords'] ?? '')) ?: $info['seo_title'];
+        $description = trim((string)($info['seo_description'] ?? '')) ?: trim((string)($info['description'] ?? ''));
+        if ($description === '' && !empty($info['content'])) {
+            $description = (string)get_word(del_html($info['content']), 120);
+        }
+        $info['seo_description'] = $description !== '' ? $description : $info['seo_title'];
+        return $info;
+    }
+
     protected function fetch(string $template = '', array $vars = []): string
     {
         if ($this->request->isAjax()) {
