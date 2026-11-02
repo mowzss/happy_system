@@ -778,15 +778,16 @@ if (!function_exists('seo_head_meta')) {
     /**
      * 统一输出 Open Graph 与 JSON-LD（布局层缺省兜底）
      *
-     * 页面模板自定义了 head_meta 块时不会执行，可用于更精细的输出。
+     * 通过 $type 可拆分输出：'all'(默认) / 'og'(仅 Open Graph+twitter+bytedance) / 'json_ld'(仅结构化数据)
      *
      * @param mixed $info 当前页面实体（详情/栏目/工具配置）
      * @param mixed $list 当前列表数据
      * @param mixed $total 列表总数
      * @param mixed $web_config 全站配置
+     * @param string $type 输出类型：all|og|json_ld
      * @return string
      */
-    function seo_head_meta(mixed $info = [], mixed $list = [], mixed $total = 0, mixed $web_config = []): string
+    function seo_head_meta(mixed $info = [], mixed $list = [], mixed $total = 0, mixed $web_config = [], string $type = 'all'): string
     {
         $toArray = static function (mixed $value): array {
             if (is_array($value)) {
@@ -891,20 +892,29 @@ if (!function_exists('seo_head_meta')) {
             $og['article:published_time'] = $dateIso($info['create_time']);
         }
 
-        $html = '';
+        $ogHtml = '';
         foreach ($og as $property => $content) {
             if ($content === '') {
                 continue;
             }
-            $html .= '<meta property="' . $escape($property) . '" content="' . $escape($content) . '"/>' . "\n";
+            $ogHtml .= '<meta property="' . $escape($property) . '" content="' . $escape($content) . '"/>' . "\n";
         }
         foreach (['title' => $title, 'description' => $description, 'image' => $image] as $name => $content) {
             if ($content === '') {
                 continue;
             }
-            $html .= '<meta name="twitter:' . $escape($name) . '" content="' . $escape($content) . '"/>' . "\n";
+            $ogHtml .= '<meta name="twitter:' . $escape($name) . '" content="' . $escape($content) . '"/>' . "\n";
         }
-        $html .= '<meta name="twitter:card" content="summary_large_image"/>' . "\n";
+        $ogHtml .= '<meta name="twitter:card" content="summary_large_image"/>' . "\n";
+        // 字节跳动搜索：详情页发布/更新时间
+        if ($isDetail) {
+            $published = $dateIso($info['create_time'] ?? '');
+            if ($published !== '') {
+                $ogHtml .= '<meta property="bytedance:published_time" content="' . $escape($published) . '"/>' . "\n";
+                $dateModified = $dateIso($info['update_time'] ?? ($info['create_time'] ?? ''));
+                $ogHtml .= '<meta property="bytedance:updated_time" content="' . $escape($dateModified !== '' ? $dateModified : $published) . '"/>' . "\n";
+            }
+        }
 
         // ---------- JSON-LD ----------
         $organization = [
@@ -1036,11 +1046,19 @@ if (!function_exists('seo_head_meta')) {
             JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
         );
 
-        if ($json === false) {
-            return $html;
+        $jsonLdHtml = $json === false
+            ? ''
+            : '<script type="application/ld+json">' . $json . '</script>' . "\n";
+
+        $type = strtolower($type);
+        if ($type === 'og') {
+            return $ogHtml;
+        }
+        if ($type === 'json_ld' || $type === 'jsonld') {
+            return $jsonLdHtml;
         }
 
-        return $html . '<script type="application/ld+json">' . $json . '</script>' . "\n";
+        return $ogHtml . $jsonLdHtml;
     }
 }
 
