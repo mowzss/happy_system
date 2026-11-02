@@ -127,7 +127,10 @@ class Index extends BaseAdmin
         Console::call('optimize:route');
         Console::call('optimize:schema');
         $path = $this->app->config->get('view.cache_path') ?: $this->app->getRuntimePath() . 'temp';
-        Console::call('clear', ['--path' => $path]);
+        Console::call('clear', ['--path='.$path]);
+        if (function_exists('opcache_reset')) {
+            opcache_reset();
+        }
         Run::setRun();
         $this->success('清理成功');
     }
@@ -140,7 +143,7 @@ class Index extends BaseAdmin
     public function cleanTemp(): void
     {
         $path = $this->app->config->get('view.cache_path') ?: $this->app->getRuntimePath() . 'temp';
-        Console::call('clear', ['--path' => $path]);
+        Console::call('clear', ['--path='.$path]);
         // 清理 opcode 缓存，确保新模板立即生效
         if (function_exists('opcache_reset')) {
             opcache_reset();
