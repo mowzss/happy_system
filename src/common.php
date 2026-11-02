@@ -4,14 +4,14 @@
  * 私有助手函数引入
  */
 
-use think\facade\Db;
-use app\logic\system\NavLogic;
-use app\logic\system\LinksLogic;
 use app\logic\system\ConfigLogic;
+use app\logic\system\LinksLogic;
+use app\logic\system\NavLogic;
 use mowzs\cms\logic\FieldBaseLogic;
-use think\db\exception\DbException;
 use think\db\exception\DataNotFoundException;
+use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
+use think\facade\Db;
 
 if (is_file(__DIR__ . 'function.php')) {
     include_once __DIR__ . 'function.php';
@@ -68,6 +68,7 @@ if (!function_exists('url_with')) {
     /**
      * @param string $url
      * @param array $params
+     * @param array $defaults
      * @return string
      */
     function url_with(string $url = '', array $params = [], $defaults = []): string
@@ -402,20 +403,6 @@ if (!function_exists('format_time')) {
         
         // 如果不需要相对时间格式，直接返回指定格式的日期
         return date($format, $time);
-    }
-}
-if (!function_exists('system_runtime')) {
-    /**
-     * @param bool $html
-     * @return string
-     */
-    function system_runtime(bool $html = false): string
-    {
-        $runtime = number_format(microtime(true) - app()->getBeginTime(), 3, '.', '');
-        if ($html) {
-            return '<!-- Dynamic page generated in ' . $runtime . ' seconds. -->';
-        }
-        return $runtime;
     }
 }
 if (!function_exists('sys_config')) {
