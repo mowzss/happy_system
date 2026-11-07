@@ -42,6 +42,7 @@ class BaseAdmin extends Base
         $keyword = (string)$this->request->param('keyword', '');
         $page = max(1, (int)$this->request->param('page', 1));
         $pageSize = min(100, max(1, (int)$this->request->param('page_size', 20)));
-        $this->success(OptionResolver::searchTableSource($source, $keyword, $page, $pageSize));
+        $autoAdd = (bool)$this->request->param('add', false);
+        $this->success(OptionResolver::searchTableSource($source, $keyword, $page, $pageSize, $autoAdd));
     }
 }
