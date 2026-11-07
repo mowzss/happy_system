@@ -116,4 +116,37 @@ class Module extends BaseAdmin
         
         return $this->fetch();
     }
+
+    /**
+     * 卸载模块
+     * 按模块 info.php 中的 uninstall 声明清理数据表、菜单、配置与模块文件
+     *
+     * @auth true
+     * @return void
+     */
+    public function delete(): void
+    {
+        if (!$this->request->isPost()) {
+            $this->error('请求错误');
+        }
+        $ids = $this->request->param('ids');
+        if (is_null($ids) || $ids === '') {
+            $this->error('id不能为空');
+        }
+        $ids = is_array($ids) ? $ids : [(int)$ids];
+        $records = SystemModule::whereIn('id', $ids)->select();
+        if ($records->isEmpty()) {
+            $this->error('记录不存在');
+        }
+        $done = [];
+        foreach ($records as $record) {
+            try {
+                $result = ModuleLogic::instance()->uninstall((string)$record['dir']);
+                $done[] = $result['module'];
+            } catch (\Throwable $e) {
+                $this->error('卸载失败：' . $e->getMessage());
+            }
+        }
+        $this->success('卸载成功：' . implode('、', $done));
+    }
 }
