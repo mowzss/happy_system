@@ -223,15 +223,19 @@ if (!function_exists('get_word')) {
     /**
      * 截取指定长度的字符串，并在超出长度时添加省略号
      *
-     * @param string $string 需要截取的字符串
+     * @param string|null $string 需要截取的字符串，为空时返回空字符串
      * @param int $length 截取的最大字符数
      * @param bool $more 是否在超出长度时添加省略号，默认为 true
      * @param string $dot 省略号的内容，默认为 '..'
      * @param string $encoding 字符串编码，默认为 'UTF-8'
      * @return string 截取后的字符串
      */
-    function get_word(string $string, int $length, bool $more = true, string $dot = '..', string $encoding = 'UTF-8'): string
+    function get_word(?string $string, int $length, bool $more = true, string $dot = '..', string $encoding = 'UTF-8'): string
     {
+        // 空值（如关联数据缺失、字段为空）直接返回空字符串，避免 TypeError
+        if ($string === null || $string === '') {
+            return '';
+        }
         // 如果字符串长度小于或等于指定长度，直接返回原字符串
         if (mb_strlen($string, $encoding) <= $length) {
             return $string;
