@@ -38,9 +38,6 @@ class Base extends Controller
         if (empty($this->user)) {
             // 访客：允许 ESA 缓存 30 分钟
             header('Cache-Control: public, max-age=3600, s-maxage=3600');
-            $isMobile = $this->request->isMobile();
-            header('X-Device: ' . ($isMobile ? 'mobile' : 'pc'));
-            header('Vary: X-Device');
             if ($this->app->cookie->has('UserToken')) {
                 $this->app->cookie->delete('UserToken');
             }
