@@ -41,6 +41,9 @@ class Base extends Controller
             $isMobile = $this->request->isMobile();
             header('X-Device: ' . ($isMobile ? 'mobile' : 'pc'));
             header('Vary: X-Device');
+            if ($this->app->cookie->has('UserToken')) {
+                $this->app->cookie->delete('UserToken');
+            }
         } else {
             // 登录用户：不允许缓存
             header('Cache-Control: private, no-cache, no-store, must-revalidate, max-age=0');
