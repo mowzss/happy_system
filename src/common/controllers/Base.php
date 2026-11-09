@@ -40,7 +40,7 @@ class Base extends Controller
             header('Cache-Control: public, max-age=3600, s-maxage=3600');
             $isMobile = $this->request->isMobile();
             header('X-Device: ' . ($isMobile ? 'mobile' : 'pc'));
-            header('Vary: Accept-Encoding, X-Device');
+            header('Vary: X-Device');
         } else {
             // 登录用户：不允许缓存
             header('Cache-Control: private, no-cache, no-store, must-revalidate, max-age=0');
