@@ -37,7 +37,10 @@ class Base extends Controller
         $this->user = UserHelper::instance()->getUserInfo();
         if (empty($this->user)) {
             // 访客：允许 ESA 缓存 30 分钟
-            header('Cache-Control: public, max-age=1800, s-maxage=1800');
+            header('Cache-Control: public, max-age=3600, s-maxage=3600');
+            $isMobile = $this->request->isMobile();
+            header('X-Device: ' . ($isMobile ? 'mobile' : 'pc'));
+            header('Vary: Accept-Encoding, X-Device');
         } else {
             // 登录用户：不允许缓存
             header('Cache-Control: private, no-cache, no-store, must-revalidate, max-age=0');
