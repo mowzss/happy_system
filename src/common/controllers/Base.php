@@ -46,6 +46,9 @@ class Base extends Controller
             header('Cache-Control: private, no-cache, no-store, must-revalidate, max-age=0');
             header('Pragma: no-cache');
             header('Expires: -1');
+            if (!$this->app->cookie->has('UserToken')) {
+                $this->app->cookie->forever('UserToken', md5($this->user['id'] . time()));
+            }
         }
         if ($this->app->config->get('happy.installed', false)) {
             $this->web_config = ConfigLogic::instance()->getConfigValue();
