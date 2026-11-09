@@ -4,15 +4,15 @@ declare (strict_types=1);
 
 namespace app\common\controllers;
 
-use happy\admin\libs\Controller;
-use app\logic\system\ConfigLogic;
-use happy\admin\libs\helper\UserHelper;
 use app\common\traits\system\ViewTheme;
+use app\logic\system\ConfigLogic;
+use happy\admin\libs\Controller;
+use happy\admin\libs\helper\UserHelper;
 
 class Base extends Controller
 {
     use ViewTheme;
-    
+
     /**
      * 用户信息
      * @var array|false
@@ -28,13 +28,22 @@ class Base extends Controller
      * @var string
      */
     protected string $sys_module;
-    
+
     protected string $mobile_url;
     protected string $pc_url;
-    
+
     protected function initialize(): void
     {
         $this->user = UserHelper::instance()->getUserInfo();
+        if (empty($this->user)) {
+            // 访客：允许 ESA 缓存 30 分钟
+            header('Cache-Control: public, max-age=1800, s-maxage=1800');
+        } else {
+            // 登录用户：不允许缓存
+            header('Cache-Control: private, no-cache, no-store, must-revalidate, max-age=0');
+            header('Pragma: no-cache');
+            header('Expires: -1');
+        }
         if ($this->app->config->get('happy.installed', false)) {
             $this->web_config = ConfigLogic::instance()->getConfigValue();
         } else {
