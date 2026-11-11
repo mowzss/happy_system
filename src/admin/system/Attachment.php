@@ -8,11 +8,11 @@ use think\App;
 use think\Exception;
 use happy\admin\libs\Forms;
 use think\facade\Filesystem;
+use app\logic\system\ConfigLogic;
 use app\common\traits\CrudTrait;
 use think\db\exception\DbException;
 use app\common\controllers\BaseAdmin;
 use app\model\system\SystemAttachment;
-use League\Flysystem\FilesystemException;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\ModelNotFoundException;
 
@@ -167,10 +167,10 @@ class Attachment extends BaseAdmin
                 $record = $this->model->find($ids);
                 if ($record) {
                     try {
-                        Filesystem::disk($record->driver)->delete($record->path);
+                        $this->deleteObject((string)($record->driver ?: 'local'), (string)$record->path);
                         $record->delete();
                         $this->success('删除成功');
-                    } catch (FilesystemException $e) {
+                    } catch (\Throwable $e) {
                         $this->error('删除失败', $e->getMessage());
                     }
                 } else {
@@ -179,6 +179,39 @@ class Attachment extends BaseAdmin
             }
         } else {
             $this->error('请求错误');
+        }
+    }
+    
+    /**
+     * 删除存储对象（兼容历史记录 driver 写错的情况）
+     *
+     * @param string $driver
+     * @param string $path
+     * @return void
+     * @throws \Throwable
+     */
+    protected function deleteObject(string $driver, string $path): void
+    {
+        if ($path === '') {
+            return;
+        }
+        
+        $current = (string)ConfigLogic::instance()->getConfigValue('storage_driver');
+        // 历史记录的 driver 可能写错，依次尝试记录驱动与当前配置驱动
+        $drivers = array_values(array_unique(array_filter([$driver, $current ?: 'local'])));
+        $error = null;
+        
+        foreach ($drivers as $item) {
+            try {
+                Filesystem::disk($item)->delete($path);
+                return;
+            } catch (\Throwable $e) {
+                $error = $e;
+            }
+        }
+        
+        if ($error) {
+            throw $error;
         }
     }
 }

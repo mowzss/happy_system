@@ -4,6 +4,9 @@ layui.define(['jquery', 'upload', 'layer', 'element', 'sortable'], function (exp
         layer = layui.layer,
         $ = layui.$;
 
+    // 直传配置（由后端注入，local 驱动时 enabled=false 走服务器中转）
+    var DIRECT_CONFIG = JSON.parse('{$direct_config|raw}');
+
     // 上传组件构造函数
     function Uploads(options, callback) {
         this.config = $.extend(true, {}, this.defaults, options);
@@ -15,7 +18,11 @@ layui.define(['jquery', 'upload', 'layer', 'element', 'sortable'], function (exp
 
     // 默认配置
     Uploads.prototype.defaults = {
-        severUrl: "{:urls('save')}", // 请确保此URL正确指向你的服务器端处理接口
+        severUrl: "{:urls('save')}", // 服务器中转上传接口
+        signUrl: DIRECT_CONFIG.signUrl, // 直传签名接口
+        registerUrl: DIRECT_CONFIG.registerUrl, // 直传登记接口
+        direct: DIRECT_CONFIG.enabled, // 是否启用浏览器直传
+        directMaxSize: DIRECT_CONFIG.maxSize,
         multiple: false, // 是否允许多文件上传
         exts: JSON.parse('{$exts|raw|json_encode}').join('|'), // 允许的文件扩展名
         mimes: JSON.parse('{$mimes|raw|json_encode}'),
@@ -34,8 +41,8 @@ layui.define(['jquery', 'upload', 'layer', 'element', 'sortable'], function (exp
         this.config.field = $(this.elem).find('input').attr('name');
         //渲染上传容器
         this.initView()
-        // 初始化上传组件
-        this.initUpload();
+        // 初始化上传组件（第三方存储优先走浏览器直传）
+        this.initUploader();
 
         // 如果是多文件上传且启用了排序功能，则初始化排序
         if (this.config.multiple && this.config.sort) {
@@ -87,6 +94,183 @@ layui.define(['jquery', 'upload', 'layer', 'element', 'sortable'], function (exp
         );
     }
 
+    // 初始化上传组件（第三方存储优先走浏览器直传）
+    Uploads.prototype.initUploader = function () {
+        var that = this;
+        if (!that.config.direct) {
+            that.initUpload();
+            return;
+        }
+        $.ajax({url: that.config.signUrl, type: 'POST', dataType: 'json'})
+            .done(function (res) {
+                if (res && res.code === 0 && res.data && res.data.mode === 'direct') {
+                    that.directInfo = res.data;
+                    that.initDirect();
+                } else {
+                    that.initUpload();
+                }
+            })
+            .fail(function () {
+                that.initUpload();
+            });
+    };
+
+    // 绑定直传文件选择
+    Uploads.prototype.initDirect = function () {
+        var that = this;
+        $(that.elem).off('click.directUpload').on('click.directUpload', '[data-upload]', function (event) {
+            event.preventDefault();
+            that.getFileInput().click();
+        });
+        that.getFileInput();
+    };
+
+    // 获取（并复用）隐藏的文件选择框
+    Uploads.prototype.getFileInput = function () {
+        var that = this;
+        if (that.$fileInput) return that.$fileInput;
+
+        var accept = '';
+        if (that.config.type === 'images') {
+            accept = 'image/*';
+        } else if (that.config.exts) {
+            accept = '.' + String(that.config.exts).split('|').join(',.');
+        }
+
+        var $input = $('<input type="file" style="display:none">');
+        if (that.config.multiple) {
+            $input.attr('multiple', 'multiple');
+        }
+        if (accept) {
+            $input.attr('accept', accept);
+        }
+        $input.on('change', function () {
+            var files = Array.prototype.slice.call(this.files || []);
+            this.value = '';
+            files.forEach(function (file) {
+                that.directUpload(file);
+            });
+        });
+
+        that.$fileInput = $input.appendTo(that.elem);
+        return $input;
+    };
+
+    // 浏览器直传单个文件
+    Uploads.prototype.directUpload = function (file) {
+        var that = this, info = that.directInfo;
+        var ext = file.name.indexOf('.') > -1 ? file.name.split('.').pop().toLowerCase() : '';
+
+        if (info.allowExts && info.allowExts.length && info.allowExts.indexOf(ext) === -1) {
+            layer.msg('不允许的文件类型');
+            return;
+        }
+        if (info.maxSize && file.size > info.maxSize) {
+            layer.msg('文件大小超过限制');
+            return;
+        }
+
+        var key = info.dir + that.randomName() + (ext ? '.' + ext : '');
+        var formData = new FormData();
+        if (info.driver === 'oss') {
+            formData.append('key', key);
+            formData.append('policy', info.policy);
+            formData.append('OSSAccessKeyId', info.accessId);
+            formData.append('signature', info.signature);
+            formData.append('success_action_status', String(info.successActionStatus || 200));
+        } else {
+            formData.append('token', info.token);
+            formData.append('key', key);
+        }
+        // 文件字段必须最后追加
+        formData.append(that.config.field || 'file', file, file.name);
+
+        var xhr = new XMLHttpRequest();
+        layer.load();
+        xhr.onload = function () {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                that.registerDirect(key, file, ext);
+            } else {
+                layer.closeAll('loading');
+                that.relayUpload(file);
+            }
+        };
+        xhr.onerror = function () {
+            layer.closeAll('loading');
+            that.relayUpload(file);
+        };
+        xhr.open('POST', info.host, true);
+        xhr.send(formData);
+    };
+
+    // 直传完成后登记附件
+    Uploads.prototype.registerDirect = function (key, file, ext) {
+        var that = this;
+        $.ajax({
+            url: that.directInfo.registerUrl,
+            type: 'POST',
+            dataType: 'json',
+            data: {path: key, name: file.name, size: file.size, ext: ext}
+        }).done(function (res) {
+            layer.closeAll('loading');
+            if (res && res.code === 0 && res.data) {
+                that.onUploaded(res.data);
+            } else {
+                layer.msg((res && res.msg) || '上传失败');
+            }
+        }).fail(function () {
+            layer.closeAll('loading');
+            layer.msg('上传登记失败');
+        });
+    };
+
+    // 直传失败时回退服务器中转
+    Uploads.prototype.relayUpload = function (file) {
+        var that = this;
+        var formData = new FormData();
+        formData.append(that.config.field || 'file', file, file.name);
+
+        var xhr = new XMLHttpRequest();
+        layer.load();
+        xhr.onload = function () {
+            layer.closeAll('loading');
+            var res = null;
+            try {
+                res = JSON.parse(xhr.responseText);
+            } catch (e) {
+                res = null;
+            }
+            if (res && res.code === 0 && res.data) {
+                that.onUploaded(res.data);
+            } else {
+                layer.msg((res && res.msg) || '上传失败');
+            }
+        };
+        xhr.onerror = function () {
+            layer.closeAll('loading');
+            layer.msg('上传失败');
+        };
+        xhr.open('POST', that.config.severUrl, true);
+        xhr.send(formData);
+    };
+
+    // 上传成功后的统一处理（编辑器回调 + 界面回填）
+    Uploads.prototype.onUploaded = function (data) {
+        if (this.callback) {
+            if (this.config.type === 'images') {
+                this.callback(data.url); // 图片类型只传递 URL
+            } else {
+                this.callback(data.url, data.name); // 文件类型传递 URL 和文件名
+            }
+        }
+        this.addItem(data);
+    };
+
+    // 随机文件名
+    Uploads.prototype.randomName = function () {
+        return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    };
+
     // 初始化上传组件
     Uploads.prototype.initUpload = function () {
         var that = this;
@@ -102,19 +286,7 @@ layui.define(['jquery', 'upload', 'layer', 'element', 'sortable'], function (exp
             done: function (res, index, upload) { // 文件上传成功
                 layer.closeAll('loading'); // 关闭加载动画
                 if (res.code === 0) { // 假设返回code为0表示成功
-                    var data = res.data;
-
-                    // 调用 wangEditor 的回调函数，将文件信息返回给编辑器
-                    if (that.callback) {
-                        if (that.config.type === 'images') {
-                            that.callback(data.url); // 图片类型只传递 URL
-                        } else {
-                            that.callback(data.url, data.name); // 文件类型传递 URL 和文件名
-                        }
-                    }
-
-                    // 继续执行原有的逻辑，更新界面和隐藏字段
-                    that.addItem(data);
+                    that.onUploaded(res.data);
                 } else {
                     layer.msg(res.msg || '上传失败');
                 }
@@ -294,7 +466,7 @@ layui.define(['jquery', 'upload', 'layer', 'element', 'sortable'], function (exp
             var $append = $itemContainer.parent();
             $itemContainer.remove();
             $append.append(html)
-            this.initUpload()
+            this.initUploader()
         } else {
             // 移除整个子节点
             $itemContainer.remove();

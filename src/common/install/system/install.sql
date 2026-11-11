@@ -33,7 +33,7 @@ CREATE TABLE `ha_system_attachment`
     `imagewidth`  int(10) unsigned                                 DEFAULT '0' COMMENT '宽度',
     `imageheight` int(10) unsigned                                 DEFAULT '0' COMMENT '高度',
     `mime`        varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '文件mime类型',
-    `ext`         varchar(4) COLLATE utf8mb4_unicode_ci   NOT NULL DEFAULT '' COMMENT '文件类型',
+    `ext`         varchar(16) COLLATE utf8mb4_unicode_ci  NOT NULL DEFAULT '' COMMENT '文件类型',
     `size`        int(11) unsigned                        NOT NULL DEFAULT '0' COMMENT '文件大小',
     `md5`         varchar(32) COLLATE utf8mb4_unicode_ci  NOT NULL DEFAULT '' COMMENT '文件md5',
     `sha1`        varchar(40) COLLATE utf8mb4_unicode_ci  NOT NULL DEFAULT '' COMMENT 'sha1 散列值',
