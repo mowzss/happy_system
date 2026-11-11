@@ -129,10 +129,10 @@ VALUES (1, 'storage_driver', 'radio', '存储引擎', 4,
        (20, 'mail_username', 'text', '邮箱账号', 3, '', '', '', NULL, 91, 'system', 1, 1735801302, 1735802304),
        (21, 'mail_password', 'text', '邮箱密码', 3, '', '', '', NULL, 90, 'system', 1, 1735801367, 1735802304),
        (22, 'mail_port', 'text', '端口', 3, '', '', '465', NULL, 99, 'system', 1, 1735801925, 1735802269),
-       (23, 'mail_test', 'radio', '发送测试邮件', 3, '0|不发送\n1|发送', '', '1', NULL, 10, 'system', 1, 1735802080,
+       (23, 'mail_test', 'switchs', '发送测试邮件', 3, '0|不发送\n1|发送', '', '1', NULL, 10, 'system', 1, 1735802080,
         1735804998),
        (24, 'mail_send_user', 'text', '测试收件邮箱', 3, '', '', '', NULL, 5, 'system', 1, 1735802132, 1735804998),
-       (25, 'is_open_site', 'radio', '网站是否开启', 1, '1|开启\n0|关闭', '是否开启站点', '1', NULL, 0, 'system', 1,
+       (25, 'is_open_site', 'switchs', '网站是否开启', 1, '1|开启\n0|关闭', '是否开启站点', '1', NULL, 0, 'system', 1,
         1735962684, 1735974616),
        (26, 'icp_number', 'text', 'ICP备案号', 1, '', '', 'XICP备XXXXX号', NULL, 0, 'system', 1, 1736139836,
         1736139873),
@@ -145,10 +145,10 @@ VALUES (1, 'storage_driver', 'radio', '存储引擎', 4,
        (31, 'sms_code_template', 'text', '验证码模板', 5, '',
         '模板中使用的变量只能是code,如果不是的话,请先修改或者重新申请一个把变量名换用code', '', NULL, 0, 'system', 1,
         1736217219, 1736217219),
-       (32, 'is_reg', 'radio', '开启注册', 2, '1|开启\n0|关闭', '', '0', NULL, 0, 'system', 1, 1736217376, 1736217951),
+       (32, 'is_reg', 'switchs', '开启注册', 2, '1|开启\n0|关闭', '', '0', NULL, 0, 'system', 1, 1736217376, 1736217951),
        (33, 'is_reg_image_code', 'select', '注册图形验证码', 2, '0|关闭\n1|开启\n2|自动（3次失败后开启）', '', '0', NULL,
         0, 'system', 1, 1736217499, 1736217951),
-       (34, 'is_reg_sms_code', 'radio', '注册短信验证码', 2, '0|关闭\n1|开启', '', '0', NULL, 0, 'system', 1,
+       (34, 'is_reg_sms_code', 'switchs', '注册短信验证码', 2, '0|关闭\n1|开启', '', '0', NULL, 0, 'system', 1,
         1736217584, 1736217951),
        (35, 'is_login_image_code', 'select', '登录图形验证码', 2, '0|关闭\n1|开启\n2|自动（三次失败自动开启）', '', '0',
         NULL, 0, 'system', 1, 1736217669, 1736217951),
@@ -174,7 +174,7 @@ VALUES (1, 'storage_driver', 'radio', '存储引擎', 4,
        (43, 'site_domain', 'text', '网站域名', 1, '',
         '尽量填写域名，需要带http://或https:// 命令行等模式下部分服务需使用域名', '', NULL, 0, 'system', 1, 1776861707,
         1776861707),
-       (44, 'is_open', 'radio', '开启推送', 6, '1|开启\n0|关闭', '是否开启IndexNow推送', '', NULL, 1000, 'p_index_now',
+       (44, 'is_open', 'switchs', '开启推送', 6, '1|开启\n0|关闭', '是否开启IndexNow推送', '', NULL, 1000, 'p_index_now',
         1, 1776861707, 1776861707),
        (45, 'open_module', 'checkbox', '开启模块', 6, '\\app\\common\\fun\\system\\SystemModule@getAllModule',
         '选择开启IndexNow推送模块', '', NULL, 800, 'p_index_now', 1, 1776861707, 1776861707),
@@ -192,7 +192,13 @@ VALUES (1, 'storage_driver', 'radio', '存储引擎', 4,
        (50, 'static_local_path', 'text', '本地文件路径', 7, '', '静态文件本地位置 无需public', 'static', NULL, 0,
         'system', 1, 1776861707, 1776861707),
        (51, 'static_version', 'text', '前端资源版本号', 7, '', '适应前端资源缓存，默认上传云存储资源后自动设置版本号',
-        '26.0423.423208', NULL, 0, 'system', 1, 1776861707, 1776861707);
+        '26.0423.423208', NULL, 0, 'system', 1, 1776861707, 1776861707),
+       (52, 'posters_image', 'image', '默认海报图片', 1, '', '系统全局默认海报图片，海报生成时候如果没有设置图片则使用此图片，优先级低于模块默认海报图片', '', NULL, 0, 'system', 1, 1776861707, 1776861707),
+       (53, 'site_wap_domain', 'text', '手机版域名', 8, '', '填写域名，需要包含http://或https:// 无需/结尾', '', NULL, 0, 'system', 1, 1776861707, 1776861707),
+       (54, 'is_wap_domain', 'switchs', '是否使用手机版域名', 8, '0|否\n1|是', '是否使用手机版独立域名访问', '0', NULL, 0, 'system', 1, 1776861707, 1776861707),
+       (55, 'is_wap_domain_dump', 'switchs', '手机版域名是否重定向', 8, '0|否\n1|是', '开启重定向后，pc端访问手机版域名时，将自动重定向到pc端域名', '0', NULL, 0, 'system', 1, 1776861707, 1776861707),
+       (56, 'is_wap_dump_type', 'switchs', '重定向方式', 8, '1|php\n0|JavaScript', '开启重定向后 重定向方案 js需自行在前端实现', '0', NULL, 0, 'system', 1, 1776861707, 1776861707),
+       (57, 'baidu_push_wap_domain', 'text', '百度 PUSH 移动端域名', 9, '', '移动端推送域名，需包含http://或https:// 无需/结尾；必须与百度站长平台中已验证的移动端站点一致', '', NULL, 0, 'system', 1, 1776861707, 1776861707);
 /*!40000 ALTER TABLE `ha_system_config`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -213,7 +219,7 @@ CREATE TABLE `ha_system_config_group`
     `status`   int(11)      DEFAULT '1' COMMENT '状态',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 8
+  AUTO_INCREMENT = 10
   DEFAULT CHARSET = utf8mb4 COMMENT ='设置分组';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -231,7 +237,9 @@ VALUES (1, '基础设置', 1, 'system', 1),
        (4, '存储设置', 1, 'system', 1),
        (5, '短信设置', 1, 'system', 1),
        (6, 'IndexNow推送', 0, 'p_index_now', 1),
-       (7, '前端资源', 1, 'system', 1);
+       (7, '前端资源', 1, 'system', 1),
+       (8, '手机版设置', 1, 'system', 1),
+       (9, 'Api设置', 1, 'system', 1);
 /*!40000 ALTER TABLE `ha_system_config_group`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -647,6 +655,7 @@ CREATE TABLE `ha_system_nav`
     `class`  varchar(512) DEFAULT NULL COMMENT '自定义样式类',
     `list`   int(11)      DEFAULT '0' COMMENT '排序',
     `status` int(11)      DEFAULT '1' COMMENT '状态',
+    `active` varchar(64)  DEFAULT NULL COMMENT '菜单激活标记',
     PRIMARY KEY (`id`),
     KEY `ha_system_nav_dir_index` (`dir`),
     KEY `ha_system_nav_pid_index` (`pid`)
@@ -663,15 +672,15 @@ LOCK TABLES `ha_system_nav` WRITE;
 /*!40000 ALTER TABLE `ha_system_nav`
     DISABLE KEYS */;
 INSERT INTO `ha_system_nav`
-VALUES (1, 0, '首页', 'layui-icon layui-icon-home', 'pc', '/', '_self', '', '', 2, '', 0, 1),
-       (2, 0, '测试栏目', '', 'pc', '/', '_blank', '', '', 2, '', 0, 1),
-       (3, 2, '测试子栏目', '', 'pc', '/', '_blank', '', '', 2, '', 0, 1),
-       (4, 0, '个人信息', 'layui-icon layui-icon-username', 'pc_user', '#', '', '', '', 2, '', 10000, 1),
-       (5, 4, '我的信息', '', 'pc_user', '', '', 'user/index/main', '', 1, '', 1000, 1),
-       (6, 4, '修改资料', '', 'pc_user', '', '', 'user/index/profile', '', 1, '', 0, 1),
-       (7, 4, '修改密码', '', 'pc_user', '', '', 'user/index/pass', '', 1, '', 0, 1),
-       (8, 4, '积分记录', '', 'pc_user', '', '', 'user/points_log/index', '', 1, '', 0, 1),
-       (9, 4, '登录记录', '', 'pc_user', '', '', 'user/login_log/index', '', 1, '', 0, 1);
+VALUES (1, 0, '首页', 'layui-icon layui-icon-home', 'pc', '/', '_self', '', '', 2, '', 0, 1, NULL),
+       (2, 0, '测试栏目', '', 'pc', '/', '_blank', '', '', 2, '', 0, 1, NULL),
+       (3, 2, '测试子栏目', '', 'pc', '/', '_blank', '', '', 2, '', 0, 1, NULL),
+       (4, 0, '个人信息', 'layui-icon layui-icon-username', 'pc_user', '#', '', '', '', 2, '', 10000, 1, NULL),
+       (5, 4, '我的信息', '', 'pc_user', '', '', 'user/index/main', '', 1, '', 1000, 1, NULL),
+       (6, 4, '修改资料', '', 'pc_user', '', '', 'user/index/profile', '', 1, '', 0, 1, NULL),
+       (7, 4, '修改密码', '', 'pc_user', '', '', 'user/index/pass', '', 1, '', 0, 1, NULL),
+       (8, 4, '积分记录', '', 'pc_user', '', '', 'user/points_log/index', '', 1, '', 0, 1, NULL),
+       (9, 4, '登录记录', '', 'pc_user', '', '', 'user/login_log/index', '', 1, '', 0, 1, NULL);
 /*!40000 ALTER TABLE `ha_system_nav`
     ENABLE KEYS */;
 UNLOCK TABLES;
@@ -823,11 +832,17 @@ CREATE TABLE `ha_system_spider_logs`
     `url`         varchar(512)        NOT NULL COMMENT '访问的 URL',
     `ip`          varchar(45)         NOT NULL COMMENT 'IP 地址',
     `module`      varchar(64) DEFAULT NULL COMMENT '模块',
+    `domain`      varchar(255)        NULL DEFAULT NULL COMMENT '抓取域名',
     `user_agent`  text                NOT NULL COMMENT 'User-Agent 字符串',
+    `referer`     varchar(200)        NULL DEFAULT NULL,
+    `device`      int(1)      NOT NULL DEFAULT '0' COMMENT '设备 1pc 2移动',
     `create_time` int(11)     DEFAULT '0',
     PRIMARY KEY (`id`),
     KEY `ha_system_spider_logs_name_index` (`name`),
-    KEY `ha_system_spider_logs_module_index` (`module`)
+    KEY `ha_system_spider_logs_module_index` (`module`),
+    KEY `domain` (`domain`),
+    KEY `referer` (`referer`),
+    KEY `device` (`device`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
