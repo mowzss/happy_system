@@ -209,18 +209,27 @@ class ContentSaveFilterUtil extends UtilBase
      */
     protected function setTag($data): mixed
     {
-        if (empty($data['huati']) && empty($data['tag'])) {
+        // 后台正常提交由 xmselect 提供 tag 关联 id；huati 为 publish/采集传入的文字标签
+        $title = (string)($data['title'] ?? '');
+        $content = (string)($data['content'] ?? '');
+        if (empty($data['huati']) && empty($data['tag']) && ($title !== '' || $content !== '')) {
+            // 无语义内容时不再请求外部接口
             $data['huati'] = (new AipNlp())->getStringTag(
-                $data['title'],
-                get_word(del_html($data['content']), 300)
+                $title,
+                get_word(del_html($content), 300)
             );
         }
         //处理tag
         $tags = [];
         if (!empty($data['huati']) && empty($data['tag'])) {
+            // 显式指定模块，避免静态 module 在跨模块请求中被复用
+            $tagLogic = TagBaseLogic::instance([$this->app->request->layer(true)]);
             $huati = str2arr($data['huati']);
             foreach ($huati as $k => $v) {
-                $tags[$k] = TagBaseLogic::instance()->getTagIdByTitle($v);
+                if ($v === '') {
+                    continue;
+                }
+                $tags[$k] = $tagLogic->getTagIdByTitle($v);
             }
             $data['tag'] = arr2str($tags);
         }
