@@ -101,7 +101,7 @@ layui.define(['jquery', 'upload', 'layer', 'element', 'sortable'], function (exp
             that.initUpload();
             return;
         }
-        $.ajax({url: that.config.signUrl, type: 'POST', dataType: 'json'})
+        $.ajax({ url: that.config.signUrl, type: 'POST', dataType: 'json' })
             .done(function (res) {
                 if (res && res.code === 0 && res.data && res.data.mode === 'direct') {
                     that.directInfo = res.data;
@@ -182,8 +182,10 @@ layui.define(['jquery', 'upload', 'layer', 'element', 'sortable'], function (exp
             formData.append('token', info.token);
             formData.append('key', key);
         }
-        // 文件字段必须最后追加
-        formData.append(that.config.field || 'file', file, file.name);
+        // 文件字段必须最后追加；文件名仅用于 multipart，OSS 对象名由 key 决定。
+        // 避免中文/空格等特殊字符导致 OSS 无法识别文件 part（IncorrectNumberOfFilesInPOSTRequest）
+        var safeName = 'upload_' + that.randomName() + (ext ? '.' + ext : '');
+        formData.append('file', file, safeName);
 
         var xhr = new XMLHttpRequest();
         layer.load();
@@ -210,7 +212,7 @@ layui.define(['jquery', 'upload', 'layer', 'element', 'sortable'], function (exp
             url: that.directInfo.registerUrl,
             type: 'POST',
             dataType: 'json',
-            data: {path: key, name: file.name, size: file.size, ext: ext}
+            data: { path: key, name: file.name, size: file.size, ext: ext }
         }).done(function (res) {
             layer.closeAll('loading');
             if (res && res.code === 0 && res.data) {
@@ -224,11 +226,11 @@ layui.define(['jquery', 'upload', 'layer', 'element', 'sortable'], function (exp
         });
     };
 
-    // 直传失败时回退服务器中转
+    // 直传失败时回退服务器中转（save 接口固定读取 file 字段）
     Uploads.prototype.relayUpload = function (file) {
         var that = this;
         var formData = new FormData();
-        formData.append(that.config.field || 'file', file, file.name);
+        formData.append('file', file, file.name);
 
         var xhr = new XMLHttpRequest();
         layer.load();
