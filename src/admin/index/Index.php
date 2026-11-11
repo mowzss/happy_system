@@ -27,10 +27,10 @@ class Index extends BaseAdmin
      */
     public function index(): string
     {
-        
+
         return $this->fetch();
     }
-    
+
     /**
      * 后台欢迎页
      * @auth true
@@ -71,14 +71,14 @@ class Index extends BaseAdmin
             $this->assign('system_modules', $systemModules);
             $this->assign('happy_modules', $happyModules);
         } catch (\Exception $e) {
-            
+
         }
         $this->assign('is_debug', $this->app->isDebug());
         $this->assign('php_ext', $php_ext);
         $this->assign('system', $system);
         return $this->fetch();
     }
-    
+
     /**
      * 切换运行模式
      * @auth true
@@ -98,7 +98,7 @@ class Index extends BaseAdmin
             $this->success('已切换为调试模式');
         }
     }
-    
+
     /**
      * 管理菜单数据
      * @login true
@@ -115,7 +115,7 @@ class Index extends BaseAdmin
         }
         $this->error('访问方式错误');
     }
-    
+
     /**
      * 清理缓存
      * @auth true
@@ -127,7 +127,7 @@ class Index extends BaseAdmin
         Console::call('optimize:route');
         Console::call('optimize:schema');
         $path = $this->app->config->get('view.cache_path') ?: $this->app->getRuntimePath() . 'temp';
-        Console::call('clear', ['--path='.$path]);
+        Console::call('clear', ['--path=' . $path]);
         if (function_exists('opcache_reset')) {
             opcache_reset();
         }
@@ -143,7 +143,7 @@ class Index extends BaseAdmin
     public function cleanTemp(): void
     {
         $path = $this->app->config->get('view.cache_path') ?: $this->app->getRuntimePath() . 'temp';
-        Console::call('clear', ['--path='.$path]);
+        Console::call('clear', ['--path=' . $path]);
         // 清理 opcode 缓存，确保新模板立即生效
         if (function_exists('opcache_reset')) {
             opcache_reset();
@@ -151,7 +151,7 @@ class Index extends BaseAdmin
         $this->success('模板缓存清理成功');
     }
 
-    
+
     /**
      * 安全退出
      * @login true
