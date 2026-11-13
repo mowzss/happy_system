@@ -5,14 +5,13 @@ declare (strict_types=1);
 namespace app\admin\index;
 
 use app\common\controllers\BaseAdmin;
+use app\logic\system\DashboardLogic;
 use app\model\system\SystemMenu;
-use happy\admin\libs\helper\ComposerHelper;
 use happy\admin\libs\Run;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
 use think\facade\Console;
-use think\facade\Db;
 use think\response\Json;
 
 /**
@@ -32,50 +31,18 @@ class Index extends BaseAdmin
     }
 
     /**
-     * 后台欢迎页
+     * 后台欢迎页（仪表盘）
+     * 数据组装已下沉至 DashboardLogic
      * @auth true
      * @return string
      */
     public function main(): string
     {
-        $system = [
-            //系统信息
-            'info' => php_uname(),
-            //服务器ip
-            'ip' => $this->request->server('server_addr', $this->request->server('local_addr', getHostByName(getHostName()))),
-            //php版本
-            'php_version' => PHP_VERSION,
-            //mysql版本
-            'mysql_version' => Db::query("select version()")[0]['version()'],
-            //运行内存
-            'php_run_memory' => round(memory_get_peak_usage() / 1024 / 1024 / 1024, 6) . 'G',
-            //运行模式
-            'php_sapi' => php_sapi_name(),
-            //运行环境
-            'php_os' => PHP_OS,
-            //thinkphp版本
-            'think_version' => $this->app->version(),
-        ];
-        // PHP 扩展支持状态
-        $php_ext = [
-            'pdo' => extension_loaded('pdo') ? 'on' : 'off',
-            'curl' => extension_loaded('curl') ? 'on' : 'off',
-            'fileinfo' => extension_loaded('fileinfo') ? 'on' : 'off',
-            'openssl' => extension_loaded('openssl') ? 'on' : 'off',
-            'gd' => extension_loaded('gd') ? 'on' : 'off',
-            'redis' => extension_loaded('redis') ? 'on' : 'off',
-        ];
-        try {
-            $happyModules = ComposerHelper::getPackagesByType();
-            $systemModules = ComposerHelper::getPackagesExceptType();
-            $this->assign('system_modules', $systemModules);
-            $this->assign('happy_modules', $happyModules);
-        } catch (\Exception $e) {
-
+        $data = DashboardLogic::instance()->build();
+        foreach ($data as $key => $value) {
+            $this->assign($key, $value);
         }
-        $this->assign('is_debug', $this->app->isDebug());
-        $this->assign('php_ext', $php_ext);
-        $this->assign('system', $system);
+
         return $this->fetch();
     }
 
