@@ -183,7 +183,7 @@ if (!function_exists('get_hello')) {
     }
 }
 if (!function_exists('event_listen')) {
-    
+
     /**
      * @param object|string $event
      * @param mixed $params
@@ -240,18 +240,18 @@ if (!function_exists('get_word')) {
         if (mb_strlen($string, $encoding) <= $length) {
             return $string;
         }
-        
+
         // 解码 HTML 实体，防止截断时破坏 HTML 语法
         $decodedString = htmlspecialchars_decode($string, ENT_QUOTES);
-        
+
         // 使用 mb_substr 截取指定长度的字符串
         $truncatedString = mb_substr($decodedString, 0, $length, $encoding);
-        
+
         // 如果需要添加省略号
         if ($more) {
             $truncatedString .= $dot;
         }
-        
+
         // 重新编码 HTML 实体，确保输出的安全性
         return htmlspecialchars($truncatedString, ENT_QUOTES, $encoding);
     }
@@ -273,7 +273,7 @@ if (!function_exists('del_html')) {
         // 1. 清除 JavaScript 和 CSS 样式
         $content = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', '', $content);  // 清除 <script> 标签
         $content = preg_replace('/<style\b[^>]*>(.*?)<\/style>/is', '', $content);    // 清除 <style> 标签
-        
+
         // 2. 清除所有 HTML 标签，但保留指定的标签
         if (empty($allowedTags)) {
             // 如果没有指定允许的标签，清除所有 HTML 标签
@@ -325,20 +325,20 @@ if (!function_exists('format_view')) {
         if ($int <= 0) {
             return '0';
         }
-        
+
         // 根据浏览量大小进行格式化
         if ($int >= 10000) {
             // 超过 1 万，格式化为 "万"
             $value = $decimals ? round($int / 10000, 1) : round($int / 10000);
             return $value . 'w';
         }
-        
+
         if ($int >= 1000) {
             // 超过 1 千，格式化为 "千"
             $value = $decimals ? round($int / 1000, 1) : round($int / 1000);
             return $value . 'k';
         }
-        
+
         // 小于 1 千，直接返回原始数字
         return (string)$int;
     }
@@ -358,16 +358,16 @@ if (!function_exists('format_time')) {
         if (!is_numeric($time)) {
             $time = strtotime($time);
         }
-        
+
         // 如果时间戳无效，返回空字符串
         if ($time === false) {
             return '';
         }
-        
+
         // 获取当前时间和时间差
         $currentTime = time();
         $timeDifference = $currentTime - intval($time);
-        
+
         // 如果需要相对时间格式
         if ($format === true) {
             // 定义时间间隔单位
@@ -379,7 +379,7 @@ if (!function_exists('format_time')) {
                 'minute' => 60,
                 'second' => 1,
             ];
-            
+
             // 遍历时间间隔单位，找到合适的时间描述
             foreach ($intervals as $unit => $seconds) {
                 if ($timeDifference >= $seconds) {
@@ -400,11 +400,11 @@ if (!function_exists('format_time')) {
                     }
                 }
             }
-            
+
             // 如果时间差小于 60 秒，返回 "刚刚"
             return '刚刚';
         }
-        
+
         // 如果不需要相对时间格式，直接返回指定格式的日期
         return date($format, $time);
     }
@@ -478,20 +478,20 @@ if (!function_exists('hurl')) {
     {
         // 调用 urls 函数生成初始 URL
         $url = urls($url, $vars, $suffix, $domain, '/index.php');
-        
+
         // 解析 URL
         $parsedUrl = parse_url($url);
-        
+
         // 初始化路径
         $path = isset($parsedUrl['path']) ? $parsedUrl['path'] : '';
-        
+
         // 移除 /xxxx.php/ 从路径中
         // 使用正则表达式匹配任何 .php 文件名并移除
         $path = preg_replace('#/[^/]+\.php/#i', '/', $path);
-        
+
         // 重构 URL
         $reconstructedUrl = '';
-        
+
         // 如果有协议和主机（即完整域名），则保留
         if (isset($parsedUrl['scheme']) && isset($parsedUrl['host'])) {
             $reconstructedUrl .= $parsedUrl['scheme'] . '://' . $parsedUrl['host'];
@@ -499,20 +499,20 @@ if (!function_exists('hurl')) {
                 $reconstructedUrl .= ':' . $parsedUrl['port'];
             }
         }
-        
+
         // 添加路径
         $reconstructedUrl .= $path;
-        
+
         // 添加查询参数
         if (isset($parsedUrl['query'])) {
             $reconstructedUrl .= '?' . $parsedUrl['query'];
         }
-        
+
         // 添加片段标识符（#）
         if (isset($parsedUrl['fragment'])) {
             $reconstructedUrl .= '#' . $parsedUrl['fragment'];
         }
-        
+
         return $reconstructedUrl;
     }
 }
@@ -528,7 +528,7 @@ if (!function_exists('urls')) {
      */
     function urls(string $url = '', array|string $vars = [], bool $suffix = true, bool $domain = false, string $root = ''): string
     {
-        
+
         // 分割路径为模块、控制器和方法
         $pathInfo = explode('/', trim($url, '/'));
         $module = '';
@@ -556,7 +556,7 @@ if (!function_exists('urls')) {
         }
         // 构建最终的 URL
         $finalUrl = $module . '/' . $controller . '/' . $action;
-        
+
         if (is_string($vars)) {
             parse_str($vars, $vars);
         }
@@ -564,18 +564,18 @@ if (!function_exists('urls')) {
         if (!empty($root)) {
             // 找到 $a 在 $url 中的位置
             $pos = strpos($uri_info, $root);
-            
+
             if ($pos !== false) {
                 // 截取 $a 之后的部分
                 $afterA = substr($uri_info, $pos + strlen($root));
-                
+
                 // 查找第一个出现的 .php 位置
                 $phpPos = strpos($afterA, '.php');
-                
+
                 if ($phpPos !== false) {
                     // 检查 .php 前是否有一个斜杠
                     $slashBeforePhp = ($phpPos > 0 && $afterA[$phpPos - 1] === '/') ? true : false;
-                    
+
                     // 构建新的 URL
                     if ($slashBeforePhp) {
                         // 如果有斜杠，则从斜杠开始移除，直到 .php 结束
@@ -584,7 +584,7 @@ if (!function_exists('urls')) {
                         // 如果没有斜杠，只移除 .php 部分
                         $newUrl = $root . substr($afterA, $phpPos + 4); // 4 是 '.php' 的长度
                     }
-                    
+
                     return $newUrl;
                 }
             }
@@ -649,7 +649,7 @@ if (!function_exists('dumps')) {
                 }
                 return null;
             }
-            
+
             if (array_key_exists(0, $vars) && 1 === count($vars)) {
                 \Symfony\Component\VarDumper\VarDumper::dump($vars[0]);
                 $k = 0;
@@ -658,38 +658,38 @@ if (!function_exists('dumps')) {
                     \Symfony\Component\VarDumper\VarDumper::dump($v, is_int($k) ? 1 + $k : $k);
                 }
             }
-            
+
             return null;
-            
+
         }
-        
+
         // 回退到原始实现（深度优化版）
         ob_start();
         var_dump(...$vars);
         $output = ob_get_clean();
-        
+
         // 标准化换行符
         $output = preg_replace("/\r\n|\r/", "\n", $output);
-        
+
         // 美化数组箭头格式：将 "]=>\n    " 替换为 "] => "
         $output = preg_replace('/\]\s*=\>\s*\n(\s+)/m', '] => ', $output);
-        
+
         // 进一步美化：处理对象属性的换行问题
         $output = preg_replace('/\s*=>\s*\n(\s+)/m', ' => ', $output);
-        
+
         // 清理每行末尾多余空格
         $output = preg_replace('/[ \t]+$/m', '', $output);
-        
+
         // 去掉开头结尾的空白行
         $output = trim($output);
-        
+
         if (PHP_SAPI === 'cli') {
             $output = PHP_EOL . $output . PHP_EOL;
         } else {
             if (!extension_loaded('xdebug')) {
                 $output = htmlspecialchars($output, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
             }
-            
+
             // Web 页面中更美观的样式
             $output = '<div style="margin: 10px 0; padding: 12px; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; font-family: monospace; font-size: 14px; line-height: 1.4; overflow-x: auto;">' .
                 '<pre style="margin: 0; padding: 0; white-space: pre-wrap; word-break: break-word;">' .
@@ -732,10 +732,10 @@ if (!function_exists('get_lay_table_id')) {
     {
         return 'table-' . md5(request()->url());
     }
-    
+
 }
 if (!function_exists('send_email')) {
-    
+
     /**
      * 发送普通邮件的助手函数.
      *
@@ -799,13 +799,13 @@ if (!function_exists('table_exists')) {
         $config = $db->getConfig();
         $prefix = $config['prefix'] ?? '';
         $fullTableName = $prefix . $tableName;
-        
+
         // SHOW TABLES LIKE 后面是字符串模式，必须用单引号
         // 转义单引号防止SQL注入
         $safeTableName = str_replace("'", "''", $fullTableName);
-        
+
         $result = $db->query("SHOW TABLES LIKE '{$safeTableName}'");
-        
+
         return !empty($result);
     }
 }

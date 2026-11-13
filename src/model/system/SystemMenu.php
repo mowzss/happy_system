@@ -4,11 +4,11 @@ declare (strict_types=1);
 
 namespace app\model\system;
 
-use happy\admin\libs\Model;
-use think\db\exception\DbException;
 use happy\admin\libs\helper\AuthHelper;
 use happy\admin\libs\helper\DataHelper;
+use happy\admin\libs\Model;
 use think\db\exception\DataNotFoundException;
+use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
 
 class SystemMenu extends Model
@@ -19,7 +19,7 @@ class SystemMenu extends Model
             'name' => 'ID',
         ],
     ];
-    
+
     /**
      * 查询后
      * @param $model
@@ -38,7 +38,7 @@ class SystemMenu extends Model
             : $model['node'];
         return $model;
     }
-    
+
     /**
      * 获取系统菜单
      * @param array $where
@@ -56,15 +56,13 @@ class SystemMenu extends Model
             }
             $model['type'] = 1;
             //            $model['openType'] = '_component';
-            $model['href'] = $model['class'] == 1
-                ? urls($model['node'], $model['params'] ?: [])
-                : $model['node'];
+            $model['href'] = $model['class'] == 1 ? urls($model['node'], $model['params'] ?: []) : $model['node'];
             return $model;
         })->toArray();
         // 判断是否为超管账号，如果是，则不进行权限过滤
         if (!AuthHelper::instance()->isAuthAdmin()) {
             $userNodes = AuthHelper::instance()->getUserNodesModule();
-            
+
             // 过滤函数或循环处理
             $filteredMenu = array_filter($menu, function ($item) use ($userNodes) {
                 // 如果 node 是 '#' 或者空字符串，则直接保留该项目
@@ -79,7 +77,7 @@ class SystemMenu extends Model
         }
         return DataHelper::instance()->arrToTree($menu);
     }
-    
+
     /**
      * @param array $where
      * @return array
