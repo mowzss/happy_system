@@ -44,17 +44,17 @@ class DashboardLogic extends BaseLogic
     /**
      * 组装后台首页完整数据
      *
+     * 完全不缓存。dashboard 各数据源本身已有缓存（SpiderLogic 查询缓存、
+     * 表元数据 schema 缓存等），DashboardLogic 自身再包一层缓存容易导致：
+     * 1) 某次请求 SpiderLogic 异常 → 空 spider 数据被缓存 → 后续整分钟全坏
+     * 2) 菜单/模块数变化后需要等缓存过期才生效
+     * 单次请求开销可忽略，直接实时组装。
+     *
      * @return array
      */
     public function build(): array
     {
-        $cacheKey = 'admin_dashboard_' . date('YmdHi');
-        $cached = $this->app->cache->get($cacheKey);
-        if (is_array($cached)) {
-            return $cached;
-        }
-
-        $data = [
+        return [
             'overview'    => $this->buildOverview(),
             'content'     => $this->buildContentStats(),
             'system'      => $this->buildSystemInfo(),
@@ -64,10 +64,6 @@ class DashboardLogic extends BaseLogic
             'composer'    => $this->buildComposer(),
             'is_debug'    => $this->app->isDebug(),
         ];
-
-        $this->app->cache->set($cacheKey, $data, self::CACHE_TTL);
-
-        return $data;
     }
 
     /**
@@ -297,12 +293,77 @@ class DashboardLogic extends BaseLogic
             $items[] = [
                 'title' => $row['title'],
                 'node'  => $node,
-                'icon'  => $row['icon'] ?? 'layui-icon layui-icon-console',
+                'icon'  => $this->resolveMenuIcon($row['icon'] ?? '', $node, $row['title'] ?? ''),
                 'url'   => aurl($node),
             ];
         }
 
         return $items;
+    }
+
+    /**
+     * 菜单 icon 兜底：数据库 icon 为空时，根据 node 前缀/标题语义给一个 layui-icon
+     *
+     * @param string $dbIcon  数据库原始 icon 值
+     * @param string $node    节点字符串，如 system/attachment/index
+     * @param string $title   菜单标题
+     * @return string
+     */
+    protected function resolveMenuIcon(string $dbIcon, string $node, string $title): string
+    {
+        if (trim($dbIcon) !== '') {
+            return $dbIcon;
+        }
+
+        // 根据 node 路径关键词猜图标
+        $node = strtolower($node);
+        $rules = [
+            '/user/'           => 'layui-icon layui-icon-username',
+            '/attachment/'     => 'layui-icon layui-icon-folder',
+            '/spider/'         => 'layui-icon layui-icon-bot',
+            '/operationlog|log/' => 'layui-icon layui-icon-log',
+            '/sitemap/'        => 'layui-icon layui-icon-website',
+            '/task/'           => 'layui-icon layui-icon-time',
+            '/feedback/'       => 'layui-icon layui-icon-about',
+            '/links/'          => 'layui-icon layui-icon-link',
+            '/config/'         => 'layui-icon layui-icon-set',
+            '/setting/'        => 'layui-icon layui-icon-set',
+            '/module/'         => 'layui-icon layui-icon-component',
+            '/menu/'           => 'layui-icon layui-icon-list',
+            '/nav/'            => 'layui-icon layui-icon-website',
+            '/event/'          => 'layui-icon layui-icon-rate-half',
+            '/indexnow/'       => 'layui-icon layui-icon-release',
+            '/group/'          => 'layui-icon layui-icon-group',
+        ];
+        foreach ($rules as $pattern => $icon) {
+            if (preg_match($pattern, $node)) {
+                return $icon;
+            }
+        }
+
+        // 根据菜单标题关键词兜底
+        $titleRules = [
+            '用户'  => 'layui-icon layui-icon-username',
+            '文件'  => 'layui-icon layui-icon-folder',
+            '蜘蛛'  => 'layui-icon layui-icon-bot',
+            '日志'  => 'layui-icon layui-icon-log',
+            '设置'  => 'layui-icon layui-icon-set',
+            '模块'  => 'layui-icon layui-icon-component',
+            '菜单'  => 'layui-icon layui-icon-list',
+            '事件'  => 'layui-icon layui-icon-rate-half',
+            '链接'  => 'layui-icon layui-icon-link',
+            '反馈'  => 'layui-icon layui-icon-about',
+            '导航'  => 'layui-icon layui-icon-website',
+            '任务'  => 'layui-icon layui-icon-time',
+        ];
+        foreach ($titleRules as $keyword => $icon) {
+            if (str_contains($title, $keyword)) {
+                return $icon;
+            }
+        }
+
+        // 最终兜底
+        return 'layui-icon layui-icon-console';
     }
 
     /**
