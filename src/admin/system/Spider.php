@@ -6,8 +6,8 @@ namespace app\admin\system;
 use think\App;
 use app\common\traits\CrudTrait;
 use app\logic\system\SpiderLogic;
-use think\db\exception\DbException;
 use app\common\controllers\BaseAdmin;
+use think\db\exception\DbException;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\ModelNotFoundException;
 
@@ -24,6 +24,8 @@ class Spider extends BaseAdmin
     }
     
     /**
+     * 蜘蛛统计看板
+     *
      * @return string
      * @throws DataNotFoundException
      * @throws DbException
@@ -31,19 +33,13 @@ class Spider extends BaseAdmin
      */
     public function index(): string
     {
-        // 使用服务层获取蜘蛛统计数据
-        $chartData = [
-            'today_pie_chart' => $this->spiderLogic->getTodaySpiderPieChartData(),
-            'yesterday_today_compare' => $this->spiderLogic->getYesterdayAndTodayCompare(),
-            'seven_days_trend' => $this->spiderLogic->getRecentSevenDaysTrend(),
-            'hourly_trend_by_spider' => $this->spiderLogic->getHourlyTrendTodayVsYesterdayBySpider(),
-        ];
-        // 传递给模板
+        $dashboard = $this->spiderLogic->getDashboard();
+        
         $this->assign([
-            'chartData' => json_encode($chartData, JSON_UNESCAPED_UNICODE),
+            'dashboard' => $dashboard,
+            'charts'    => json_encode($dashboard['charts'], JSON_UNESCAPED_UNICODE),
         ]);
         
-        $this->assign(['logs_list' => $this->spiderLogic->getNewLogs()]);
         return $this->fetch();
     }
     

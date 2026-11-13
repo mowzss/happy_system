@@ -111,7 +111,7 @@ class Index extends BaseAdmin
     {
         if ($this->request->isAjax()) {
             $menu = SystemMenu::getMenuTree();
-            return json($menu);
+            $this->success('获取成功', $menu);
         }
         $this->error('访问方式错误');
     }
