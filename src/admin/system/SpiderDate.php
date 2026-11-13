@@ -2,10 +2,10 @@
 
 namespace app\admin\system;
 
-use think\App;
-use app\common\traits\CrudTrait;
 use app\common\controllers\BaseAdmin;
+use app\common\traits\CrudTrait;
 use app\model\system\SystemSpiderDate;
+use think\App;
 
 /**
  * 蜘蛛每日抓取统计（只读）
@@ -31,12 +31,12 @@ class SpiderDate extends BaseAdmin
                 [
                     'field' => 'id',
                     'title' => 'ID',
-                    'sort'  => true,
+                    'sort' => true,
                 ],
                 [
                     'field' => 'date',
                     'title' => '统计日期',
-                    'sort'  => true,
+                    'sort' => true,
                 ],
                 [
                     'field' => 'name',
@@ -45,38 +45,38 @@ class SpiderDate extends BaseAdmin
                 [
                     'field' => 'total_visits',
                     'title' => '访问次数',
-                    'sort'  => true,
+                    'sort' => true,
                 ],
                 [
                     'field' => 'unique_urls',
                     'title' => '不同URL数',
-                    'sort'  => true,
+                    'sort' => true,
                 ],
                 [
-                    'field'  => 'avg_per_url',
-                    'title'  => '平均每URL访问',
-                    'templet'=> 'function(d){ return d.unique_urls > 0 ? (d.total_visits / d.unique_urls).toFixed(2) : "-"; }',
+                    'field' => 'avg_per_url',
+                    'title' => '平均每URL访问',
+                    'templet' => 'function(d){ return d.unique_urls > 0 ? (d.total_visits / d.unique_urls).toFixed(2) : "-"; }',
                 ],
             ],
-            'top_button'  => false,
-            'right_button'=> false,
+            'top_button' => [['event' => 'del'],],
+            'right_button' => [['event' => 'del'],],
         ];
 
         // forms 必须有 name 字段，否则 getSearchFields() 用 array_column 找不到映射
         $this->forms = ['fields' => [
             [
-                'type'  => 'text',
-                'name'  => 'date',
+                'type' => 'text',
+                'name' => 'date',
                 'label' => '日期（起始）',
             ],
             [
-                'type'  => 'text',
-                'name'  => 'date_end',
+                'type' => 'text',
+                'name' => 'date_end',
                 'label' => '日期（结束）',
             ],
             [
-                'type'  => 'select',
-                'name'  => 'name',
+                'type' => 'select',
+                'name' => 'name',
                 'label' => '蜘蛛',
                 'options' => [],
             ],
@@ -112,10 +112,6 @@ class SpiderDate extends BaseAdmin
         $this->error('只读');
     }
 
-    public function del($id = '')
-    {
-        $this->error('只读');
-    }
 
     public function quickEdit($id): void
     {
