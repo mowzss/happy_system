@@ -184,8 +184,20 @@ class AuthLogic extends BaseLogic
             }
         }
 
+        // 提交值可能是扁平数组（nodes=a&nodes=b），也可能是嵌套数组
+        // （layui 对同名 nodes[] 的聚合结果，或旧模板残留），统一拍平成字符串列表，
+        // 避免 trim((string)$array) 触发 "Array to string conversion"。
         $cleaned = [];
-        foreach ($nodes as $node) {
+        $stack   = array_values($nodes);
+        while ($stack) {
+            $node = array_shift($stack);
+            if (is_array($node)) {
+                foreach ($node as $child) {
+                    $stack[] = $child;
+                }
+                continue;
+            }
+            if (!is_scalar($node)) continue;
             $node = trim((string)$node);
             if ($node === '') continue;
             if (!isset($validNodes[$node])) continue;   // 不可授权 / 脏数据过滤
