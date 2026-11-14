@@ -8,6 +8,7 @@ use app\model\user\UserInfo;
 use think\facade\Db;
 use app\common\controllers\BaseAdmin;
 use happy\admin\libs\helper\AuthHelper;
+use happy\admin\libs\helper\TotpHelper;
 
 /**
  * 登录入口
@@ -61,6 +62,25 @@ $username = trim((string)$data['username']);
             if (!password_verify($data['password'], $user->password)) {
                 $this->markLoginFail($failKey, $fails, $window, $ip);
                 $this->error('账号或密码错误!');
+            }
+
+            // 二次验证：已绑定 TOTP 的用户，密码通过后还必须提交动态验证码
+            if (!empty($user['totp_enabled']) && !empty($user['totp_secret'])) {
+                $totp = preg_replace('/\s+/', '', (string)($data['totp'] ?? '')) ?? '';
+                if ($totp === '') {
+                    $this->error('请输入动态验证码', json_encode(['need_totp' => 1]));
+                }
+                $period = (int)app()->config->get('happy.totp_period', 30);
+                if (!TotpHelper::verify((string)$user['totp_secret'], $totp, 1, 6, $period)) {
+                    $this->markLoginFail($failKey, $fails, $window, $ip);
+                    $this->error('动态验证码错误', json_encode(['need_totp' => 1]));
+                }
+                // 防重放：同一时间片内的验证码只能使用一次
+                $sliceKey = 'totp_used_' . $user['id'] . '_' . TotpHelper::currentSlice($period);
+                if ($this->safeCache(fn() => $this->app->cache->has($sliceKey))) {
+                    $this->error('该验证码已使用，请等待下一次刷新', json_encode(['need_totp' => 1]));
+                }
+                $this->safeCache(fn() => $this->app->cache->set($sliceKey, 1, max(60, $period * 2)));
             }
 
             // 登录成功：清空失败计数并记录审计日志
