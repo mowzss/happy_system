@@ -748,7 +748,7 @@ if (!function_exists('send_email')) {
      */
     function send_email(array|string $to, string $subject, string $body, bool $isHtml = false, array $attachments = []): void
     {
-        queue(\app\job\system\SendEmailJob::class, ['to' => $to, 'subject' => $subject, 'body' => $body, 'isHtml' => $isHtml, 'attachments' => $attachments]);
+        queue(\app\job\system\SendEmailJob::class, ['to' => $to, 'subject' => $subject, 'body' => $body, 'is_html' => $isHtml, 'attachments' => $attachments]);
     }
 }
 if (!function_exists('send_code_email')) {
