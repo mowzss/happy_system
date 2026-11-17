@@ -53,15 +53,16 @@ if (!function_exists('filter_urls')) {
     /**
      * @param int $mid
      * @param string $module
+     * @param bool $withCount 是否统计各选项在当前条件下的数据量，用于列表页筛选项置灰
      * @return array
      * @throws \think\Exception
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    function filter_urls(int $mid, string $module = ''): array
+    function filter_urls(int $mid, string $module = '', bool $withCount = false): array
     {
-        return FieldBaseLogic::instance([$module])->buildFieldsUrls($mid);
+        return FieldBaseLogic::instance([$module])->buildFieldsUrls($mid, $withCount);
     }
 }
 if (!function_exists('url_with')) {
