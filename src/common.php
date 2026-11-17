@@ -425,6 +425,26 @@ if (!function_exists('sys_config')) {
         return ConfigLogic::instance()->getConfigValue($name, $default);
     }
 }
+if (!function_exists('url_full')) {
+    /**
+     * 补全站内链接为完整地址，便于展示与复制
+     * 已带协议或协议相对地址时原样返回
+     *
+     * @param string|null $url
+     * @return string
+     */
+    function url_full(?string $url = ''): string
+    {
+        $url = trim((string)$url);
+        if ($url === '') {
+            return '';
+        }
+        if (preg_match('#^(?:https?:)?//#i', $url)) {
+            return $url;
+        }
+        return rtrim((string)request()->domain(), '/') . '/' . ltrim($url, '/');
+    }
+}
 if (!function_exists('sys_opt_log')) {
     /**
      * @param string $desc
