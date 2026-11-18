@@ -69,21 +69,18 @@ class Nav extends BaseAdmin
         if ($this->isLayTable()) {
             // 构建查询
             $query = $this->buildWhereConditions($this->model, $params);
-            // 处理关联查询
-            if (isset($params['with'])) {
-                foreach (explode(',', $params['with']) as $relation) {
-                    $query->with(trim($relation));
-                }
-            }
-            
-            //设置排序
+            // 关联预加载：仅允许白名单内的关联
+            $query = \app\common\util\CrudQuery::applyWith($query, $params['with'] ?? null, $this->allowedRelations);
+
+            // 设置排序（字段白名单校验）
             $query = $this->setListOrder($query, $params);
-            // 分页
-            $page = $params['page'] ?? 1;
-            $limit = $params['limit'] ?? ($this->limit ?? 20);
-            if (!$this->is_page) {
-                $limit = 200;
-            }
+            // 分页参数统一收敛到上限内
+            [$page, $limit] = \app\common\util\CrudQuery::normalizePagination(
+                $params,
+                $this->is_page,
+                $this->maxLimit,
+                $this->limit ?? 20
+            );
             $paginateResult = $query->paginate([
                 'page' => $page,
                 'list_rows' => $limit,
