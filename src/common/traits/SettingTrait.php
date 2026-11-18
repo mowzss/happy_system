@@ -3,14 +3,14 @@ declare (strict_types=1);
 
 namespace app\common\traits;
 
-use think\Exception;
-use happy\admin\libs\Forms;
 use app\logic\system\ConfigLogic;
 use app\model\system\SystemConfigGroup;
-use think\db\exception\DbException;
-use think\db\exception\DataNotFoundException;
-use think\db\exception\ModelNotFoundException;
 use happy\admin\libs\Exception\FormsException;
+use happy\admin\libs\Forms;
+use think\db\exception\DataNotFoundException;
+use think\db\exception\DbException;
+use think\db\exception\ModelNotFoundException;
+use think\Exception;
 use think\template\exception\TemplateNotFoundException;
 
 /**
@@ -53,7 +53,7 @@ trait SettingTrait
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    protected function loadSettingGroups()
+    protected function loadSettingGroups(): \think\Collection
     {
         $where = $this->settingGroupWhere;
         if ($this->settingModule !== '') {
