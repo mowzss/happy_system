@@ -5,22 +5,23 @@ declare (strict_types=1);
 namespace app\admin\system;
 
 use think\App;
-use happy\admin\libs\Forms;
 use app\logic\system\ConfigLogic;
 use app\model\system\SystemConfig;
 use PHPMailer\PHPMailer\Exception;
 use think\db\exception\DbException;
 use app\common\controllers\BaseAdmin;
+use app\common\traits\SettingTrait;
 use app\model\system\SystemConfigGroup;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\ModelNotFoundException;
-use happy\admin\libs\Exception\FormsException;
 
 /**
  * 系统参数设置
  */
 class Setting extends BaseAdmin
 {
+    use SettingTrait;
+
     /**
      * 当前模型
      * @var SystemConfig
@@ -31,14 +32,18 @@ class Setting extends BaseAdmin
      * @var SystemConfigGroup
      */
     protected SystemConfigGroup $groupModel;
-    
+
     public function __construct(App $app, SystemConfig $config, SystemConfigGroup $configGroup)
     {
         parent::__construct($app);
         $this->model = $config;
         $this->groupModel = $configGroup;
+        // 系统设置只展示标记了 sys_show 的分组。
+        // 注意：不能在类里直接声明与 Trait 同名的属性（PHP 要求默认值完全一致），
+        // 因此在构造函数中赋值覆盖。
+        $this->settingGroupWhere = ['sys_show' => 1, 'status' => 1];
     }
-    
+
     /**
      * 设置
      * @auth true
@@ -50,57 +55,30 @@ class Setting extends BaseAdmin
     public function index(): string
     {
         if ($this->request->isPost()) {
-            $data = $this->request->post();
-            
-            if (empty($data['group_id'])) {
-                $this->error('group_id不能为空');
-            }
-            if (!empty($data['mail_test']) && !empty($data['mail_send_user'])) {
-                //发送邮件
-                try {
-                    send_email($data['mail_send_user'], '测试邮件', '您申请的测试邮件');
-                } catch (Exception $e) {
-                    $this->error('测试邮件发送失败:' . $e->getMessage());
-                }
-            }
-            if (!empty($data['square_logo'])) {
-                $this->app->console->call('admin:favicon');
-            }
-            if (ConfigLogic::instance()->saveConfig($data)) {
-                $this->success('保存成功');
-            } else {
-                $this->error('保存失败');
-            }
+            $this->saveSetting($this->request->post());
         }
-        $this->assign('list', $this->groupModel->where([
-            'sys_show' => 1,
-            'status' => 1,
-        ])->select());
+
+        $this->assign('list', $this->loadSettingGroups());
         return $this->fetch();
     }
-    
+
     /**
-     * 获取设置表单
-     * @auth true
-     * @param int $group_id
-     * @return string|void
-     * @throws DataNotFoundException
-     * @throws DbException
-     * @throws FormsException
-     * @throws ModelNotFoundException
-     * @throws \think\Exception
+     * 保存前副作用：邮件测试与站点图标重建
+     *
+     * @param array $data
+     * @return void
      */
-    public function getForms(int $group_id = 0)
+    protected function beforeSaveSetting(array &$data): void
     {
-        if (empty($group_id)) {
-            $this->error('group_id 不能为空');
+        if (!empty($data['mail_test']) && !empty($data['mail_send_user'])) {
+            try {
+                send_email($data['mail_send_user'], '测试邮件', '您申请的测试邮件');
+            } catch (Exception $e) {
+                $this->error('测试邮件发送失败:' . $e->getMessage());
+            }
         }
-        $data = ConfigLogic::instance()->getListByGroup($group_id);
-        if (!empty($data)) {
-            return Forms::instance(['action' => urls('index')])
-                ->setInputs([['type' => 'hidden', 'name' => 'group_id', 'value' => $group_id]])
-                ->render($data);
+        if (!empty($data['square_logo'])) {
+            $this->app->console->call('admin:favicon');
         }
-        $this->error('暂无设置表单信息');
     }
 }

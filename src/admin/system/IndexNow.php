@@ -1,37 +1,39 @@
 <?php
+declare (strict_types=1);
 
 
 namespace app\admin\system;
 
 use think\App;
-use happy\admin\libs\Forms;
-use app\logic\system\ConfigLogic;
-use think\db\exception\DbException;
 use app\common\controllers\BaseAdmin;
+use app\common\traits\SettingTrait;
 use app\model\system\SystemConfigGroup;
+use think\db\exception\DbException;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\ModelNotFoundException;
-use think\template\exception\TemplateNotFoundException;
 
+/**
+ * IndexNow 推送设置
+ */
 class IndexNow extends BaseAdmin
 {
-    
+    use SettingTrait;
+
     /**
      * 分组模型
      * @var SystemConfigGroup
      */
     protected SystemConfigGroup $groupModel;
-    /**
-     * @var
-     */
-    protected $list;
-    
+
     public function __construct(App $app, SystemConfigGroup $configGroup)
     {
         parent::__construct($app);
         $this->groupModel = $configGroup;
+        // IndexNow 使用固定的 p_index_now 模块分组。
+        // 在构造函数赋值而非类内声明，避免与 Trait 同名属性默认值冲突。
+        $this->settingModule = 'p_index_now';
     }
-    
+
     /**
      * 设置
      * @auth true
@@ -42,70 +44,52 @@ class IndexNow extends BaseAdmin
      */
     public function index(): string
     {
-        $this->list = $this->groupModel->where([
-            'module' => 'p_index_now',
-            'status' => 1,
-        ])->select();
         if ($this->request->isPost()) {
-            $data = $this->request->post();
-            
-            if (empty($data['group_id'])) {
-                $this->error('group_id不能为空');
-            }
-            if (!empty($data['index_key'])) {
-                file_put_contents(public_path() . $data['index_key'] . '.txt', $data['index_key']);
-            }
-            foreach ($data as $key => $value) {
-                if (is_array($value)) {
-                    $data[$key] = implode(',', $value);
-                }
-            }
-            if (ConfigLogic::instance()->saveConfig($data)) {
-                $this->success('保存成功');
-            } else {
-                $this->error('保存失败');
-            }
+            $this->saveSetting($this->request->post());
         }
-        
-        
-        //渲染页面
-        try {
-            return $this->fetch();
-        } catch (TemplateNotFoundException) {
-            //模板不存在时 尝试读取公用模板
-            return $this->fetch('common@/setting');
-        }
+
+        $this->assign('list', $this->loadSettingGroups());
+        return $this->renderSettingPage();
     }
-    
+
     /**
-     * 获取设置表单
-     * @auth true
-     * @param int $group_id
-     * @return string|void
-     * @throws DataNotFoundException
-     * @throws DbException
-     * @throws ModelNotFoundException
-     * @throws \think\Exception
+     * 保存前副作用：写入 verification 文件、规范化数组值
+     *
+     * @param array $data
+     * @return void
      */
-    public function getForms(int $group_id = 0)
+    protected function beforeSaveSetting(array &$data): void
     {
-        if (empty($group_id)) {
-            $this->error('group_id 不能为空');
+        if (!empty($data['index_key'])) {
+            $key = (string)$data['index_key'];
+            // 安全校验：IndexNow 密钥为纯字母数字串，禁止任何路径分隔符或点号，
+            // 防止 "../../etc/x" 之类输入通过路径拼接写到站点之外。
+            if (!preg_match('/^[A-Za-z0-9_-]{5,128}$/', $key) || $key !== basename($key)) {
+                $this->error('推送秘钥格式不合法（仅允许字母、数字、下划线、连字符，长度 5-128）');
+            }
+            $file = public_path() . $key . '.txt';
+            if (file_put_contents($file, $key) === false) {
+                $this->error('验证文件写入失败，请检查 public 目录权限');
+            }
         }
-        $data = ConfigLogic::instance()->getListByGroup($group_id);
-        if (!empty($data)) {
-            return Forms::instance(['action' => urls('index')])
-                ->setInputs([['type' => 'hidden', 'name' => 'group_id', 'value' => $group_id]])
-                ->render($data);
+
+        // layui 多选等组件提交数组，落库前转为逗号分隔字符串
+        foreach ($data as $key => $value) {
+            if (is_array($value)) {
+                $data[$key] = implode(',', $value);
+            }
         }
-        $this->error('暂无设置表单信息');
     }
-    
+
+    /**
+     * 手动推送
+     * @return string
+     */
     public function push()
     {
         if ($this->request->isPost()) {
             $data = $this->request->post();
         }
-        $this->fetch();
+        return $this->fetch();
     }
 }
