@@ -4,17 +4,19 @@ declare (strict_types=1);
 
 namespace app\common\util;
 
+use app\logic\system\ConfigLogic;
+use GuzzleHttp\Exception\GuzzleException;
+use happy\admin\libs\baidu\AipNlpKeyword;
+use happy\admin\libs\baidu\AipNlpSummary;
 use HTMLPurifier;
+use HTMLPurifier_Config;
+use mowzs\cms\logic\FieldBaseLogic;
+use mowzs\cms\logic\TagBaseLogic;
+use think\db\exception\DataNotFoundException;
+use think\db\exception\DbException;
+use think\db\exception\ModelNotFoundException;
 use think\Exception;
 use think\facade\Log;
-use HTMLPurifier_Config;
-use app\logic\system\ConfigLogic;
-use mowzs\cms\logic\TagBaseLogic;
-use happy\admin\libs\baidu\AipNlp;
-use think\db\exception\DbException;
-use mowzs\cms\logic\FieldBaseLogic;
-use think\db\exception\DataNotFoundException;
-use think\db\exception\ModelNotFoundException;
 
 class ContentSaveFilterUtil extends UtilBase
 {
@@ -28,7 +30,7 @@ class ContentSaveFilterUtil extends UtilBase
      * @var mixed
      */
     protected mixed $web_config;
-    
+
     /**
      * 初始化
      * @return void
@@ -42,7 +44,7 @@ class ContentSaveFilterUtil extends UtilBase
         $this->web_config = ConfigLogic::instance()->getConfigValue();
         $this->config = $this->web_config[$this->app->request->layer(true)];
     }
-    
+
     /**
      * 校验是否开启下载图片
      * @return bool
@@ -54,7 +56,7 @@ class ContentSaveFilterUtil extends UtilBase
         }
         return false;
     }
-    
+
     /**
      * 检测是否开启获取缩略图
      * @return bool
@@ -66,7 +68,7 @@ class ContentSaveFilterUtil extends UtilBase
         }
         return false;
     }
-    
+
     /**
      * 检测是否开启内容过滤
      * @return bool
@@ -78,7 +80,7 @@ class ContentSaveFilterUtil extends UtilBase
         }
         return false;
     }
-    
+
     /**
      * 检查排除域名
      * @param string $url
@@ -93,7 +95,7 @@ class ContentSaveFilterUtil extends UtilBase
         };
         return stripos($url, $host) !== false;
     }
-    
+
     /**
      * 检测功能是否开启
      * @return bool
@@ -111,7 +113,7 @@ class ContentSaveFilterUtil extends UtilBase
         }
         return false;
     }
-    
+
     /**
      * 内容过滤
      * @param string $content
@@ -130,16 +132,17 @@ class ContentSaveFilterUtil extends UtilBase
         $config->set('AutoFormat.RemoveEmpty', (bool)$this->config['content_purifer_remove_empty']);
         return (new HTMLPurifier($config))->purify($content);
     }
-    
+
     /**
      * 处理数据
      * @param $info
      * @return array
-     * @throws Exception
+     * @throws Exception|\happy\admin\libs\Exception\LogicException|GuzzleException
      */
     public function setProcessingData($info): array
     {
         $info = $this->setTag($info);
+        $info = $this->setDescription($info);
         $info = $this->setCheckboxData($info);
         $update = [];
         //检测功能是否开启
@@ -188,7 +191,7 @@ class ContentSaveFilterUtil extends UtilBase
         }
         return $info;
     }
-    
+
     protected function setCheckboxData($info)
     {
         if (!empty($info['mid'])) {
@@ -201,11 +204,27 @@ class ContentSaveFilterUtil extends UtilBase
         }
         return $info;
     }
-    
+
     /**
+     * 设置描述
      * @param $data
      * @return mixed
      * @throws Exception
+     * @throws GuzzleException
+     */
+    protected function setDescription($data): mixed
+    {
+        if (empty($data['description'])) {
+            $data['description'] = (new AipNlpSummary())->getSummary($data['title'], get_word(del_html($data['content']), 1500));
+            $data['description'] = $data['description'] ?: get_word(del_html($data['content']), 200);
+        }
+        return $data;
+    }
+
+    /**
+     * @param $data
+     * @return mixed
+     * @throws Exception|\happy\admin\libs\Exception\LogicException
      */
     protected function setTag($data): mixed
     {
@@ -214,9 +233,9 @@ class ContentSaveFilterUtil extends UtilBase
         $content = (string)($data['content'] ?? '');
         if (empty($data['huati']) && empty($data['tag']) && ($title !== '' || $content !== '')) {
             // 无语义内容时不再请求外部接口
-            $data['huati'] = (new AipNlp())->getStringTag(
+            $data['huati'] = (new AipNlpKeyword())->getStringTag(
                 $title,
-                get_word(del_html($content), 300)
+                get_word(del_html($content), 800)
             );
         }
         //处理tag
