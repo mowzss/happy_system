@@ -43,6 +43,50 @@ final class CrudQuery
     }
 
     /**
+     * 判断区间两端点是否为「日期字符串」而非时间戳
+     *
+     * daterange 控件提交 2024-01-01 这类日期；若端点为纯数字时间戳，
+     * 应保持原生 BETWEEN，避免被 ORM 重复 strtotime 转换。
+     *
+     * @param array $range 仅两个端点
+     */
+    private static function isDateStringRange(array $range): bool
+    {
+        foreach ($range as $point) {
+            if (!is_string($point) && !is_numeric($point)) {
+                return false;
+            }
+            $point = trim((string)$point);
+            if ($point === '') {
+                return false;
+            }
+            // 纯数字视为时间戳，不走时间表达式转换
+            if (ctype_digit($point)) {
+                return false;
+            }
+            // 必须能被解析为日期，且含有日期分隔符（排除普通文本）
+            if (strtotime($point) === false || !preg_match('/[\/\-\.年月日]/', $point)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 纯日期字符串补当天结束时刻，含时分秒的原样保留
+     */
+    private static function appendEndOfDay(string $value): string
+    {
+        $value = trim($value);
+        // 已含时间部分（HH:MM 或更完整）则不处理
+        if (preg_match('/\d{1,2}:\d{2}/', $value)) {
+            return $value;
+        }
+        $ts = strtotime($value);
+        return $ts === false ? $value : date('Y-m-d 23:59:59', $ts);
+    }
+
+    /**
      * 应用搜索条件到查询对象
      *
      * @param Model|Query        $model      查询对象
@@ -65,24 +109,41 @@ final class CrudQuery
                 continue;
             }
             $value = $requestData[$paramKey];
-            // 数组参数只取第一个值，避免 addcslashes 收到数组导致 TypeError
-            if (is_array($value)) {
-                $value = reset($value);
-            }
             if ($value === null || $value === '' || $value === []) {
                 continue;
+            }
+
+            // 区间操作符标记：数组值代表两个端点，不能被 reset 成单个值
+            $isBetween = in_array($operator, ['BETWEEN', 'NOTBETWEEN', 'BETWEEN TIME', 'NOT BETWEEN TIME'], true);
+
+            // 数组参数只取第一个值，避免 addcslashes 收到数组导致 TypeError（区间查询除外）
+            if (is_array($value) && !$isBetween) {
+                $value = reset($value);
             }
 
             // LIKE 值转义：必须同时转义反斜杠，否则用户输入的 \% 可绕过通配符过滤
             if ($operator === 'LIKE' || $operator === 'NOTLIKE') {
                 $value = '%' . addcslashes((string)$value, "\\_%") . '%';
-            } elseif ($operator === 'BETWEEN' || $operator === 'NOTBETWEEN' || $operator === 'BETWEEN TIME' || $operator === 'NOT BETWEEN TIME') {
+            } elseif ($isBetween) {
                 // 时间区间：必须恰好两个端点，否则忽略该条件，避免构造异常 SQL
                 $range = is_array($value) ? array_values($value) : explode(' - ', (string)$value);
                 if (count($range) !== 2) {
                     continue;
                 }
                 $value = $range;
+
+                // 时间字段在库中通常为 int 时间戳，而 daterange 控件提交日期字符串
+                // （如 2024-01-01 - 2024-01-31）。普通 BETWEEN 会把字符串直接与 int 比较导致
+                // 条件永远不成立；升级为 BETWEEN TIME 由 ORM 的 parseBetweenTime 转时间戳。
+                // 纯数字时间戳区间保持原 BETWEEN，避免被重复转换。
+                if ($operator === 'BETWEEN' || $operator === 'NOTBETWEEN') {
+                    if (self::isDateStringRange($value)) {
+                        // 纯日期端点（如 2025-09-19）会被 ORM 解析为当天 00:00:00，
+                        // 导致「选某一天却查不到当天数据」。给结束端点补到当天 23:59:59。
+                        $value[1] = self::appendEndOfDay($value[1]);
+                        $operator = $operator === 'BETWEEN' ? 'BETWEEN TIME' : 'NOT BETWEEN TIME';
+                    }
+                }
             }
 
             $fieldList = array_values(array_filter(array_map('trim', explode('|', $fields)), 'strlen'));
