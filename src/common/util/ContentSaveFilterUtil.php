@@ -222,6 +222,16 @@ class ContentSaveFilterUtil extends UtilBase
     }
 
     /**
+     * 当前模块是否开启百度自动生成 TAG
+     * 未配置该开关时默认开启，保持升级前的行为
+     * @return bool
+     */
+    protected function isOpenBaiduTag(): bool
+    {
+        return (string)($this->config['is_open_baidu_tag'] ?? '1') === '1';
+    }
+
+    /**
      * @param $data
      * @return mixed
      * @throws Exception|\happy\admin\libs\Exception\LogicException
@@ -231,7 +241,8 @@ class ContentSaveFilterUtil extends UtilBase
         // 后台正常提交由 xmselect 提供 tag 关联 id；huati 为 publish/采集传入的文字标签
         $title = (string)($data['title'] ?? '');
         $content = (string)($data['content'] ?? '');
-        if (empty($data['huati']) && empty($data['tag']) && ($title !== '' || $content !== '')) {
+        if (empty($data['huati']) && empty($data['tag']) && ($title !== '' || $content !== '')
+            && $this->isOpenBaiduTag()) {
             // 无语义内容时不再请求外部接口
             $data['huati'] = (new AipNlpKeyword())->getStringTag(
                 $title,
