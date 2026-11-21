@@ -7,6 +7,7 @@ use think\console\Input;
 use think\console\Output;
 use think\console\Command;
 use think\console\input\Option;
+use app\job\system\RecordSpiderLog;
 
 class HourlyReport extends Command
 {
@@ -41,8 +42,18 @@ class HourlyReport extends Command
         $startTime = "$statDate {$statHour}:00:00";
         $endTime = "$statDate {$statHour}:59:59";
         
+        // 统计前先把 Redis 中滞留的日志强制入库，避免低流量站点因不足 50 条未被统计
+        try {
+            $flushed = (new RecordSpiderLog())->flushPending();
+            if ($flushed > 0) {
+                $output->writeln("📥 已将 {$flushed} 条滞留的蜘蛛日志入库");
+            }
+        } catch (\Throwable $e) {
+            $output->writeln('⚠️ 清空滞留蜘蛛日志失败：' . $e->getMessage());
+        }
+
         $output->writeln("🔍 开始处理 [$startTime ~ $endTime] 的蜘蛛访问数据...");
-        
+
         $modelLog = new \app\model\system\SystemSpiderLogs();
         $modelStats = new \app\model\system\SystemSpiderHourly();
         
