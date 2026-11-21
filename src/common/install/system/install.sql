@@ -198,7 +198,8 @@ VALUES (1, 'storage_driver', 'radio', '存储引擎', 4,
        (54, 'is_wap_domain', 'switchs', '是否使用手机版域名', 8, '0|否\n1|是', '是否使用手机版独立域名访问', '0', NULL, 0, 'system', 1, 1776861707, 1776861707),
        (55, 'is_wap_domain_dump', 'switchs', '手机版域名是否重定向', 8, '0|否\n1|是', '开启重定向后，pc端访问手机版域名时，将自动重定向到pc端域名', '0', NULL, 0, 'system', 1, 1776861707, 1776861707),
        (56, 'is_wap_dump_type', 'switchs', '重定向方式', 8, '1|php\n0|JavaScript', '开启重定向后 重定向方案 js需自行在前端实现', '0', NULL, 0, 'system', 1, 1776861707, 1776861707),
-       (57, 'baidu_push_wap_domain', 'text', '百度 PUSH 移动端域名', 9, '', '移动端推送域名，需包含http://或https:// 无需/结尾；必须与百度站长平台中已验证的移动端站点一致', '', NULL, 0, 'system', 1, 1776861707, 1776861707);
+       (57, 'baidu_push_wap_domain', 'text', '百度 PUSH 移动端域名', 9, '', '移动端推送域名，需包含http://或https:// 无需/结尾；必须与百度站长平台中已验证的移动端站点一致', '', NULL, 0, 'system', 1, 1776861707, 1776861707),
+       (58, 'no_password_publish', 'text', '免密发布Token', 9, '', '免密发布接口（各模块 publish）校验用的令牌，采集端通过 token 参数或 publish_token 请求头传入；留空表示不开启免密发布', '', NULL, 0, 'system', 1, 1795255575, 1795255575);
 /*!40000 ALTER TABLE `ha_system_config`
     ENABLE KEYS */;
 UNLOCK TABLES;
