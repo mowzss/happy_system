@@ -214,9 +214,13 @@ class ContentSaveFilterUtil extends UtilBase
      */
     protected function setDescription($data): mixed
     {
-        if (empty($data['description'])) {
-            $data['description'] = (new AipNlpSummary())->getSummary($data['title'], get_word(del_html($data['content']), 1500));
-            $data['description'] = $data['description'] ?: get_word(del_html($data['content']), 200);
+        // 防御：绕过前端直接提交时 title/content 可能缺失，避免 Undefined array key
+        // 必填校验由控制器的 checkRequiredFields() 负责，这里只保证不因缺键抛出 500
+        $title = (string)($data['title'] ?? '');
+        $content = (string)($data['content'] ?? '');
+        if (empty($data['description']) && $title !== '' && $content !== '') {
+            $data['description'] = (new AipNlpSummary())->getSummary($title, get_word(del_html($content), 1500));
+            $data['description'] = $data['description'] ?: get_word(del_html($content), 200);
         }
         return $data;
     }

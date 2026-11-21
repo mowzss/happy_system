@@ -321,7 +321,11 @@ trait CrudTrait
         if (!empty($required)) {
             // 遍历必填字段
             foreach ($required as $field => $label) {
-                if (!isset($data[$field]) || $data[$field] === '' || $data[$field] === null) {
+                $value = $data[$field] ?? null;
+                // 字符串需 trim 后判断（纯空格应视为空），数组为空也应视为空
+                if ($value === null
+                    || (is_string($value) && trim($value) === '')
+                    || (is_array($value) && $value === [])) {
                     $this->error($label . '不能为空');
                 }
             }
