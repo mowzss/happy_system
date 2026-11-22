@@ -6,6 +6,7 @@ namespace app\service;
 
 use think\facade\Queue;
 use app\job\system\RecordSpiderLog;
+use app\logic\system\OperationLogLogic;
 use app\command\system\spider\ClearLogs;
 use app\command\system\nav\NavRestNodeUrl;
 use app\command\system\spider\DailyReport;
@@ -54,6 +55,11 @@ class CommonService extends \think\Service
     {
         $this->app->event->listen('HomeControllerInit', function () {
             $this->registerSpidersLog();
+        });
+
+        // 后台控制器初始化时自动记录写操作日志（内部已做范围判定与异常隔离）
+        $this->app->event->listen('AdminControllerInit', static function () {
+            OperationLogLogic::record();
         });
     }
     
