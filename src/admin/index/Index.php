@@ -7,6 +7,8 @@ namespace app\admin\index;
 use app\common\controllers\BaseAdmin;
 use app\logic\system\DashboardLogic;
 use app\model\system\SystemMenu;
+use happy\admin\libs\forms\OptionResolver;
+use happy\admin\libs\helper\AuthHelper;
 use happy\admin\libs\Run;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
@@ -128,5 +130,38 @@ class Index extends BaseAdmin
     {
         $this->app->session->delete('user');
         $this->success('您已安全退出', hurl('index/index/index'));
+    }
+    //*     * 请求参数：
+    //     * - source    数据源配置（JSON 字符串或数组，含 type/table/value/label/where/order）
+    //     * - keyword   搜索关键字
+    //     * - page      页码，默认 1
+    //     * - page_size 每页数量，默认 20，最大 100
+    /**
+     * 通用字段选项远程数据接口
+     *
+     * @return void
+     */
+
+    // getOptionList 刻意不标记 @auth：退化为仅登录可用节点，
+    // 避免每个继承 BaseAdmin 的控制器都生成需逐类授权的 getOptionList 节点。
+    // 该注解务必保持删除状态（@auth true 会导致权限节点重复授权）。
+    public function getOptionList(): void
+    {
+        if (!AuthHelper::instance()->isLogin()) {
+            $this->error('请先登录');
+        }
+        $source = $this->request->param('source', []);
+        if (is_string($source)) {
+            $decoded = json_decode($source, true);
+            $source = is_array($decoded) ? $decoded : [];
+        }
+        if (!is_array($source)) {
+            $source = [];
+        }
+        $keyword = (string)$this->request->param('keyword', '');
+        $page = max(1, (int)$this->request->param('page', 1));
+        $pageSize = min(100, max(1, (int)$this->request->param('page_size', 20)));
+        $autoAdd = (bool)$this->request->param('add', false);
+        $this->success(OptionResolver::searchTableSource($source, $keyword, $page, $pageSize, $autoAdd));
     }
 }
