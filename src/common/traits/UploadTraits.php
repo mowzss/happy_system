@@ -4,24 +4,24 @@ declare (strict_types=1);
 
 namespace app\common\traits;
 
-use think\File;
-use think\facade\View;
-use think\facade\Cache;
-use think\response\Json;
-use think\facade\Filesystem;
-use app\logic\system\ConfigLogic;
-use think\db\exception\DbException;
 use app\logic\system\AttachmentLogic;
+use app\logic\system\ConfigLogic;
 use app\model\system\SystemAttachment;
-use think\exception\ValidateException;
 use happy\admin\libs\helper\MimeHelper;
 use happy\admin\libs\helper\UserHelper;
 use think\db\exception\DataNotFoundException;
+use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
+use think\exception\ValidateException;
+use think\facade\Cache;
+use think\facade\Filesystem;
+use think\facade\View;
+use think\File;
+use think\response\Json;
 
 trait UploadTraits
 {
-    
+
     /**
      * 文件类型
      * @var array|string[]
@@ -37,7 +37,7 @@ trait UploadTraits
      * @var mixed
      */
     protected mixed $storage_driver;
-    
+
     /**
      * 上传接口
      * @login true
@@ -63,7 +63,7 @@ trait UploadTraits
         View::config(['view_path' => __DIR__ . '/view/', 'view_suffix' => 'js']);
         return \view('/uploads', $data)->contentType('application/x-javascript');
     }
-    
+
     /**
      * 获取直传签名（第三方存储时浏览器直接上传，不经服务器中转）
      * @login true
@@ -83,19 +83,19 @@ trait UploadTraits
                     ],
                 ]);
             }
-            
+
             $disk = Filesystem::disk($this->storage_driver);
             $dir = $this->directDir();
-            
+
             if (!$this->rateLimit('sign', (int)(UserHelper::instance()->getUserId() ?: 0), 120)) {
                 return json(['code' => 1, 'msg' => '请求过于频繁，请稍后再试']);
             }
             $expire = 600;
-            
+
             $data = $this->storage_driver === 'oss'
                 ? $disk->getSignPolicy($dir, (int)$this->max_size, $expire)
                 : $disk->getSignToken($dir, (int)$this->max_size, $expire);
-            
+
             $data = array_merge($data, [
                 'mode' => 'direct',
                 'driver' => $this->storage_driver,
@@ -104,57 +104,60 @@ trait UploadTraits
                 'allowExts' => array_map('strtolower', $this->allowed_types),
                 'registerUrl' => urls('register'),
             ]);
-            
+
             return json(['code' => 0, 'msg' => 'ok', 'data' => $data]);
         } catch (\Throwable $e) {
             return json(['code' => 1, 'msg' => $e->getMessage()]);
         }
     }
-    
+
     /**
      * 直传完成后登记附件
      * @login true
-     * @return \think\response\Json
+     * @return Json
+     * @throws DataNotFoundException
+     * @throws DbException
+     * @throws ModelNotFoundException
      */
     public function register(): \think\response\Json
     {
         if (!$this->isDirect()) {
             return json(['code' => 1, 'msg' => '当前存储未启用直传']);
         }
-        
+
         $path = trim((string)$this->request->post('path', ''));
         $uid = (int)(UserHelper::instance()->getUserId() ?: 0);
-        
+
         if (!$this->rateLimit('register', $uid, 120)) {
             return json(['code' => 1, 'msg' => '请求过于频繁，请稍后再试']);
         }
-        
+
         // key 必须落在当前用户目录下，防止越权覆盖
         if (!preg_match('#^uploads/' . $uid . '/\d{8}/[A-Za-z0-9][A-Za-z0-9._-]*$#', $path)) {
             return json(['code' => 1, 'msg' => '非法的文件路径']);
         }
-        
+
         $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
         $allowTypes = array_map('strtolower', $this->allowed_types);
         if ($ext === '' || !in_array($ext, $allowTypes, true)) {
             return json(['code' => 1, 'msg' => '不允许的文件类型']);
         }
-        
+
         $disk = Filesystem::disk($this->storage_driver);
         $meta = null;
-        
+
         try {
             if (!$disk->fileExists($path)) {
                 return json(['code' => 1, 'msg' => '文件不存在']);
             }
-            
+
             $meta = method_exists($disk, 'getObjectMeta') ? $disk->getObjectMeta($path) : null;
             $size = (int)($meta['size'] ?? $disk->fileSize($path));
             $mime = (string)($meta['mime'] ?? '');
             if ($mime === '') {
                 $mime = (string)$disk->mimeType($path);
             }
-            
+
             if ($size <= 0) {
                 return json(['code' => 1, 'msg' => '无法读取文件信息']);
             }
@@ -164,16 +167,16 @@ trait UploadTraits
         } catch (\Throwable $e) {
             return json(['code' => 1, 'msg' => $e->getMessage()]);
         }
-        
+
         $name = trim((string)$this->request->post('name', ''));
         $name = $name !== '' ? basename($name) : basename($path);
         $name = mb_substr($name, 0, 100);
-        
+
         $exist = SystemAttachment::where('uid', $uid)->where('path', $path)->find();
         if ($exist) {
             return json(['code' => 0, 'msg' => '已登记', 'data' => $this->attachmentResponse($exist->toArray(), $disk->url($path))]);
         }
-        
+
         $data = [
             'uid' => $uid,
             'name' => $name,
@@ -188,7 +191,7 @@ trait UploadTraits
             'create_time' => time(),
             'update_time' => time(),
         ];
-        
+
         if (str_starts_with($data['mime'], 'image/') && method_exists($disk, 'getImageInfo')) {
             $image = $disk->getImageInfo($path);
             if ($image) {
@@ -196,16 +199,16 @@ trait UploadTraits
                 $data['imageheight'] = $image['height'];
             }
         }
-        
+
         try {
             $record = SystemAttachment::create($data);
         } catch (\Throwable $e) {
             return json(['code' => 1, 'msg' => $e->getMessage()]);
         }
-        
+
         return json(['code' => 0, 'msg' => '上传成功', 'data' => $this->attachmentResponse($record->toArray(), $data['url'])]);
     }
-    
+
     /**
      * 保存文件
      * @login true
@@ -215,11 +218,11 @@ trait UploadTraits
     {
         // 获取表单上传文件
         $file = $this->app->request->file('file');
-        
+
         if (empty($file)) {
             return json(['code' => 1, 'msg' => '未选择文件']);
         }
-        
+
         try {
             $data = $this->storeUploadedFile($file);
             // 返回JSON格式的成功响应
@@ -231,7 +234,7 @@ trait UploadTraits
             return json(['code' => 1, 'msg' => $e->getMessage()]);
         }
     }
-    
+
     /**
      * 保存上传文件并写入附件表（服务器中转）
      *
@@ -243,16 +246,16 @@ trait UploadTraits
     {
         // 验证文件
         $this->validateFile($file);
-        
+
         // 使用Filesystem facade 处理文件上传
         $disk = Filesystem::disk($this->storage_driver);
         $filename = $file->getOriginalName();
         $path = $disk->putFile('/', $file, 'md5');
-        
+
         if (!$path) {
             throw new \Exception('上传失败');
         }
-        
+
         // 成功上传后 获取上传信息
         $data = [
             'uid' => UserHelper::instance()->getUserId() ?: 0,
@@ -268,20 +271,20 @@ trait UploadTraits
             'create_time' => time(),
             'update_time' => time(),
         ];
-        
+
         // 如果是图片文件，获取宽度和高度
         if (in_array($data['mime'], ['image/jpeg', 'image/png', 'image/gif'])) {
             [$width, $height] = getimagesize($file->getPathname());
             $data['imagewidth'] = $width;
             $data['imageheight'] = $height;
         }
-        
+
         // 插入数据到附件表
         SystemAttachment::create($data);
-        
+
         return $data;
     }
-    
+
     /**
      * 简单频率限制（按用户 + 分钟计数）
      *
@@ -298,7 +301,7 @@ trait UploadTraits
         Cache::set($key, $count, $ttl);
         return $count <= $max;
     }
-    
+
     /**
      * 是否启用浏览器直传
      * @return bool
@@ -307,7 +310,7 @@ trait UploadTraits
     {
         return in_array($this->storage_driver, ['oss', 'qiniu'], true);
     }
-    
+
     /**
      * 直传目录（按用户 + 日期隔离）
      * @return string
@@ -317,7 +320,7 @@ trait UploadTraits
         $uid = (int)(UserHelper::instance()->getUserId() ?: 0);
         return 'uploads/' . $uid . '/' . date('Ymd') . '/';
     }
-    
+
     /**
      * 统一附件返回结构
      *
@@ -330,7 +333,7 @@ trait UploadTraits
         $data['url'] = $url;
         return $data;
     }
-    
+
     /**
      * 文件验证
      *
@@ -343,18 +346,18 @@ trait UploadTraits
         if ($file->getSize() > $this->max_size) {
             throw new ValidateException('文件大小超过限制');
         }
-        
+
         // 检查文件类型
-        
+
         $mime = $file->getMime();
         $possibleExtensions = MimeHelper::instance()->getExtensionByMimeType($mime);
-        
-        
+
+
         // 确保 $possibleExtensions 是数组，并且至少包含一个元素
         if (!is_array($possibleExtensions) || empty($possibleExtensions)) {
             throw new ValidateException('无法识别的文件类型');
         }
-        
+
         // 判断允许的文件类型是否包含任意一个可能的扩展名
         $isValidType = false;
         foreach ($possibleExtensions as $ext) {
@@ -363,15 +366,15 @@ trait UploadTraits
                 break;
             }
         }
-        
+
         if (!$isValidType) {
             throw new ValidateException('不允许的文件类型');
         }
     }
-    
+
     /**
      * UEditor 相关操作
-     *
+     * @login true
      * @param string $action 操作类型 (config, listimage, listfile)
      * @return Json
      * @throws DataNotFoundException
@@ -385,7 +388,7 @@ trait UploadTraits
         // 获取 start 和 size 参数
         $start = $this->request->get('start/d', 0);  // 确保 start 是整数，默认值为 0
         $size = $this->request->get('size/d', 20);   // 确保 size 是整数，默认值为 20
-        
+
         // 验证 size 参数，防止过大的分页请求
         if ($size <= 0 || $size > 100) {
             return json([
@@ -400,7 +403,7 @@ trait UploadTraits
             default => json(['state' => 'ERROR', 'msg' => '无效的操作类型']),
         };
     }
-    
+
     /**
      * 远程下载文件并保存
      *
@@ -416,17 +419,17 @@ trait UploadTraits
             if (!$ch) {
                 throw new \Exception('cURL初始化失败');
             }
-            
+
             // 设置选项以获取文件内容
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // 跟踪重定向
-            
+
             // 执行请求并检查是否有错误
             $fileContent = curl_exec($ch);
             if (curl_errno($ch)) {
                 throw new \Exception(curl_error($ch));
             }
-            
+
             // 获取文件信息
             $fileInfo = get_headers($url, 1);
             $mimeType = $fileInfo['Content-Type'] ?? '';
@@ -440,17 +443,17 @@ trait UploadTraits
             $file = new File($tmpFile, false);
             $file->setOriginalMime($mimeType);
             $file->setSize($fileSize);
-            
+
             // 验证文件
             $this->validateFile($file);
-            
+
             // 确定保存路径
             $path = $savePath ?: '/';
-            
+
             // 使用 Filesystem facade 处理文件上传
             $disk = Filesystem::disk($this->storage_driver);
             $savedPath = $disk->putFile($path, $file, 'md5');
-            
+
             if ($savedPath) {
                 // 成功上传后 获取上传信息
                 $data = [
@@ -467,20 +470,20 @@ trait UploadTraits
                     'create_time' => time(),
                     'update_time' => time(),
                 ];
-                
+
                 // 如果是图片文件，获取宽度和高度
                 if (in_array($mimeType, ['image/jpeg', 'image/png', 'image/gif'])) {
                     [$width, $height] = getimagesize($tmpFile);
                     $data['imagewidth'] = $width;
                     $data['imageheight'] = $height;
                 }
-                
+
                 // 插入数据到附件表
                 SystemAttachment::create($data);
-                
+
                 // 删除临时文件
                 unlink($tmpFile);
-                
+
                 // 返回JSON格式的成功响应
                 return json(['code' => 0, 'msg' => '下载并上传成功', 'data' => $data]);
             }
@@ -494,7 +497,7 @@ trait UploadTraits
             return json(['code' => 1, 'msg' => $e->getMessage()]);
         }
     }
-    
+
     protected function initialize(): void
     {
         parent::initialize(); // TODO: Change the autogenerated stub
@@ -502,7 +505,7 @@ trait UploadTraits
         $this->allowed_types = str2arr(ConfigLogic::instance()->getConfigValue('file_type'));
         $this->storage_driver = ConfigLogic::instance()->getConfigValue('storage_driver');
     }
-    
+
     /**
      * 将以 MB 为单位的文件大小限制转换为字节数
      *
