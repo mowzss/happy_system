@@ -17,32 +17,6 @@ class OperationLog extends BaseAdmin
 {
     use CrudTrait;
 
-    /**
-     * 清空类按钮的确认 + POST 提交脚本（自包含，不依赖额外前端资源）
-     * 按钮由 CrudUtil::getButtonHtml() 以 onclick="..." 输出，故脚本内只使用单引号。
-     */
-    private const CONFIRM_AJAX_JS = <<<'JS'
-(function (el) {
-    var L = layui.layer, $ = layui.jquery;
-    L.confirm(el.getAttribute('data-tip') || '确认执行此操作？', {
-        icon: 3, title: '危险操作确认', btn: ['确认执行', '取消']
-    }, function (i) {
-        L.close(i);
-        var ld = L.load(1);
-        $.ajax({
-            url: el.getAttribute('data-url'), type: 'POST', dataType: 'json',
-            success: function (r) {
-                L.close(ld);
-                L.msg(r.msg, {icon: r.code == 1 ? 1 : 2});
-                if (r.code == 1) { setTimeout(function () { location.reload(); }, 800); }
-            },
-            error: function () { L.close(ld); L.msg('网络错误'); }
-        });
-    });
-    return false;
-})(this)
-JS;
-
     public function __construct(App $app)
     {
         parent::__construct($app);
@@ -118,9 +92,9 @@ JS;
                 'name'  => '清空我的记录',
                 'class' => 'layui-btn-warm',
                 'extra' => [
-                    'data-url' => urls('clearMine'),
-                    'data-tip' => '确定清空当前账号的全部操作日志吗？此操作不可恢复！',
-                    'onclick'  => self::CONFIRM_AJAX_JS,
+                    'data-confirm-ajax' => urls('clearMine'),
+                    'data-tip'          => '确定清空当前账号的全部操作日志吗？此操作不可恢复！',
+                    'data-then'         => 'reload',
                 ],
             ],
         ];
@@ -131,9 +105,9 @@ JS;
                 'name'  => '清空全部记录',
                 'class' => 'layui-btn-danger',
                 'extra' => [
-                    'data-url' => urls('clearAll'),
-                    'data-tip' => '确定清空【全部账号】的操作日志吗？此操作不可恢复！',
-                    'onclick'  => self::CONFIRM_AJAX_JS,
+                    'data-confirm-ajax' => urls('clearAll'),
+                    'data-tip'          => '确定清空【全部账号】的操作日志吗？此操作不可恢复！',
+                    'data-then'         => 'reload',
                 ],
             ];
         }
