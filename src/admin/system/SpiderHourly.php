@@ -118,22 +118,17 @@ class SpiderHourly extends BaseAdmin
         }
     }
 
-    public function add()
+    protected function add()
     {
         $this->error('只读');
     }
 
-    public function edit($id = '')
+    protected function edit($id = '')
     {
         $this->error('只读');
     }
 
-    public function del($id = '')
-    {
-        $this->error('只读');
-    }
-
-    public function quickEdit($id): void
+    protected function quickEdit($id): void
     {
         $this->error('只读');
     }
