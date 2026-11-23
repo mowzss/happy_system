@@ -95,24 +95,66 @@ layui.define(['jquery', 'upload', 'layer', 'element', 'sortable'], function (exp
     }
 
     // 初始化上传组件（第三方存储优先走浏览器直传）
+    // 签名改为「选中文件后按需获取」：md5 路径需要先算出文件 md5 才能签发 policy。
     Uploads.prototype.initUploader = function () {
-        var that = this;
-        if (!that.config.direct) {
-            that.initUpload();
+        if (!this.config.direct) {
+            this.initUpload();
             return;
         }
-        $.ajax({ url: that.config.signUrl, type: 'POST', dataType: 'json' })
-            .done(function (res) {
-                if (res && res.code === 0 && res.data && res.data.mode === 'direct') {
-                    that.directInfo = res.data;
-                    that.initDirect();
-                } else {
-                    that.initUpload();
-                }
-            })
-            .fail(function () {
-                that.initUpload();
+        this.initDirect();
+    };
+
+    // 按文件 md5 获取直传签名（每个文件签名一次）
+    Uploads.prototype.fetchSign = function (md5) {
+        return $.ajax({
+            url: this.config.signUrl,
+            type: 'POST',
+            dataType: 'json',
+            data: { md5: md5 }
+        });
+    };
+
+    // 按需加载 SparkMD5（通过 layui 外部模块机制，避免写死脚本路径）
+    Uploads.prototype.ensureSparkMD5 = function () {
+        if (typeof SparkMD5 !== 'undefined') return Promise.resolve();
+        return new Promise(function (resolve, reject) {
+            layui.use(['sparkmd5'], function () {
+                typeof SparkMD5 !== 'undefined' ? resolve() : reject(new Error('MD5 组件加载失败'));
             });
+        });
+    };
+
+    // 用 SparkMD5 分块计算文件 md5（大文件不卡主线程）
+    Uploads.prototype.computeMd5 = function (file) {
+        var that = this;
+        return that.ensureSparkMD5().then(function () {
+            return new Promise(function (resolve, reject) {
+                var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice;
+                var chunkSize = 2 * 1024 * 1024; // 2MB 分块
+                var chunks = Math.ceil(file.size / chunkSize);
+                var current = 0;
+                var spark = new SparkMD5.ArrayBuffer();
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    spark.append(e.target.result);
+                    current++;
+                    if (current < chunks) {
+                        loadNext();
+                    } else {
+                        resolve(spark.end());
+                    }
+                };
+                reader.onerror = function () { reject(new Error('读取文件失败')); };
+
+                function loadNext() {
+                    var start = current * chunkSize;
+                    var end = Math.min(start + chunkSize, file.size);
+                    reader.readAsArrayBuffer(blobSlice.call(file, start, end));
+                }
+                loadNext();
+            });
+        });
     };
 
     // 绑定直传文件选择
@@ -158,61 +200,73 @@ layui.define(['jquery', 'upload', 'layer', 'element', 'sortable'], function (exp
 
     // 浏览器直传单个文件
     Uploads.prototype.directUpload = function (file) {
-        var that = this, info = that.directInfo;
+        var that = this;
         var ext = file.name.indexOf('.') > -1 ? file.name.split('.').pop().toLowerCase() : '';
 
-        if (info.allowExts && info.allowExts.length && info.allowExts.indexOf(ext) === -1) {
-            layer.msg('不允许的文件类型');
-            return;
-        }
-        if (info.maxSize && file.size > info.maxSize) {
+        if (that.config.directMaxSize && file.size > that.config.directMaxSize) {
             layer.msg('文件大小超过限制');
             return;
         }
 
-        var key = info.dir + that.randomName() + (ext ? '.' + ext : '');
-        var formData = new FormData();
-        if (info.driver === 'oss') {
-            formData.append('key', key);
-            formData.append('policy', info.policy);
-            formData.append('OSSAccessKeyId', info.accessId);
-            formData.append('signature', info.signature);
-            formData.append('success_action_status', String(info.successActionStatus || 200));
-        } else {
-            formData.append('token', info.token);
-            formData.append('key', key);
-        }
-        // 文件字段必须最后追加；文件名仅用于 multipart，OSS 对象名由 key 决定。
-        // 避免中文/空格等特殊字符导致 OSS 无法识别文件 part（IncorrectNumberOfFilesInPOSTRequest）
-        var safeName = 'upload_' + that.randomName() + (ext ? '.' + ext : '');
-        formData.append('file', file, safeName);
-
-        var xhr = new XMLHttpRequest();
         layer.load();
-        xhr.onload = function () {
-            if (xhr.status >= 200 && xhr.status < 300) {
-                that.registerDirect(key, file, ext);
+        // 先算文件 md5，再按 md5 取签名（key = {前2位}/{md5}.{ext}，内容级去重）
+        that.computeMd5(file).then(function (md5) {
+            return that.fetchSign(md5).then(function (res) {
+                if (!res || res.code !== 0 || !res.data || res.data.mode !== 'direct') {
+                    throw new Error((res && res.msg) || '获取直传签名失败');
+                }
+                return { info: res.data, md5: md5 };
+            });
+        }).then(function (ctx) {
+            var info = ctx.info, md5 = ctx.md5;
+            // 以服务端签发的前缀为准拼 key，防止越权
+            var key = info.dir + md5 + (ext ? '.' + ext : '');
+            var formData = new FormData();
+            if (info.driver === 'oss') {
+                formData.append('key', key);
+                formData.append('policy', info.policy);
+                formData.append('OSSAccessKeyId', info.accessId);
+                formData.append('signature', info.signature);
+                formData.append('success_action_status', String(info.successActionStatus || 200));
             } else {
+                formData.append('token', info.token);
+                formData.append('key', key);
+            }
+            // 文件字段必须最后追加；文件名仅用于 multipart，OSS 对象名由 key 决定。
+            // 避免中文/空格等特殊字符导致 OSS 无法识别文件 part（IncorrectNumberOfFilesInPOSTRequest）
+            var safeName = 'upload_' + that.randomName() + (ext ? '.' + ext : '');
+            formData.append('file', file, safeName);
+
+            var xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    that.registerDirect(key, file, ext, md5);
+                } else {
+                    layer.closeAll('loading');
+                    that.relayUpload(file);
+                }
+            };
+            xhr.onerror = function () {
                 layer.closeAll('loading');
                 that.relayUpload(file);
-            }
-        };
-        xhr.onerror = function () {
+            };
+            xhr.open('POST', info.host, true);
+            xhr.send(formData);
+        }).catch(function (err) {
             layer.closeAll('loading');
+            // 签名/MD5 阶段失败则回退服务器中转
             that.relayUpload(file);
-        };
-        xhr.open('POST', info.host, true);
-        xhr.send(formData);
+        });
     };
 
     // 直传完成后登记附件
-    Uploads.prototype.registerDirect = function (key, file, ext) {
+    Uploads.prototype.registerDirect = function (key, file, ext, md5) {
         var that = this;
         $.ajax({
-            url: that.directInfo.registerUrl,
+            url: that.config.registerUrl,
             type: 'POST',
             dataType: 'json',
-            data: { path: key, name: file.name, size: file.size, ext: ext }
+            data: { path: key, name: file.name, size: file.size, ext: ext, md5: md5 }
         }).done(function (res) {
             layer.closeAll('loading');
             if (res && res.code === 0 && res.data) {

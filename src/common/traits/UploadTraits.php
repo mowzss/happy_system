@@ -85,7 +85,14 @@ trait UploadTraits
             }
 
             $disk = Filesystem::disk($this->storage_driver);
-            $dir = $this->directDir();
+
+            // 直传改用 md5 路径（与中转 putFile('/', $file, 'md5') 一致），实现内容级去重。
+            // 前端先算好 md5 传入，服务端据此精确签发 policy 前缀，防止越权覆盖。
+            $md5 = strtolower(trim((string)$this->request->post('md5', '')));
+            if (!preg_match('/^[a-f0-9]{32}$/', $md5)) {
+                return json(['code' => 1, 'msg' => '缺少有效的文件 MD5']);
+            }
+            $dir = $this->directDir($md5);
 
             if (!$this->rateLimit('sign', (int)(UserHelper::instance()->getUserId() ?: 0), 120)) {
                 return json(['code' => 1, 'msg' => '请求过于频繁，请稍后再试']);
@@ -99,7 +106,9 @@ trait UploadTraits
             $data = array_merge($data, [
                 'mode' => 'direct',
                 'driver' => $this->storage_driver,
+                // dir = md5 前两位 + '/'，policy 已按此前缀限定；完整 key = dir + md5 + '.' + ext
                 'dir' => $dir,
+                'md5' => $md5,
                 'maxSize' => (int)$this->max_size,
                 'allowExts' => array_map('strtolower', $this->allowed_types),
                 'registerUrl' => urls('register'),
@@ -132,12 +141,16 @@ trait UploadTraits
             return json(['code' => 1, 'msg' => '请求过于频繁，请稍后再试']);
         }
 
-        // key 必须落在当前用户目录下，防止越权覆盖
-        if (!preg_match('#^uploads/' . $uid . '/\d{8}/[A-Za-z0-9][A-Za-z0-9._-]*$#', $path)) {
+        // key 必须是 {md5前2}/{md5}.{ext}（与中转 md5 路径一致），全局共享实现内容级去重
+        if (!preg_match('#^([a-f0-9]{2})/([a-f0-9]{32})\.([a-z0-9]+)$#', $path, $m)) {
             return json(['code' => 1, 'msg' => '非法的文件路径']);
         }
+        if ($m[1] !== substr($m[2], 0, 2)) {
+            return json(['code' => 1, 'msg' => '非法的文件路径']);
+        }
+        $pathMd5 = $m[2];
 
-        $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+        $ext = strtolower($m[3]);
         $allowTypes = array_map('strtolower', $this->allowed_types);
         if ($ext === '' || !in_array($ext, $allowTypes, true)) {
             return json(['code' => 1, 'msg' => '不允许的文件类型']);
@@ -172,9 +185,12 @@ trait UploadTraits
         $name = $name !== '' ? basename($name) : basename($path);
         $name = mb_substr($name, 0, 100);
 
-        $exist = SystemAttachment::where('uid', $uid)->where('path', $path)->find();
+        // 按 md5 + 驱动全局查重：相同内容不重复登记，直接复用已有附件
+        $exist = SystemAttachment::where('md5', $pathMd5)
+            ->where('driver', $this->storage_driver)
+            ->find();
         if ($exist) {
-            return json(['code' => 0, 'msg' => '已登记', 'data' => $this->attachmentResponse($exist->toArray(), $disk->url($path))]);
+            return json(['code' => 0, 'msg' => '已存在', 'data' => $this->attachmentResponse($exist->toArray(), $disk->url($exist->path))]);
         }
 
         $data = [
@@ -185,7 +201,8 @@ trait UploadTraits
             'mime' => $mime ?: 'application/octet-stream',
             'ext' => $ext,
             'size' => $size,
-            'md5' => (string)($meta['md5'] ?? ''),
+            // 用路径中的 md5（前端计算并与 key 一致），保证查重键稳定，不依赖对象存储 meta 格式
+            'md5' => $pathMd5,
             'sha1' => '',
             'driver' => $this->storage_driver,
             'create_time' => time(),
@@ -312,13 +329,17 @@ trait UploadTraits
     }
 
     /**
-     * 直传目录（按用户 + 日期隔离）
+     * 直传目录：按 md5 前两位分目录（与中转 putFile('/', $file, 'md5') 规则一致）
+     *
+     * 这样相同内容映射到相同 key，对象存储天然覆盖，实现内容级去重。
+     * 返回的是 policy 限定的前缀；完整 key 由前端拼成 "{前2位}/{md5}.{ext}"。
+     *
+     * @param string $md5 32 位小写十六进制 md5（调用方已校验）
      * @return string
      */
-    protected function directDir(): string
+    protected function directDir(string $md5 = ''): string
     {
-        $uid = (int)(UserHelper::instance()->getUserId() ?: 0);
-        return 'uploads/' . $uid . '/' . date('Ymd') . '/';
+        return substr($md5, 0, 2) . '/';
     }
 
     /**
