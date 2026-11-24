@@ -225,6 +225,19 @@ class ConfigLogic extends BaseLogic
     ];
 
     /**
+     * 各频道模块允许对外输出的公开键。
+     *
+     * 模块配置（name/seo_*）存于 ha_system_config 的 module 段，
+     * 这些是 SEO 与展示用信息，属于公开数据；其余配置（采集过滤、sitemap、
+     * 搜索开关等内部项）一律不输出。
+     */
+    private const PUBLIC_MODULE_KEYS = [
+        'name', 'seo_title', 'seo_keywords', 'seo_description',
+        // 栏目页筛选开关：前端据此决定是否渲染筛选区域（模块级，默认 0 关闭）
+        'column_filter',
+    ];
+
+    /**
      * 获取可安全输出给前端的公开配置。
      *
      * 采用白名单机制（默认拒绝），并对已知的键做类型规整：
@@ -259,6 +272,29 @@ class ConfigLogic extends BaseLogic
                 }
                 $result[$module][$name] = $value;
             }
+        }
+
+        // 追加各频道模块的公开配置（模块名 + SEO 信息）
+        // 以 system_module 表 status=1 的模块为准，避免输出已卸载模块残留配置
+        try {
+            $modules = \app\logic\system\ModuleLogic::instance()->getModuleAll();
+            foreach (array_keys($modules) as $module) {
+                if ($module === 'system' || !isset($allConfigs[$module])) {
+                    continue;
+                }
+                foreach (self::PUBLIC_MODULE_KEYS as $name) {
+                    if (array_key_exists($name, $allConfigs[$module])) {
+                        $value = $allConfigs[$module][$name];
+                        // column_filter 规整为 int，便于前端直接判断
+                        if ($name === 'column_filter') {
+                            $value = (int)$value;
+                        }
+                        $result['modules'][$module][$name] = $value;
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            // 模块表不可用时不影响系统配置输出
         }
 
         return $result;
