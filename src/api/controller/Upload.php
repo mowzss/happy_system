@@ -4,13 +4,13 @@ declare (strict_types=1);
 
 namespace app\api\controller;
 
+use app\common\controllers\BaseAuthApi;
 use app\common\traits\UploadTraits;
-use app\common\controllers\BaseApi;
 
-class Upload extends BaseApi
+class Upload extends BaseAuthApi
 {
     use UploadTraits;
-    
+
     /**
      * 保存文件
      * @login true
@@ -20,11 +20,11 @@ class Upload extends BaseApi
     {
         // 获取表单上传文件
         $file = $this->app->request->file('file');
-        
+
         if (empty($file)) {
             $this->json([], 400, '请选择要上传的文件');
         }
-        
+
         try {
             $data = $this->storeUploadedFile($file);
             $this->json($data);
