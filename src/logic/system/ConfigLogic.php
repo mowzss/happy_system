@@ -198,4 +198,69 @@ class ConfigLogic extends BaseLogic
         // 尝试从缓存中获取特定模块和名称的配置值
         return $allConfigs[$module][$name] ?? $default;
     }
+
+    /**
+     * 允许输出给前端（Vue 等）的公开配置白名单。
+     *
+     * 安全约定：默认拒绝。只有显式列入本白名单的键才会对外输出，
+     * 数据库密码、JWT 密钥、AES 密钥、OSS/七牛/短信 AK/SK、SMTP 密码、
+     * 免密发布 Token、IndexNow key、OAuth appsecret 等敏感项一律不包含。
+     * 结构：module => [name, ...]
+     */
+    private const PUBLIC_CONFIG_WHITELIST = [
+        'system' => [
+            // 站点基础信息
+            'site_name', 'site_domain', 'site_wap_domain', 'site_logo', 'site_logo_image',
+            'square_logo', 'copyright', 'icp_number', 'wa_number', 'posters_image',
+            // SEO
+            'seo_title', 'seo_keywords', 'seo_description',
+            // 存储对外域名（不含任何 AK/SK/Secret）
+            'storage_driver', 'static_upload', 'static_prefix', 'static_version',
+            'oss_domain', 'qiniu_domain',
+            // 手机版开关（供前端决定是否走 wap 域名/响应式）
+            'is_wap_domain', 'is_wap_domain_dump', 'is_wap_dump_type', 'is_open_site',
+            // 会员功能开关（前端据此决定是否展示注册入口等）
+            'is_reg', 'is_reg_image_code', 'is_reg_sms_code', 'is_login_image_code',
+        ],
+    ];
+
+    /**
+     * 获取可安全输出给前端的公开配置。
+     *
+     * 采用白名单机制（默认拒绝），并对已知的键做类型规整：
+     * - static_version 强制为字符串，避免前导零丢失；
+     * - 开关类配置转为 int，便于前端判断；
+     * - 空值保留为空字符串，保证字段稳定存在。
+     *
+     * 返回结构：['system' => ['site_name' => ..., ...], ...]
+     *
+     * @return array
+     * @throws \Throwable
+     */
+    public function getPublicConfig(): array
+    {
+        $allConfigs = $this->loadAllConfigsToCache();
+        $result = [];
+
+        foreach (self::PUBLIC_CONFIG_WHITELIST as $module => $names) {
+            if (!isset($allConfigs[$module])) {
+                continue;
+            }
+            foreach ($names as $name) {
+                if (!array_key_exists($name, $allConfigs[$module])) {
+                    continue;
+                }
+                $value = $allConfigs[$module][$name];
+                // 开关类与版本号规整为字符串/整型，避免 JSON 数字精度问题
+                if (in_array($name, ['static_version', 'static_prefix'], true)) {
+                    $value = (string)$value;
+                } elseif (str_starts_with($name, 'is_')) {
+                    $value = (int)$value;
+                }
+                $result[$module][$name] = $value;
+            }
+        }
+
+        return $result;
+    }
 }
