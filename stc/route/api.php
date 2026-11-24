@@ -30,6 +30,14 @@ Route::get('cms/search/hotWord', '\app\api\search\Index@hotWord');
 Route::get('cms/search/modules', '\app\api\search\Index@modules');
 Route::get('cms/search$', '\app\api\search\Index@index');
 
+// 通用附表查询（白名单表）
+Route::get('cms/table', '\app\api\cms\Table@index');
+
+// 诗人 API（poetry 模块自带控制器；归入 cms/ 前缀避免被 home 层 route/poetry.php 的 'poetry' group 抢占）
+Route::get('cms/poetry-author/index', '\app\api\poetry\Author@index');
+Route::get('cms/poetry-author/info', '\app\api\poetry\Author@info');
+Route::get('cms/poetry-author/contents', '\app\api\poetry\Author@contents');
+
 // 迷目（谜语分类）API：归入 cms/ 前缀避免被 home 层 route/miyu.php 的 'miyu' group 干扰
 Route::get('cms/miyu-type/index', '\app\api\miyu\Type@index');
 Route::get('cms/miyu-type/show', '\app\api\miyu\Type@show');
