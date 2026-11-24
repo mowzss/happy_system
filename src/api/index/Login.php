@@ -1,25 +1,25 @@
 <?php
 
 
-namespace app\api\controller;
+namespace app\api\index;
 
-use yzh52521\Jwt\JWT;
-use think\oauth\OAuth;
+use app\common\controllers\BaseApi;
 use app\model\user\UserInfo;
 use app\model\user\UserOauth;
-use happy\admin\libs\Controller;
-use think\db\exception\DbException;
+use happy\admin\libs\Exception\LibsException;
 use happy\admin\libs\helper\CodeHelper;
 use happy\admin\libs\helper\EventHelper;
 use Psr\SimpleCache\InvalidArgumentException;
-use happy\admin\libs\Exception\LibsException;
 use think\db\exception\DataNotFoundException;
+use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
+use think\oauth\OAuth;
+use yzh52521\Jwt\JWT;
 
-class Login extends Controller
+class Login extends BaseApi
 {
     protected JWT $jwt;
-    
+
     /**
      * 账号密码登录
      * @return void
@@ -61,7 +61,7 @@ class Login extends Controller
             $this->resToken($user);
         }
     }
-    
+
     /**
      * @param UserInfo $user
      * @return void
@@ -80,7 +80,7 @@ class Login extends Controller
             $this->json(['msg' => $e->getMessage()], 500);
         }
     }
-    
+
     /**
      * 微信小程序登录
      * @return void
@@ -116,7 +116,7 @@ class Login extends Controller
         }
         $this->resToken($user);
     }
-    
+
     /**
      * @param array $wx_user_info
      * @return UserInfo
@@ -136,7 +136,7 @@ class Login extends Controller
         UserOauth::create(['uid' => $user->id, 'type' => 'wxxcx', 'openid' => $wx_user_info['openid'], 'unionid' => $wx_user_info['unionid']]);
         return $user;
     }
-    
+
     protected function initialize(): void
     {
         $this->jwt = new JWT();

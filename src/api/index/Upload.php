@@ -2,7 +2,7 @@
 declare (strict_types=1);
 
 
-namespace app\api\controller;
+namespace app\api\index;
 
 use app\common\controllers\BaseAuthApi;
 use app\common\traits\UploadTraits;

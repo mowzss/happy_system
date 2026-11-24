@@ -1,7 +1,7 @@
 <?php
 
 
-namespace app\api\controller\user;
+namespace app\api\user;
 
 use app\common\controllers\BaseAuthApi;
 

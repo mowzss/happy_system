@@ -2,7 +2,7 @@
 declare (strict_types=1);
 
 
-namespace app\api\site;
+namespace app\api\index;
 
 use app\common\controllers\BaseApi;
 use app\logic\system\ConfigLogic;
