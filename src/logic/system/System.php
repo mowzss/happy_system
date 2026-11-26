@@ -4,65 +4,83 @@ declare (strict_types=1);
 namespace app\logic\system;
 
 use happy\admin\libs\BaseLogic;
-use think\db\exception\DataNotFoundException;
-use think\db\exception\DbException;
-use think\db\exception\ModelNotFoundException;
 use think\helper\Str;
 
 class System extends BaseLogic
 {
     /**
-     * 获取当前请求的规范 URL（Canonical）
+     * 获取当前请求的 URL 信息
      *
-     * 生成规则：
-     * 1. 始终输出主站绝对地址：移动端也统一指向 PC 规范地址，避免跨域重复内容；
-     * 2. 分页 2~10 页输出自引用地址（?page=N），第 1 页不带分页参数，
-     *    10 页以后交由 robots 的 noindex 收敛，canonical 回指列表首页；
-     * 3. 路由变量中剔除 page，避免分页参数重复；分页参数按已有查询串正确拼接；
-     * 4. 域名取后台配置的 site_domain，规避 CDN 回源协议不一致导致的 http / 相对地址。
+     * - pc_url：主站域名 + 当前请求地址（含查询串），用于 PC / 移动端互跳
+     * - mobile_url：移动端域名 + 当前请求地址（未配置移动域名时回退主站域名）
+     * - canonical_url：主站绝对规范地址，按路由重建并剔除无关查询参数，
+     *   分页 2~10 页自引用（?page=N），第 1 页与 10 页以后不带分页参数
      *
-     * @return string
-     * @throws DataNotFoundException
-     * @throws DbException
-     * @throws ModelNotFoundException
-     * @throws \Throwable
+     * @return array{pc_url: string, mobile_url: string, canonical_url: string}
      */
-    public function getCanonicalUrl(): string
+    public function getUrlInfo(): array
     {
-        $module = $this->request->layer(true);
-        $controller = Str::snake($this->request->controller(true, true));
-        $action = $this->request->action(true);
-        $url = $module . '/' . $controller . '/' . $action;
-        $urlInfo = urls($url, (array)$this->request->route());
-        // 分页 2~10 页自引用；第 1 页与 10 页以后不输出分页参数
-        $pageParam = $this->request->param('page', 1);
-        $page = is_scalar($pageParam) ? (int)$pageParam : 1;
-        if ($page > 1 && $page <= 10) {
-            $urlInfo .= (str_contains($urlInfo, '?') ? '&' : '?') . 'page=' . $page;
-        }
-        return $this->absoluteUrl($urlInfo);
+        $domain = $this->domain('site_domain') ?: rtrim((string)$this->request->domain(), '/');
+        $wapDomain = $this->domain('site_wap_domain') ?: $domain;
+        $requestUrl = $this->normalizePath($this->request->url());
+
+        return [
+            'pc_url' => $domain . $requestUrl,
+            'mobile_url' => $wapDomain . $requestUrl,
+            'canonical_url' => $domain . $this->canonicalPath(),
+        ];
     }
 
     /**
-     * 补全主站域名，保证 canonical 为 https 绝对地址
+     * 生成规范路径：按路由变量还原简化地址，仅保留业务需要的分页参数
+     *
+     * @return string
+     */
+    private function canonicalPath(): string
+    {
+        $url = $this->request->layer(true) . '/'
+            . Str::snake($this->request->controller(true, true)) . '/'
+            . $this->request->action(true);
+
+        // 路由变量只包含路径参数（如 id），不含 GET；分页参数统一走查询串，避免路径分页重复
+        $vars = (array)$this->request->route();
+        unset($vars['page']);
+
+        $path = urls($url, $vars, true, false);
+
+        $page = (int)$this->request->param('page', 1);
+        if ($page > 1 && $page <= 10) {
+            $path .= (str_contains($path, '?') ? '&' : '?') . 'page=' . $page;
+        }
+
+        return $this->normalizePath($path);
+    }
+
+    /**
+     * 读取并规范化后台配置的域名
+     *
+     * @param string $configKey
+     * @return string
+     */
+    private function domain(string $configKey): string
+    {
+        $domain = rtrim(trim((string)sys_config($configKey, '')), '/');
+
+        if ($domain === '') {
+            return '';
+        }
+
+        return preg_match('#^https?://#i', $domain) ? $domain : 'https://' . $domain;
+    }
+
+    /**
+     * 保证地址以单个斜杠开头
+     *
      * @param string $path
      * @return string
-     * @throws \Throwable
-     * @throws DataNotFoundException
-     * @throws DbException
-     * @throws ModelNotFoundException
      */
-    private function absoluteUrl(string $path): string
+    private function normalizePath(string $path): string
     {
-        $domain = rtrim(trim((string)sys_config('site_domain', '')), '/');
-        if ($domain === '') {
-            $domain = rtrim((string)$this->request->domain(), '/');
-        } elseif (!preg_match('#^https?://#i', $domain)) {
-            $domain = 'https://' . $domain;
-        }
-        if (!str_starts_with($path, '/')) {
-            $path = '/' . $path;
-        }
-        return $domain . $path;
+        return '/' . ltrim($path, '/');
     }
 }
