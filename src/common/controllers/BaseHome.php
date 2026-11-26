@@ -4,11 +4,16 @@ declare (strict_types=1);
 
 namespace app\common\controllers;
 
+use app\logic\system\System;
 use think\App;
 use think\facade\View;
 
 class BaseHome extends Base
 {
+    /**
+     * @var string $canonical_url 网站Canonical URL
+     */
+    protected string $canonical_url;
 
     public function __construct(App $app)
     {
@@ -40,6 +45,7 @@ class BaseHome extends Base
         if ($siteClosed) {
             $this->closeSite('网站暂未开启!敬请期待');
         }
+        $this->canonical_url = System::instance()->getCanonicalUrl();
     }
 
     /**
