@@ -46,6 +46,23 @@ class BaseHome extends Base
             $this->closeSite('网站暂未开启!敬请期待');
         }
         $this->url_info = System::instance()->getUrlInfo();
+        if (!$this->app->isDebug()) {
+            if (empty($this->user)) {
+                // 访客：允许 ESA 缓存 30 分钟
+                header('Cache-Control: public, max-age=3600, s-maxage=3600');
+                if ($this->app->cookie->has('UserToken')) {
+                    $this->app->cookie->delete('UserToken');
+                }
+            } else {
+                // 登录用户：不允许缓存
+                header('Cache-Control: private, no-cache, no-store, must-revalidate, max-age=0');
+                header('Pragma: no-cache');
+                header('Expires: -1');
+                if (!$this->app->cookie->has('UserToken')) {
+                    $this->app->cookie->forever('UserToken', md5($this->user['id'] . time()));
+                }
+            }
+        }
     }
 
     /**
